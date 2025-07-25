@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Gestion Immobilière</title>
+    <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/public/css/app2.css">
+</head>
+
+<body class="primary-gradient min-h-screen relative overflow-hidden">
+    <!-- Loading screen -->
+    <div id="loading">
+        <div class="text-center">
+            <div class="spinner mx-auto mb-4"></div>
+            <p class="text-white text-lg">Chargement de l'environnement 3D...</p>
+        </div>
+    </div>
+
+    <!-- Canvas Three.js -->
+    <canvas id="three-canvas"></canvas>
+    
+    <!-- Overlay -->
+    <div class="overlay"></div>
+
+    <!-- Navigation en haut -->
+    <nav class="absolute top-0 left-0 w-full glass-nav shadow-lg z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg">
+                        <i class="fas fa-building text-lg"></i>
+                    </div>
+                    <span class="text-xl font-bold text-blue-900">
+                        Immobilier<span class="text-blue-500">Pro</span>
+                    </span>
+                </div>
+                
+                <!-- Lien d'inscription -->
+                <div class="flex items-center">
+                    <a href="register.html" class="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-300">
+                        Pas de compte ? <span class="font-bold">Inscrivez-vous</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal centré -->
+    <div class="flex items-center justify-center min-h-screen pt-16 px-4 relative z-10">
+        <div class="w-full max-w-md">
+            <!-- Carte de connexion -->
+            <div class="glass-card rounded-3xl shadow-2xl p-8">
+                <!-- Header avec logo animé -->
+                <div class="text-center mb-8">
+                    <div class="relative w-20 h-20 mx-auto mb-6">
+                        <div class="absolute inset-0 bg-blue-500 rounded-full pulse-ring"></div>
+                        <div class="relative w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                            <i class="fas fa-building text-white text-2xl"></i>
+                        </div>
+                    </div>
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">Connexion</h1>
+                    <p class="text-gray-600">Accédez à votre espace professionnel</p>
+                </div>
+
+                <!-- Formulaire -->
+                <form class="space-y-6" onsubmit="handleLogin(event)">
+                    <!-- Champ Email -->
+                    <div class="relative">
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            required
+                            class="w-full p-4 bg-white/80 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-transparent input-focus transition-all duration-300 peer backdrop-blur-sm"
+                            placeholder="Adresse email"
+                        >
+                        <label 
+                            for="email" 
+                            class="floating-label absolute left-4 top-4 text-gray-500 bg-white/80 px-2 transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:text-sm peer-focus:text-blue-600 peer-valid:top-0 peer-valid:text-sm peer-valid:text-blue-600"
+                        >
+                            Adresse email
+                        </label>
+                    </div>
+
+                    <!-- Champ Mot de passe -->
+                    <div class="relative">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            required
+                            class="w-full p-4 bg-white/80 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-transparent input-focus transition-all duration-300 peer pr-12 backdrop-blur-sm"
+                            placeholder="Mot de passe"
+                        >
+                        <label 
+                            for="password" 
+                            class="floating-label absolute left-4 top-4 text-gray-500 bg-white/80 px-2 transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:text-sm peer-focus:text-blue-600 peer-valid:top-0 peer-valid:text-sm peer-valid:text-blue-600"
+                        >
+                            Mot de passe
+                        </label>
+                        <button 
+                            type="button" 
+                            onclick="togglePassword()"
+                            class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-300"
+                            tabindex="-1"
+                        >
+                            <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Options de connexion -->
+                    <div class="flex items-center justify-between text-sm">
+                        <label class="flex items-center cursor-pointer">
+                            <input 
+                                type="checkbox" 
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 transition-all duration-300"
+                            >
+                            <span class="ml-2 text-gray-600">Se souvenir de moi</span>
+                        </label>
+                        <a href="#" class="text-blue-600 hover:text-blue-800 font-medium transition-colors duration-300">
+                            Mot de passe oublié ?
+                        </a>
+                    </div>
+
+                    <!-- Bouton de connexion -->
+                    <button 
+                        type="submit" 
+                        class="w-full btn-primary text-white font-semibold py-4 px-6 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300"
+                    >
+                        <span class="flex items-center justify-center">
+                            <i class="fas fa-sign-in-alt mr-2"></i>
+                            Se connecter
+                        </span>
+                    </button>
+                </form>
+
+                <!-- Divider -->
+                <div class="my-8">
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div class="relative flex justify-center text-sm">
+                            <span class="px-4 bg-white text-gray-500">ou</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer avec lien d'inscription -->
+                <div class="text-center">
+                    <p class="text-gray-600 text-sm">
+                        Pas encore de compte ? 
+                        <a href="register.html" class="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300">
+                            S'inscrire maintenant
+                        </a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Information de sécurité -->
+            <div class="mt-4 text-center">
+                <p class="text-white/90 text-xs">
+                    <i class="fas fa-shield-alt mr-1"></i>
+                    Vos données sont protégées et chiffrées
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/public/js/js.js">
+        
+    </script>
+</body>
+</html>
