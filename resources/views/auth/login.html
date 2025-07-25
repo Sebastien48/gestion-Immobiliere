@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Gestion Immobilière</title>
+    <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Styles personnalisés */
+        .primary-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        .pulse-ring {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.7; }
+            70% { transform: scale(1.15); opacity: 0; }
+            100% { transform: scale(0.95); opacity: 0; }
+        }
+        .floating-label {
+            pointer-events: none;
+        }
+        .input-focus:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            z-index: 0;
+        }
+        #three-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .blue-gradient {
+            background: linear-gradient(135deg, #1E3A8A, #3B82F6);
+        }
+    </style>
+</head>
+
+<body class="primary-gradient min-h-screen">
+    <!-- Loading screen -->
+    <div id="loading">
+        <div class="text-center">
+            <div class="spinner mx-auto mb-4"></div>
+            <p class="text-white text-lg">Chargement...</p>
+        </div>
+    </div>
+
+    <!-- Canvas Three.js -->
+    <canvas id="three-canvas"></canvas>
+    
+    <!-- Overlay -->
+    <div class="overlay"></div>
+
+    <!-- Navigation en haut -->
+    <nav class="fixed top-0 left-0 w-full glass-nav shadow-lg z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg">
+                        <i class="fas fa-building text-lg"></i>
+                    </div>
+                    <span class="text-xl font-bold text-blue-900">
+                        Immobilier<span class="text-blue-500">Pro</span>
+                    </span>
+                </div>
+                
+                <!-- Lien d'inscription -->
+                <div class="flex items-center">
+                    <a href="register.html" class="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-300">
+                        Pas de compte ? <span class="font-bold">Inscrivez-vous</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <div class="container mx-auto px-4 pt-32 pb-16 relative z-10">
+        <!-- Carte de connexion -->
+        <div class="max-w-md mx-auto glass-card rounded-3xl shadow-2xl p-8 mb-8">
+            <!-- Header avec logo animé -->
+            <div class="text-center mb-8">
+                <div class="relative w-20 h-20 mx-auto mb-6">
+                    <div class="absolute inset-0 bg-blue-500 rounded-full pulse-ring"></div>
+                    <div class="relative w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                        <i class="fas fa-building text-white text-2xl"></i>
+                    </div>
+                </div>
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Connexion</h1>
+                <p class="text-gray-600">Accédez à votre espace professionnel</p>
+            </div>
+
+            <!-- Formulaire -->
+            <form class="space-y-6" onsubmit="handleLogin(event)">
+                <!-- Champ Email -->
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-envelope text-gray-400"></i>
+                    </div>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        required
+                        class="w-full p-4 pl-10 bg-white/80 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-transparent input-focus transition-all duration-300 peer backdrop-blur-sm"
+                        placeholder="Adresse email"
+                    >
+                    <label 
+                        for="email" 
+                        class="floating-label absolute left-10 top-4 text-gray-500 bg-white/80 px-2 transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:text-sm peer-focus:text-blue-600 peer-valid:top-0 peer-valid:text-sm peer-valid:text-blue-600"
+                    >
+                        Adresse email
+                    </label>
+                </div>
+
+                <!-- Champ Mot de passe -->
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-lock text-gray-400"></i>
+                    </div>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        required
+                        class="w-full p-4 pl-10 bg-white/80 border-2 border-gray-200 rounded-xl text-gray-800 placeholder-transparent input-focus transition-all duration-300 peer pr-12 backdrop-blur-sm"
+                        placeholder="Mot de passe"
+                    >
+                    <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                        <i class="fas fa-eye text-gray-400 cursor-pointer toggle-password"></i>
+                    </div>
+                    <label 
+                        for="password" 
+                        class="floating-label absolute left-10 top-4 text-gray-500 bg-white/80 px-2 transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-0 peer-focus:text-sm peer-focus:text-blue-600 peer-valid:top-0 peer-valid:text-sm peer-valid:text-blue-600"
+                    >
+                        Mot de passe
+                    </label>
+                    <button 
+                        type="button" 
+                        onclick="togglePassword()"
+                        class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors duration-300"
+                        tabindex="-1"
+                    >
+                        
+                    </button>
+                </div>
+
+                <!-- Options de connexion -->
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center cursor-pointer">
+                        <input 
+                            type="checkbox" 
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 transition-all duration-300"
+                        >
+                        <span class="ml-2 text-gray-600">Se souvenir de moi</span>
+                    </label>
+                    <a href="#" class="text-blue-600 hover:text-blue-800 font-medium transition-colors duration-300">
+                        Mot de passe oublié ?
+                    </a>
+                </div>
+
+                <!-- Bouton de connexion -->
+                <button 
+                    type="submit" 
+                    class="w-full btn-primary text-white font-semibold py-4 px-6 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300"
+                >
+                    <span class="flex items-center justify-center">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Se connecter
+                    </span>
+                </button>
+            </form>
+
+            <!-- Divider -->
+            <div class="my-8">
+                <div class="relative">
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-4 text-gray-500">ou</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer avec lien d'inscription -->
+            <div class="text-center">
+                <p class="text-gray-600 text-sm">
+                    Pas encore de compte ? 
+                    <a href="register.html" class="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300">
+                        S'inscrire maintenant
+                    </a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Information de sécurité -->
+        <div class="max-w-md mx-auto text-center">
+            <p class="text-white/90 text-xs">
+                <i class="fas fa-shield-alt mr-1"></i>
+                Vos données sont protégées et chiffrées
+            </p>
+        </div>
+
+        <!-- Espace supplémentaire pour permettre le défilement -->
+        <div class="h-64"></div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="flex items-center justify-center mb-4">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold">
+                    <i class="fas fa-building"></i>
+                </div>
+                <span class="ml-2 text-lg font-bold text-blue-400">Immobilier<span class="text-blue-300">Pro</span></span>
+            </div>
+            <p class="text-gray-400 text-sm">
+                &copy; 2025 Gestion Immobilière Pro. Tous droits réservés.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Variables globales Three.js
+        let scene, camera, renderer, buildings = [];
+        let mouse = { x: 0, y: 0 };
+
+        // Fonction pour basculer la visibilité du mot de passe
+        document.querySelectorAll('.toggle-password').forEach(icon => {
+            icon.addEventListener('click', function() {
+                const input = this.closest('.relative').querySelector('input');
+                const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+                input.setAttribute('type', type);
+                this.classList.toggle('fa-eye-slash');
+                this.classList.toggle('fa-eye');
+            });
+        });
+
+        // Initialisation de Three.js
+        function initThreeJS() {
+            const canvas = document.getElementById('three-canvas');
+            
+            // Scene
+            scene = new THREE.Scene();
+            scene.fog = new THREE.Fog(0x667eea, 10, 100);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 8, 20);
+            camera.lookAt(0, 0, 0);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x667eea, 1);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+            // Éclairage
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(10, 10, 5);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            scene.add(directionalLight);
+
+            // Lumière point colorée
+            const pointLight = new THREE.PointLight(0x764ba2, 0.6, 50);
+            pointLight.position.set(-10, 8, 10);
+            scene.add(pointLight);
+
+            // Création des bâtiments
+            createBuildings();
+
+            // Sol
+            const groundGeometry = new THREE.PlaneGeometry(100, 100);
+            const groundMaterial = new THREE.MeshLambertMaterial({ 
+                color: 0x2a2a2a,
+                transparent: true,
+                opacity: 0.3
+            });
+            const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+            ground.rotation.x = -Math.PI / 2;
+            ground.position.y = -0.5;
+            ground.receiveShadow = true;
+            scene.add(ground);
+
+            // Gestion de la souris
+            document.addEventListener('mousemove', onMouseMove);
+            window.addEventListener('resize', onWindowResize);
+
+            // Cacher l'écran de chargement
+            document.getElementById('loading').style.display = 'none';
+
+            // Démarrer l'animation
+            animate();
+        }
+
+        // Création des bâtiments
+        function createBuildings() {
+            const buildingCount = 15;
+            const colors = [0x3b82f6, 0x1d4ed8, 0x764ba2, 0x667eea, 0x4f46e5];
+
+            for (let i = 0; i < buildingCount; i++) {
+                const width = Math.random() * 2 + 1;
+                const height = Math.random() * 8 + 2;
+                const depth = Math.random() * 2 + 1;
+
+                const geometry = new THREE.BoxGeometry(width, height, depth);
+                const material = new THREE.MeshLambertMaterial({ 
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    transparent: true,
+                    opacity: 0.8
+                });
+
+                const building = new THREE.Mesh(geometry, material);
+                
+                // Position aléatoire
+                const radius = Math.random() * 20 + 10;
+                const angle = (i / buildingCount) * Math.PI * 2 + Math.random() * 0.5;
+                
+                building.position.x = Math.cos(angle) * radius;
+                building.position.z = Math.sin(angle) * radius;
+                building.position.y = height / 2;
+
+                building.castShadow = true;
+                building.receiveShadow = true;
+
+                // Propriétés pour l'animation
+                building.userData = {
+                    originalY: building.position.y,
+                    phase: Math.random() * Math.PI * 2,
+                    speed: 0.005 + Math.random() * 0.01
+                };
+
+                buildings.push(building);
+                scene.add(building);
+            }
+        }
+
+        // Gestion du mouvement de la souris
+        function onMouseMove(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        }
+
+        // Redimensionnement de la fenêtre
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Animation de la caméra basée sur la souris
+            camera.position.x += (mouse.x * 5 - camera.position.x) * 0.05;
+            camera.position.y += (8 + mouse.y * 3 - camera.position.y) * 0.05;
+            camera.lookAt(0, 2, 0);
+
+            // Animation des bâtiments
+            buildings.forEach((building, index) => {
+                building.userData.phase += building.userData.speed;
+                building.position.y = building.userData.originalY + Math.sin(building.userData.phase) * 0.3;
+                building.rotation.y += 0.002;
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        // Fonction pour basculer la visibilité du mot de passe
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const eyeIcon = document.getElementById('eye-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                eyeIcon.innerHTML = `
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L12 12m6.121-3.879L21 21"></path>
+                `;
+            } else {
+                passwordInput.type = 'password';
+                eyeIcon.innerHTML = `
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                `;
+            }
+        }
+
+        // Gestion de la soumission du formulaire
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const button = event.target.querySelector('button[type="submit"]');
+            const originalContent = button.innerHTML;
+            
+            // Animation de chargement
+            button.innerHTML = `
+                <div class="flex items-center justify-center">
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Connexion en cours...
+                </div>
+            `;
+            button.disabled = true;
+            
+            // Simulation de la connexion
+            setTimeout(() => {
+                // Animation de succès
+                button.innerHTML = `
+                    <div class="flex items-center justify-center">
+                        <i class="fas fa-check mr-2"></i>
+                        Connecté !
+                    </div>
+                `;
+                button.classList.add('bg-green-600');
+                
+                // Redirection après un court délai
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }, 2000);
+        }
+
+        // Animation d'entrée de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialiser Three.js
+            initThreeJS();
+            
+            const card = document.querySelector('.glass-card');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s ease-out';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 500);
+        });
+    </script>
+</body>
+</html>
