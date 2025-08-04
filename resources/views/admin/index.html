@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Gestion Immobilière</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen">
+        <!-- En-tête -->
+        <header class="bg-blue-800 text-white shadow-md">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg">
+                                <i class="fas fa-building text-lg"></i>
+                            </div>
+                            <span class="text-xl font-bold text-white">
+                                Immobilier<span class="text-blue-300">Pro</span>
+                            </span>
+                        </div>
+                        <nav class="hidden md:flex space-x-1">
+                            <a href="#" class="px-3 py-2 rounded-md text-sm font-medium bg-blue-900 text-white">Tableau de bord</a>
+                            <a href="#utilisateurs" class="px-3 py-2 rounded-md text-sm font-medium text-blue-200 hover:text-white">Utilisateurs</a>
+                            <a href="#agences" class="px-3 py-2 rounded-md text-sm font-medium text-blue-200 hover:text-white">Agences</a>
+                            <a href="#statistiques" class="px-3 py-2 rounded-md text-sm font-medium text-blue-200 hover:text-white">Statistiques</a>
+                        </nav>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <button class="text-blue-200 hover:text-white relative">
+                                <i class="fas fa-bell text-xl"></i>
+                                <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                            </button>
+                        </div>
+                        <button class="bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded-lg flex items-center text-sm">
+                            <i class="fas fa-sign-out-alt mr-2"></i> Déconnexion
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Contenu principal -->
+        <main class="container mx-auto px-4 py-8">
+            <!-- Section Statistiques -->
+            <section id="statistiques" class="mb-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-chart-bar text-blue-600 mr-3"></i> Statistiques des inscriptions
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <!-- Carte Inscriptions ce mois -->
+                    <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-blue-500">
+                        <div class="flex justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Inscriptions ce mois</p>
+                                <p class="text-3xl font-bold mt-2" id="monthCount">12</p>
+                            </div>
+                            <div class="bg-blue-100 text-blue-600 p-3 rounded-full h-12 w-12 flex items-center justify-center">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span class="text-green-600 text-sm font-medium">
+                                <i class="fas fa-arrow-up"></i> 20% vs mois dernier
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Carte Inscriptions cette semaine -->
+                    <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-green-500">
+                        <div class="flex justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Inscriptions cette semaine</p>
+                                <p class="text-3xl font-bold mt-2" id="weekCount">5</p>
+                            </div>
+                            <div class="bg-green-100 text-green-600 p-3 rounded-full h-12 w-12 flex items-center justify-center">
+                                <i class="fas fa-calendar-week"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span class="text-red-600 text-sm font-medium">
+                                <i class="fas fa-arrow-down"></i> 10% vs semaine dernière
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Carte Taux validation -->
+                    <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-purple-500">
+                        <div class="flex justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Taux de validation</p>
+                                <p class="text-3xl font-bold mt-2" id="validationRate">75%</p>
+                            </div>
+                            <div class="bg-purple-100 text-purple-600 p-3 rounded-full h-12 w-12 flex items-center justify-center">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span class="text-green-600 text-sm font-medium">
+                                <i class="fas fa-arrow-up"></i> 5% vs mois dernier
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Graphique -->
+                <!--<div class="bg-white rounded-lg shadow-md p-6">
+                    <canvas id="inscriptionsChart" height="300"></canvas>
+                </div>-->
+            </section>
+
+            <!-- Section Demandes en attente -->
+            <section class="mb-12">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                        <i class="fas fa-user-clock text-blue-600 mr-3"></i> Demandes en attente de validation
+                    </h2>
+                    <div class="relative">
+                        <select id="filterPending" class="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="all">Toutes les demandes</option>
+                            <option value="week">Cette semaine</option>
+                            <option value="month">Ce mois</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date demande</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agence</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="pendingUsersTable">
+                                <!-- Rempli dynamiquement par JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+                        <div class="text-sm text-gray-500">
+                            Affichage de <span id="pendingStart">1</span> à <span id="pendingEnd">3</span> sur <span id="pendingTotal">3</span> demandes
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="prevPending" class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 bg-white cursor-not-allowed" disabled>
+                                Précédent
+                            </button>
+                            <button id="nextPending" class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                Suivant
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Utilisateurs validés -->
+            <section id="utilisateurs" class="mb-12">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                        <i class="fas fa-user-check text-green-600 mr-3"></i> Utilisateurs validés
+                    </h2>
+                    <div class="relative">
+                        <select id="filterValidated" class="appearance-none bg-white border border-gray-300 rounded-md pl-3 pr-8 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="all">Tous les utilisateurs</option>
+                            <option value="active">Actifs</option>
+                            <option value="suspended">Suspendus</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agence</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="validatedUsersTable">
+                                <!-- Rempli dynamiquement par JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+                        <div class="text-sm text-gray-500">
+                            Affichage de <span id="validatedStart">1</span> à <span id="validatedEnd">5</span> sur <span id="validatedTotal">12</span> utilisateurs
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="prevValidated" class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 bg-white cursor-not-allowed" disabled>
+                                Précédent
+                            </button>
+                            <button id="nextValidated" class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                Suivant
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section Agences -->
+            <section id="agences" class="mb-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+                    <i class="fas fa-building text-green-600 mr-3"></i> Liste des agences
+                </h2>
+                
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adresse</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Téléphone</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agents</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="agencesTable">
+                                <!-- Rempli dynamiquement par JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+                        <div class="text-sm text-gray-500">
+                            Affichage de <span id="agencesStart">1</span> à <span id="agencesEnd">3</span> sur <span id="agencesTotal">5</span> agences
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="prevAgences" class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 bg-white cursor-not-allowed" disabled>
+                                Précédent
+                            </button>
+                            <button id="nextAgences" class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                Suivant
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="flex items-center justify-center mb-4">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold">
+                    <i class="fas fa-building"></i>
+                </div>
+                <span class="ml-2 text-lg font-bold text-blue-400">Immobilier<span class="text-blue-300">Pro</span></span>
+            </div>
+            <p class="text-gray-400 text-sm">
+                &copy; 2025 Gestion Immobilière Pro. Tous droits réservés.
+            </p>
+        </div>
+    </footer>
+    <script>
+        // Données simulées
+        const pendingUsers = [
+            { id: 1, name: "Fatima Zara", email: "paul.durand@mail.com", date: "2023-07-10", agency: "Agence Paris", status: "pending" },
+            { id: 2, name: "Zépékétcho Rodrigue", email: "sophie.martin@mail.com", date: "2023-07-09", agency: "Agence Lyon", status: "pending" },
+            { id: 3, name: "Konate Zanga", email: "luc.bernard@mail.com", date: "2023-07-08", agency: "Agence Marseille", status: "pending" }
+        ];
+
+        const validatedUsers = [
+            { id: 4, name: "David Seka", email: "marie.dubois@agence.com", agency: "Agence Paris", status: "active" },
+            { id: 5, name: "Jean Martin", email: "jean.martin@agence.com", agency: "Agence Lyon", status: "active" },
+            { id: 6, name: "Jean Marc", email: "alice.dupont@agence.com", agency: "Agence Paris", status: "suspended" },
+            { id: 7, name: "Thomas Shelby", email: "thomas.leroy@agence.com", agency: "Agence Bordeaux", status: "active" },
+            { id: 8, name: "Julie Larose", email: "julie.lambert@agence.com", agency: "Agence Lyon", status: "active" }
+        ];
+
+        const agencies = [
+            { id: 1, name: "Agence Zapata", address: "12 Rue de la Paix, 75002 Paris", phone: "01 23 45 67 89", agents: 1 },
+            { id: 2, name: "Agence Abidjan", address: "5 Place Bellecour, 69002 Lyon", phone: "04 56 78 90 12", agents: 3 },
+            { id: 3, name: "Agence Kouadio", address: "15 La Canebière, 13001 Marseille", phone: "04 91 23 45 67", agents: 3 }
+        ];
+
+        // Statistiques
+        const stats = {
+            monthCount: 12,
+            weekCount: 5,
+            validationRate: "75%",
+            chartData: {
+                labels: ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin", "Juil"],
+                data: [8, 10, 7, 9, 11, 10, 12]
+            }
+        };
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mise à jour des statistiques
+            document.getElementById('monthCount').textContent = stats.monthCount;
+            document.getElementById('weekCount').textContent = stats.weekCount;
+            document.getElementById('validationRate').textContent = stats.validationRate;
+
+            // Remplissage des tableaux
+            updatePendingUsersTable();
+            updateValidatedUsersTable();
+            updateAgenciesTable();
+
+            /*// Initialisation du graphique
+            initChart();*/
+
+            // Gestion des événements
+            setupEventListeners();
+        });
+
+        function updatePendingUsersTable() {
+            const tbody = document.getElementById('pendingUsersTable');
+            tbody.innerHTML = '';
+            
+            pendingUsers.forEach(user => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <img class="h-10 w-10 rounded-full" src="https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random" alt="">
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${user.name}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${user.email}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${user.date}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${user.agency}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button onclick="validateUser(${user.id})" class="text-green-600 hover:text-green-900 mr-3">
+                            <i class="fas fa-check-circle"></i> Valider
+                        </button>
+                        <button onclick="rejectUser(${user.id})" class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-times-circle"></i> Refuser
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Mise à jour de la pagination
+            document.getElementById('pendingTotal').textContent = pendingUsers.length;
+            document.getElementById('pendingEnd').textContent = pendingUsers.length;
+        }
+
+        function updateValidatedUsersTable() {
+            const tbody = document.getElementById('validatedUsersTable');
+            tbody.innerHTML = '';
+            
+            validatedUsers.forEach(user => {
+                const statusClass = user.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800';
+                const statusText = user.status === 'active' ? 'Actif' : 'Suspendu';
+                
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <img class="h-10 w-10 rounded-full" src="https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=random" alt="">
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${user.name}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${user.email}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs rounded-full ${statusClass}">${statusText}</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${user.agency}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        ${user.status === 'active' ? 
+                            `<button onclick="suspendUser(${user.id})" class="text-yellow-600 hover:text-yellow-900 mr-3">
+                                <i class="fas fa-pause-circle"></i> Suspendre
+                            </button>` : 
+                            `<button onclick="activateUser(${user.id})" class="text-green-600 hover:text-green-900 mr-3">
+                                <i class="fas fa-play-circle"></i> Activer
+                            </button>`}
+                        <button onclick="deleteUser(${user.id})" class="text-red-600 hover:text-red-900">
+                            <i class="fas fa-trash-alt"></i> Supprimer
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Mise à jour de la pagination
+            document.getElementById('validatedTotal').textContent = validatedUsers.length;
+            document.getElementById('validatedEnd').textContent = validatedUsers.length;
+        }
+
+        function updateAgenciesTable() {
+            const tbody = document.getElementById('agencesTable');
+            tbody.innerHTML = '';
+            
+            agencies.forEach(agency => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${agency.name}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${agency.address}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ${agency.phone}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">${agency.agents} agents</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button class="text-blue-600 hover:text-blue-900 mr-3">
+                            <i class="fas fa-eye"></i> Voir
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Mise à jour de la pagination
+            document.getElementById('agencesTotal').textContent = agencies.length;
+            document.getElementById('agencesEnd').textContent = agencies.length;
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('inscriptionsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: stats.chartData.labels,
+                    datasets: [{
+                        label: 'Inscriptions par mois',
+                        data: stats.chartData.data,
+                        backgroundColor: '#3B82F6',
+                        borderColor: '#2563EB',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function setupEventListeners() {
+            // Filtres
+            document.getElementById('filterPending').addEventListener('change', function() {
+                console.log('Filtre demandes:', this.value);
+                // Ici, on filtrera les données en fonction de la sélection
+            });
+
+            document.getElementById('filterValidated').addEventListener('change', function() {
+                console.log('Filtre utilisateurs:', this.value);
+                // Ici, on filtrera les données en fonction de la sélection
+            });
+
+            // Pagination (simplifiée pour l'exemple)
+            document.getElementById('nextPending').addEventListener('click', function() {
+                alert('Pagination suivante pour les demandes');
+            });
+
+            document.getElementById('prevPending').addEventListener('click', function() {
+                alert('Pagination précédente pour les demandes');
+            });
+        }
+
+        // Fonctions d'action
+        function validateUser(userId) {
+            if (confirm(`Valider l'utilisateur #${userId} ?`)) {
+                alert(`Utilisateur #${userId} validé avec succès !`);
+                // Ici, on mettra à jour les données et l'interface
+            }
+        }
+
+        function rejectUser(userId) {
+            if (confirm(`Refuser l'utilisateur #${userId} ? Cette action est irréversible.`)) {
+                alert(`Utilisateur #${userId} refusé et supprimé.`);
+                // Ici, on mettra à jour les données et l'interface
+            }
+        }
+
+        function suspendUser(userId) {
+            if (confirm(`Suspendre l'utilisateur #${userId} ?`)) {
+                alert(`Utilisateur #${userId} suspendu avec succès.`);
+                // Ici, on mettra à jour les données et l'interface
+            }
+        }
+
+        function activateUser(userId) {
+            if (confirm(`Activer l'utilisateur #${userId} ?`)) {
+                alert(`Utilisateur #${userId} activé avec succès.`);
+                // Ici, on mettra à jour les données et l'interface
+            }
+        }
+
+        function deleteUser(userId) {
+            if (confirm(`Supprimer définitivement l'utilisateur #${userId} ?`)) {
+                alert(`Utilisateur #${userId} supprimé avec succès.`);
+                // Ici, on mettra à jour les données et l'interface
+            }
+        }
+    </script>
+</body>
+</html>
