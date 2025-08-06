@@ -204,7 +204,7 @@
 
                 <!-- Formulaire pour ajouter un utilisateur -->
                 <div id="userFormContainer" class="bg-white rounded-lg shadow-md p-6 hidden">
-                    <form id="userForm" method="POST"   class="space-y-4">
+                    <form id="userForm" method="POST"    action=" {{route ('admin.users.store')}}" class="space-y-4"  enctype="multipart/form-data" >
                         @csrf
                        
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -231,8 +231,8 @@
                             <div>
                                 <label for="role" class="block text-sm font-medium text-gray-700">Rôle *</label>
                                 <select id="role" name="role" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
-                                    <option value="user">Utilisateur</option>
-                                    <option value="admin">Administrateur</option>
+                                    <option value="administrateur">Administrateur</option>
+                                    <option value="utilisateur">Utilisateur</option>
                                 </select>
                             </div>
                             <div>
@@ -529,57 +529,71 @@ function resetformsUser() {
 }
 
 // Gestion du formulaire d'ajout d'utilisateur
+
 async function handleUserFormSubmit(event) {
-    event.preventDefault(); // Empêche le rechargement de la page
+    event.preventDefault();
+
+    const form = event.target;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const messageDiv = document.getElementById('formMessage');
+    const token = document.querySelector('meta[name="csrf-token"]').content;
+
+    // Reset messages
+    messageDiv.innerHTML = '';
+    messageDiv.className = '';
 
     // Validation des mots de passe
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
+    const password = form.querySelector('#password').value;
+    const confirmPassword = form.querySelector('#confirmPassword').value;
 
     if (password !== confirmPassword) {
-        alert('Les mots de passe ne correspondent pas.');
+        alert('❌ Les mots de passe ne correspondent pas.');
         return;
     }
 
-    // Récupération des valeurs du formulaire
-    const formData = {
-        code: document.getElementById('code').value,
-        nom: document.getElementById('nom').value,
-        prenom: document.getElementById('prenom').value,
-        agence: document.getElementById('agence').value,
-        telephone: document.getElementById('telephone').value,
-        role: document.getElementById('role').value,
-        email: document.getElementById('email').value,
-        password: password
-    };
+    // Préparer les données du formulaire (inclut les fichiers, multipart)
+    const formData = new FormData(form);
 
     try {
-        const response = await fetch("{{ route('admin.users.store') }}", {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enregistrement...';
+
+        const response = await fetch(form.action, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                'X-CSRF-TOKEN': token,
+                // Ne mets PAS 'Content-Type', le navigateur le gère automatiquement avec FormData
             },
-            body: JSON.stringify(formData)
+            body: formData
         });
 
-        if (response.ok) {
+        const contentType = response.headers.get("content-type") || '';
+
+        if (contentType.includes("application/json")) {
             const data = await response.json();
-            console.log(data);
-            alert('Utilisateur ajouté avec succès!');
-            
-            resetformsUser();
-            // Réinitialiser le formulaire ou rediriger si nécessaire
-            event.target.reset();
+
+            if (response.ok && data.success) {
+                messageDiv.innerHTML = `<div class="bg-green-100 text-green-800 p-3 rounded">✅ ${data.message}</div>`;
+                form.reset();
+                if (typeof resetformsUser === 'function') resetformsUser();
+            } else {
+                messageDiv.innerHTML = `<div class="bg-red-100 text-red-800 p-3 rounded">❌ ${data.message || 'Erreur inconnue'}</div>`;
+            }
         } else {
-            console.error("Erreur lors de l'ajout de l'utilisateur");
-            alert('Erreur lors de l\'ajout de l\'utilisateur.');
+            // Réponse inattendue (souvent HTML)
+            const text = await response.text();
+            console.error("❌ Réponse non JSON reçue :", text);
+            messageDiv.innerHTML = `<div class="bg-red-100 text-red-800 p-3 rounded">❌ Le serveur a retourné une réponse inattendue (voir console).</div>`;
         }
     } catch (error) {
-        console.error("Erreur:", error);
-        alert('Une erreur est survenue.');
+        console.error("❌ Erreur lors de la requête :", error);
+        messageDiv.innerHTML = `<div class="bg-red-100 text-red-800 p-3 rounded">❌ Une erreur est survenue : ${error.message}</div>`;
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<i class="fas fa-save mr-2"></i> Enregistrer`;
     }
 }
+
 
 // Gestion du formulaire d'ajout d'agence
 

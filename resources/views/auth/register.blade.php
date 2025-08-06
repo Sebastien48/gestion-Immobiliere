@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription Agent - Gestion Immobilière</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .blue-gradient {
@@ -27,7 +27,7 @@
                     </a>
                 </div>
                 <div class="flex items-center">
-                    <a href="login.html" class="text-blue-600 hover:text-blue-700 font-medium">
+                    <a href="{{route('login')}}" class="text-blue-600 hover:text-blue-700 font-medium">
                         Déjà inscrit ? <span class="font-bold">Se connecter</span>
                     </a>
                 </div>
@@ -83,7 +83,8 @@
                         <p class="text-gray-600">Inscrivez-vous pour gérer vos propriétés et locataires</p>
                     </div>
 
-                    <form class="space-y-4" action="/inscription" method="POST">
+                    <form class="space-y-4" action="{{route('register')}}" method="POST">
+                        @csrf
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label for="nom" class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
@@ -139,7 +140,7 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i class="fas fa-building text-gray-400"></i>
                                 </div>
-                                <input type="text" id="agence" name="agence" required
+                                <input type="text" id="nomAgence" name="agence" required
                                     class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="Nom de votre agence">
                             </div>

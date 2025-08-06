@@ -2,47 +2,47 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    // Spécifiez que 'code' est la clé primaire
+    protected $primaryKey = 'code';
+
+    // Indiquez que la clé primaire n'est pas auto-incrémentée
+    public $incrementing = false;
+
+    // Spécifiez le type de la clé primaire
+    protected $keyType = 'string';
+
+    // Les attributs qui sont assignables en masse
     protected $fillable = [
-        'name',
-        'email',
-        'password',
+        'code', 'nom', 'prenom', 'telephone', 'nomAgence', 'role', 'email', 'password', 'numero'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
+    // Les attributs qui doivent être cachés pour les tableaux
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', 'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    // Les attributs qui doivent être convertis en types natifs
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    // Générer un code unique pour l'utilisateur lors de la création
+    protected static function boot()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        parent::boot();
+
+        static::creating(function ($user) {
+            if (empty($user->code)) {
+                $user->code = Str::random(5); // Génère un UUID comme code
+            }
+        });
     }
 }
