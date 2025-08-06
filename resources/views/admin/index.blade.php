@@ -400,7 +400,9 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Numéro d'enregistrement</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Adresse</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Téléphone</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fondateur</th>
@@ -731,7 +733,9 @@ async function loadData(page = 1) {
             data.agences.forEach((agence) => {
                 const row = `
                     <tr>
+                        <td class="px-6 py-4">${agence.numero}</td>
                         <td class="px-6 py-4">${agence.nomAgence}</td>
+                        <td class="px-6 py-4">${agence.emailAgence}</td>
                         <td class="px-6 py-4">${agence.adresse}</td>
                         <td class="px-6 py-4">${agence.telephoneAgence}</td>
                         <td class="px-6 py-4">${agence.fondateur}</td>

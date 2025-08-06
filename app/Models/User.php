@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class User extends Authenticatable
 {
     use Notifiable;
-
+    use HasUuids;
     // Spécifiez que 'code' est la clé primaire
     protected $primaryKey = 'code';
 

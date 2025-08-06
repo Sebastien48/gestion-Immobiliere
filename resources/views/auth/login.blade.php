@@ -145,7 +145,8 @@
             </div>
 
             <!-- Formulaire -->
-            <form class="space-y-6" onsubmit="handleLogin(event)" method="POST" action="{{ route('login') }}">
+            <form class="space-y-6"  method="POST" action="{{ route('login') }}">
+                @csrf
                 <!-- Champ Email -->
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -238,7 +239,7 @@
             <div class="text-center">
                 <p class="text-gray-600 text-sm">
                     Pas encore de compte ? 
-                    <a href="register.html" class="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300">
+                    <a href="{{route('register')}}" class="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300">
                         S'inscrire maintenant
                     </a>
                 </p>

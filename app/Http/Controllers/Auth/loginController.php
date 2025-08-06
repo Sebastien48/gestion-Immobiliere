@@ -17,7 +17,7 @@ class LoginController extends Controller
         // Valider les entrées de l'utilisateur
         $credentials = $request->validate([
             'email' => 'required|string|email',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:4|max:255',
         ]);
 
         // Tenter de connecter l'utilisateur
@@ -29,7 +29,8 @@ class LoginController extends Controller
             if ($user->role === 'admin') {
                 return redirect()->intended('admin/dashboard')->with('success', 'Connexion réussie en tant qu\'administrateur !');
             } else {
-                return redirect()->intended('home')->with('success', 'Connexion réussie en tant qu\'utilisateur !');
+               
+                 return redirect()->route('home')->with('success', 'Connexion réussie en tant qu\'utilisateur !');
             }
         }
 
@@ -39,6 +40,6 @@ class LoginController extends Controller
     public function logout()
     {
         auth()->logout();
-        return redirect('/')->with('success', 'Déconnexion réussie !');
+        return redirect('/login')->with('success', 'Déconnexion réussie !');
     }
 }

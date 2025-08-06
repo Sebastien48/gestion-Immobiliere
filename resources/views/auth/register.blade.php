@@ -83,7 +83,7 @@
                         <p class="text-gray-600">Inscrivez-vous pour gérer vos propriétés et locataires</p>
                     </div>
 
-                    <form class="space-y-4" action="{{route('register')}}" method="POST">
+                    <form class="space-y-4" action="{{route('register.post')}}" method="POST">
                         @csrf
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
@@ -140,7 +140,7 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i class="fas fa-building text-gray-400"></i>
                                 </div>
-                                <input type="text" id="nomAgence" name="agence" required
+                                <input type="text" id="nomAgence" name="nomAgence" required
                                     class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="Nom de votre agence">
                             </div>
@@ -168,7 +168,7 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i class="fas fa-lock text-gray-400"></i>
                                 </div>
-                                <input type="password" id="confirmPassword" name="confirmPassword" required 
+                                <input type="password" id="confirmPassword" name="password_confirmation" required 
                                     class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                     placeholder="Confirmez votre mot de passe">
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -198,7 +198,7 @@
 
                         <div class="text-center text-sm text-gray-600">
                             Déjà inscrit ? 
-                            <a href="login.html" class="font-medium text-blue-600 hover:text-blue-500">
+                            <a href="{{route('login')}}" class="font-medium text-blue-600 hover:text-blue-500">
                                 Connectez-vous ici
                             </a>
                         </div>
