@@ -90,13 +90,13 @@
         
         <nav class="px-2 space-y-1">
             <!-- Tableau de bord -->
-            <a href="/dashboard" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-white bg-blue-700 transition-colors">
+            <a href="{{ url('/dashboard') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
                 <i class="fas fa-tachometer-alt w-5"></i>
                 <span>Tableau de bord</span>
             </a>
             
             <!-- Bâtiments -->
-            <a href="/batiments" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
+            <a href="batiments/index.html" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
                 <i class="fas fa-building w-5"></i>
                 <span>Bâtiments</span>
             </a>
@@ -211,13 +211,21 @@
                 }
             });
         });
-    </script>
 
-    <style>
-        .nav-item.active {
-            background-color: #1d4ed8;
-            color: white;
-        }
-    </style>
+        document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const navItems = document.querySelectorAll('.nav-item');
+        
+        navItems.forEach(item => {
+            const linkPath = new URL(item.href).pathname;
+            if (currentPath === linkPath) {
+                item.classList.add('bg-blue-700', 'text-white');
+                item.classList.remove('text-blue-100', 'hover:bg-blue-700', 'hover:text-white');
+                
+                
+            }
+        });
+    });
+    </script>
 </body>
 </html>
