@@ -233,63 +233,72 @@
     </section>
 
     <!-- Section Contact -->
-    <section id="contact" class="py-20 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold text-gray-800 mb-4">Contactez notre équipe</h2>
-                <p class="text-xl text-gray-600 max-w-3xl mx-auto">
-                    Vous souhaitez une démonstration ou avez des questions sur notre solution ?
-                </p>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <div class="space-y-8">
-                    <div class="flex items-start">
-                        <div class="bg-blue-500 w-12 h-12 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                            <i class="fas fa-phone-alt text-white"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">Support Technique</h3>
-                            <p class="text-gray-600">+225 01 01 98 48 88</p>
-                            <p class="text-gray-500 text-sm">Lundi - Vendredi : 8h - 18h</p>
-                        </div>
+    
+<!-- Section Contact corrigée -->
+<section id="contact" class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4">Contactez notre équipe</h2>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+                Vous souhaitez une démonstration ou avez des questions sur notre solution ?
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div class="space-y-8">
+                <div class="flex items-start">
+                    <div class="bg-blue-500 w-12 h-12 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                        <i class="fas fa-phone-alt text-white"></i>
                     </div>
-                    
-                    
-                    
-                    <div class="flex items-start">
-                        <div class="bg-indigo-500 w-12 h-12 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                            <i class="fas fa-map-marker-alt text-white"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-bold text-gray-800 mb-2">Siège</h3>
-                            <p class="text-gray-600">Abidjan, Côte d'ivoire</p>
-                            <p class="text-gray-500 text-sm">Sur rendez-vous uniquement</p>
-                        </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Support Technique</h3>
+                        <p class="text-gray-600">+225 01 01 98 48 88</p>
+                        <p class="text-gray-500 text-sm">Lundi - Vendredi : 8h - 18h</p>
                     </div>
                 </div>
-
-                <!-- Formulaire de contact -->
-                <form class="bg-white rounded-2xl shadow-lg p-8 space-y-6">
-                    <div>
-                        <label class="block text-gray-700 mb-1" for="name">Nom complet</label>
-                        <input type="text" id="name" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Votre nom">
+                
+                <div class="flex items-start">
+                    <div class="bg-indigo-500 w-12 h-12 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                        <i class="fas fa-map-marker-alt text-white"></i>
                     </div>
                     <div>
-                        <label class="block text-gray-700 mb-1" for="email">Email professionnel</label>
-                        <input type="email" id="email" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="contact@votreagence.com">
+                        <h3 class="text-xl font-bold text-gray-800 mb-2">Siège</h3>
+                        <p class="text-gray-600">Abidjan, Côte d'ivoire</p>
+                        <p class="text-gray-500 text-sm">Sur rendez-vous uniquement</p>
                     </div>
-                    <div>
-                        <label class="block text-gray-700 mb-1" for="message">Votre message</label>
-                        <textarea id="message" rows="4" class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" placeholder="Décrivez vos besoins..."></textarea>
-                    </div>
-                    <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
-                        Envoyer la demande
-                    </button>
-                </form>
+                </div>
             </div>
+
+            <!-- Formulaire de contact corrigé -->
+            <form id="contact-form" class="bg-white rounded-2xl shadow-lg p-8 space-y-6" action="https://formspree.io/f/xdkdpgrn" method="POST">
+                <div>
+                    <label class="block text-gray-700 mb-1" for="name">Nom complet</label>
+                    <input type="text" name="name" id="name" required class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Votre nom">
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-1" for="email">Email professionnel</label>
+                    <input type="email" name="email" id="email" required class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="contact@votreagence.com">
+                </div>
+                <div>
+                    <label class="block text-gray-700 mb-1" for="message">Votre message</label>
+                    <textarea name="message" id="message" rows="4" required class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" placeholder="Décrivez vos besoins..."></textarea>
+                </div>
+                <button type="submit" id="submit-btn" class="w-full bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors">
+                    Envoyer la demande
+                </button>
+                
+                <!-- Messages de statut -->
+                <div id="success-message" class="hidden bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+                    ✓ Merci ! Votre message a été envoyé avec succès.
+                </div>
+                
+                <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    ✗ Une erreur s'est produite. Veuillez réessayer.
+                </div>
+            </form>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- Pied de page -->
     <footer class="bg-gray-900 text-white py-12">
@@ -338,9 +347,38 @@
 
     <!-- Script pour menu mobile -->
     <script>
-        document.getElementById('mobile-menu-btn').addEventListener('click', function () {
-            document.getElementById('mobile-menu').classList.toggle('active');
+         document.getElementById('mobile-menu-btn').addEventListener('click', function () {
+        document.getElementById('mobile-menu').classList.toggle('active');
+    });
+
+    // Gestion du formulaire de contact
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('contact-form');
+        const successMessage = document.getElementById('success-message');
+        const errorMessage = document.getElementById('error-message');
+        const submitBtn = document.getElementById('submit-btn');
+
+        form.addEventListener('submit', function (e) {
+            // Ne pas empêcher l'envoi par défaut pour laisser Formspree traiter
+            // e.preventDefault(); <- SUPPRIMÉ
+            
+            // Masquer les messages précédents
+            successMessage.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+            
+            // Changer le texte du bouton pendant l'envoi
+            submitBtn.textContent = 'Envoi en cours...';
+            submitBtn.disabled = true;
+            
+            // Simuler un délai puis afficher le message de succès
+            setTimeout(() => {
+                successMessage.classList.remove('hidden');
+                form.reset();
+                submitBtn.textContent = 'Envoyer la demande';
+                submitBtn.disabled = false;
+            }, 2000);
         });
+    });
     </script>
 </body>
 </html>

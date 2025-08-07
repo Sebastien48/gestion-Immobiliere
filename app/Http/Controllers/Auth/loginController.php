@@ -26,7 +26,7 @@ class LoginController extends Controller
             $user = auth()->user();
 
             // Rediriger en fonction du rôle de l'utilisateur
-            if ($user->role === 'admin') {
+            if ($user->role === 'administrateur') {
                 return redirect()->intended('admin/dashboard')->with('success', 'Connexion réussie en tant qu\'administrateur !');
             } else {
                

@@ -34,6 +34,9 @@
             </div>
         </div>
     </nav>
+     <!-- Zone pour afficher les messages -->
+     <div id="formMessage" class="mb-4"></div> <!-- Zone pour afficher les messages -->
+     
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -83,6 +86,29 @@
                         <p class="text-gray-600">Inscrivez-vous pour gérer vos propriétés et locataires</p>
                     </div>
 
+                    <!-- Affichage des erreurs générales -->
+                    @if ($errors->any())
+                        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-exclamation-triangle text-red-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-red-800">
+                                        Erreurs de validation
+                                    </h3>
+                                    <div class="mt-2 text-sm text-red-700">
+                                        <ul class="list-disc pl-5 space-y-1">
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
                     <form class="space-y-4" action="{{route('register.post')}}" method="POST">
                         @csrf
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -93,8 +119,11 @@
                                         <i class="fas fa-user text-gray-400"></i>
                                     </div>
                                     <input type="text" id="nom" name="nom" required 
-                                        class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="Votre nom">
+                                        class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('nom') border-red-500 @enderror"
+                                        placeholder="Votre nom" value="{{ old('nom') }}">
+                                    @error('nom')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                             <div>
@@ -104,8 +133,11 @@
                                         <i class="fas fa-user text-gray-400"></i>
                                     </div>
                                     <input type="text" id="prenom" name="prenom" required 
-                                        class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="Votre prénom">
+                                        class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('prenom') border-red-500 @enderror"
+                                        placeholder="Votre prénom" value="{{ old('prenom') }}">
+                                    @error('prenom')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -117,8 +149,11 @@
                                     <i class="fas fa-envelope text-gray-400"></i>
                                 </div>
                                 <input type="email" id="email" name="email" required 
-                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="email@agence.com">
+                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('email') border-red-500 @enderror"
+                                    placeholder="email@agence.com" value="{{ old('email') }}">
+                                @error('email')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
@@ -129,20 +164,32 @@
                                     <i class="fas fa-phone text-gray-400"></i>
                                 </div>
                                 <input type="tel" id="telephone" name="telephone" required 
-                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="Votre numéro de téléphone">
+                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('telephone') border-red-500 @enderror"
+                                    placeholder="Votre numéro de téléphone" value="{{ old('telephone') }}">
+                                @error('telephone')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
                         <div>
-                            <label for="agence" class="block text-sm font-medium text-gray-700 mb-1">Agence</label>
+                            <label for="nomAgence" class="block text-sm font-medium text-gray-700 mb-1">Agence</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i class="fas fa-building text-gray-400"></i>
                                 </div>
-                                <input type="text" id="nomAgence" name="nomAgence" required
-                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="Nom de votre agence">
+                                <select id="nomAgence" name="nomAgence" required
+                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('nomAgence') border-red-500 @enderror">
+                                    <option value="">Sélectionnez votre agence</option>
+                                    @foreach($agences as $agence)
+                                        <option value="{{ $agence->nomAgence }}" {{ old('nomAgence') == $agence->nomAgence ? 'selected' : '' }}>
+                                            {{ $agence->nomAgence }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('nomAgence')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
@@ -153,13 +200,16 @@
                                     <i class="fas fa-lock text-gray-400"></i>
                                 </div>
                                 <input type="password" id="password" name="password" required 
-                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('password') border-red-500 @enderror"
                                     placeholder="Créez un mot de passe">
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
                                     <i class="fas fa-eye text-gray-400 cursor-pointer toggle-password"></i>
                                 </div>
                             </div>
-                            <p class="mt-1 text-xs text-gray-500">Minimum 8 caractères avec des chiffres et lettres</p>
+                            <p class="mt-1 text-xs text-gray-500">Minimum 4 à 8 caractères avec des chiffres et lettres</p>
+                            @error('password')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div>
@@ -169,12 +219,15 @@
                                     <i class="fas fa-lock text-gray-400"></i>
                                 </div>
                                 <input type="password" id="confirmPassword" name="password_confirmation" required 
-                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('password_confirmation') border-red-500 @enderror"
                                     placeholder="Confirmez votre mot de passe">
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
                                     <i class="fas fa-eye text-gray-400 cursor-pointer toggle-password"></i>
                                 </div>
                             </div>
+                            @error('password_confirmation')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="flex items-start">

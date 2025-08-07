@@ -6,7 +6,8 @@
     <title>Mot de passe oublié</title>
    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="/public/css/app4.css" type="text/css">
+    <link rel="stylesheet" href="{{ asset('css/app4.css') }}" type="text/css">
+
 </head>
 <body>
     <div class="floating-shapes">
@@ -110,7 +111,7 @@
         </div>
     </div>
 
-    <script src="/public/js/password.js">
+    <script src="{{ asset('js/password.js') }}"></script>
         
     </script>
 </body>

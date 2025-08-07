@@ -12,7 +12,9 @@ class RegisterController extends Controller
 {
     public function showRegistrationForm()
     {
-        return view('auth.register');
+        // Récupérer toutes les agences pour les afficher
+        $agences = Agence::select('nomAgence')->get();
+        return view('auth.register', compact('agences'));
     }
 /*
     public function register(Request $request)
@@ -70,7 +72,7 @@ class RegisterController extends Controller
 
     public function register(Request $request)
 {
-    // Validation des données
+    // Validation des données avec messages personnalisés
     $validatedData = $request->validate([
         'nom' => 'required|string|max:255',
         'prenom' => 'required|string|max:255',
@@ -78,18 +80,29 @@ class RegisterController extends Controller
         'nomAgence' => 'required|string|max:255',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:4|confirmed',
+    ], [
+        'nom.required' => 'Le nom est obligatoire.',
+        'prenom.required' => 'Le prénom est obligatoire.',
+        'telephone.required' => 'Le téléphone est obligatoire.',
+        'nomAgence.required' => 'Le nom de l\'agence est obligatoire.',
+        'email.required' => 'L\'email est obligatoire.',
+        'email.email' => 'L\'email doit être valide.',
+        'email.unique' => 'Cet email est déjà utilisé.',
+        'password.required' => 'Le mot de passe est obligatoire.',
+        'password.min' => 'Le mot de passe doit contenir au moins 4 caractères.',
+        'password.confirmed' => 'Les mots de passe ne correspondent pas.',
     ]);
 
-    // Étape 3 : Vérification de l'agence
+    // Vérification de l'agence
     $agence = Agence::where('nomAgence', $validatedData['nomAgence'])->first();
 
     if (!$agence) {
         return back()->withInput()->withErrors([
-            'nomAgence' => 'Erreur : Le nom de l\'agence n\'existe pas !',
+            'nomAgence' => 'Erreur : L\'agence "' . $validatedData['nomAgence'] . '" n\'existe pas dans notre base de données. Veuillez vérifier le nom de l\'agence.',
         ]);
     }
 
-    // Étape 4 : Génération du code unique
+    // Génération du code unique
     $code = '';
     $maxAttempts = 10;
     $attempt = 0;
@@ -105,7 +118,7 @@ class RegisterController extends Controller
         ]);
     }
 
-    // Étape 5 : Création de l'utilisateur
+    // Création de l'utilisateur
     try {
         $user = User::create([
             'code' => $code,
@@ -115,20 +128,24 @@ class RegisterController extends Controller
             'nomAgence' => $validatedData['nomAgence'],
             'numero' => $agence->numero,
             'email' => $validatedData['email'],
-             'password'=>bcrypt($validatedData['password']),
+            'password' => bcrypt($validatedData['password']),
             'role' => 'utilisateur',
         ]);
+
+        // Connexion automatique
+        auth()->login($user);
+
+        // Redirection avec message de succès
+        return redirect()->route('home')->with('success', 'Inscription réussie ! Bienvenue ' . $user->prenom . ' ' . $user->nom);
+
     } catch (\Exception $e) {
+        // Log de l'erreur pour le debug
+        \Log::error('Erreur lors de l\'inscription: ' . $e->getMessage());
+        
         return back()->withInput()->withErrors([
-            'database' => 'Erreur lors de la création du compte: ' . $e->getMessage(),
+            'database' => 'Erreur lors de la création du compte. Veuillez réessayer ou contacter le support.',
         ]);
     }
-
-    // Étape 6 : Connexion automatique
-     auth()->login($user);
-
-    // Étape 7 : Redirection
-    return redirect()->route('home')->with('success', 'Inscription réussie !');
 }
         // Valider les entrées de l'utilisateur
       

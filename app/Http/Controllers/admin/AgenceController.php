@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-use App\Models\Agence; // Import the Agence model
+use App\Models\Agence;
+use Carbon\Carbon;
+ use App\Models\User; // Import the Agence model
 
 class AgenceController extends Controller
 {
@@ -22,9 +24,10 @@ class AgenceController extends Controller
      */
 public function list(Request $request)
 {
-    $perPage = 5;
+    $perPage = 10;
     $page = $request->input('page', 1);
     $query = Agence::orderBy('created_at', 'desc');
+    $agences = $query->paginate(10);
     $total = $query->count();
     $agences = $query->skip(($page - 1) * $perPage)
                      ->take($perPage)
@@ -35,9 +38,34 @@ public function list(Request $request)
         'total' => $total,
         'start' => ($page - 1) * $perPage + 1,
         'end' => min($page * $perPage, $total),
-        'agences' => $agences
+        'agences' => $agences,
+        'to' => min($page * $perPage, $total),
+        'from' => ($page - 1) * $perPage + 1,
+        
+        
     ]);
 }
+ public function stats(Request $request)
+ {
+    $months = [];
+    $counts = [];
+    for ($i = 5; $i >= 0; $i--) {
+        $month = Carbon::now()->subMonths($i)->format('Y-m');
+        $months[] = Carbon::now()->subMonths($i)->format('M Y');
+        $counts[] = User::whereYear('created_at', Carbon::now()->subMonths($i)->year)
+                        ->whereMonth('created_at', Carbon::now()->subMonths($i)->month)
+                        ->count();
+    }
+
+    // Répartition par rôle
+    $roles = User::selectRaw('role, COUNT(*) as count')->groupBy('role')->pluck('count', 'role');
+
+    return response()->json([
+        'months' => $months,
+        'inscriptions' => $counts,
+        'roles' => $roles
+    ]);
+ }
 
     public function create()
     {

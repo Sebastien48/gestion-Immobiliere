@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,8 +30,8 @@
                     <p class="text-gray-600">Choisissez un mot de passe sécurisé</p>
                 </div>
                 
-                <form method="POST" action="/password/reset" class="space-y-6">
-                    <input type="hidden" name="token" value="{{ token }}">
+                <form method="POST" action="" class="space-y-6">
+                    @csrf
                     
                     <div class="input-group">
                         <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Nouveau mot de passe</label>

@@ -17,7 +17,7 @@
                 <button id="sidebarToggle" class="lg:hidden text-gray-600 hover:text-gray-900">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
-                <h1 class="text-xl font-bold text-gray-800 hidden md:block">Agence Immobilière</h1>
+                <h1 class="text-xl font-bold text-gray-800 hidden md:block">{{$agence->nomAgence}} </h1>
                 
                 <!-- Barre de recherche - Visible sur desktop -->
                 <div class="hidden lg:flex items-center bg-gray-100 rounded-lg px-3 py-2 ml-4">
@@ -44,8 +44,21 @@
                 <!-- User Menu -->
                 <div class="relative">
                     <button id="userMenuButton" class="flex items-center space-x-2 text-gray-600 hover:text-gray-900">
-                        <img src="https://via.placeholder.com/32" alt="Avatar" class="w-8 h-8 rounded-full">
-                        <span class="hidden md:block text-sm font-medium">Agent</span>
+                        <!-- afficher le logo de l'agence avec les initiales superposées -->
+                        <div class="relative">
+                            @if(isset($logo1) && $logo1)
+                                <img src="{{ asset('storage/' . $logo1) }}" alt="Logo Agence" class="w-8 h-8 rounded-full object-cover"> 
+                                <!-- Initiales superposées sur le logo -->
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <span class="text-white font-bold text-xs drop-shadow-lg">{{$initiales ?? 'AG'}}</span>
+                                </div>
+                            @else
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xl">
+                                    {{ $initiales ?? 'AG' }}
+                                </div>
+                            @endif
+                        </div>
+                        <span class="hidden md:block text-xl font-medium">{{$initiales ?? 'Agent'}}</span>
                         <i class="fas fa-chevron-down text-xs"></i>
                     </button>
                     
@@ -57,7 +70,7 @@
                             <i class="fas fa-cog mr-2"></i>Paramètres
                         </a>
                         <hr class="my-1">
-                        <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                        <a href="{{route('logout')}}" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
                             <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
                         </a>
                     </div>

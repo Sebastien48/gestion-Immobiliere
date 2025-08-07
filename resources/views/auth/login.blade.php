@@ -209,7 +209,7 @@
                         >
                         <span class="ml-2 text-gray-600">Se souvenir de moi</span>
                     </label>
-                    <a href="#" class="text-blue-600 hover:text-blue-800 font-medium transition-colors duration-300">
+                    <a href="{{route('forget.password')}}" class="text-blue-600 hover:text-blue-800 font-medium transition-colors duration-300">
                         Mot de passe oublié ?
                     </a>
                 </div>

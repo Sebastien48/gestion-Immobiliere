@@ -56,7 +56,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
 */
 
 
-Route::prefix('admin')->middleware(['auth','admin'])->group(function () {
+Route::prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
    Route::get('/agences/list', [AgenceController::class, 'list'])->name('admin.agences.index');
     Route::get('/users/create', [UserController::class, 'create'])->name('admin.users.create');
@@ -72,3 +72,5 @@ Route::prefix('admin')->middleware(['auth','admin'])->group(function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
+/*
+*/
