@@ -44,3 +44,13 @@ Route::get('/appartements/{id}', function ($id) {
 Route::get('/batiments/{buildingId}/appartements', function ($buildingId) {
     return view('appartements.index', ['buildingId' => $buildingId]);
 })->name('batiments.appartements');
+
+
+// Routes pour les locataires
+Route::get('/locataires', function () {
+    return view('locataires.index');
+});
+
+Route::get('/locataires/{id}', function ($id) {
+    return view('locataires.show', ['id' => $id]);
+});

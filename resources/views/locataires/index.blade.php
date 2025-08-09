@@ -7,7 +7,7 @@
     <h2 class="text-2xl font-bold text-gray-800">
         <i class="fas fa-users text-blue-600 mr-2"></i> Gestion des Locataires
     </h2>
-    <button onclick="window.location.href='/locataires/ajouter'" 
+    <button onclick="openModal('addTenantModal')" 
         class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
         <i class="fas fa-plus mr-2"></i> Ajouter un locataire
     </button>
@@ -56,19 +56,19 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Nom & Prénom
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Contact
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Appartement
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Statut
                     </th>
-                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Actions
                     </th>
                 </tr>
@@ -76,7 +76,7 @@
             <tbody class="bg-white divide-y divide-gray-200">
                 <!-- Exemple de locataire avec logement -->
                 <tr>
-                    <td class="px-6 py-4">
+                    <td class="px-4 sm:px-6 py-4">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
                                 <i class="fas fa-user"></i>
@@ -87,33 +87,38 @@
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">amanikouadio@example.com</div>
                         <div class="text-sm text-gray-500">+225 07 08 09 10 11</div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
                         <a href="/appartements/1" class="text-blue-600 hover:text-blue-800">B1-05</a>
                         <div class="text-sm text-gray-500">Résidence Yasmina</div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
                         <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Locataire</span>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button onclick="assignApartment(1)" class="text-purple-600 hover:text-purple-900 mr-3" title="Attribuer un logement">
-                            <i class="fas fa-home"></i>
-                        </button>
-                        <button onclick="editTenant(1)" class="text-blue-600 hover:text-blue-900 mr-3">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button onclick="deleteTenant(1)" class="text-red-600 hover:text-red-900">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <button onclick="assignApartment(1)" class="text-purple-600 hover:text-purple-900" title="Attribuer un logement">
+                                <i class="fas fa-home"></i>
+                                <span class="sm:hidden">Attribuer</span>
+                            </button>
+                            <button onclick="editTenant(1)" class="text-blue-600 hover:text-blue-900">
+                                <i class="fas fa-edit"></i>
+                                <span class="sm:hidden">Modifier</span>
+                            </button>
+                            <button onclick="deleteTenant(1)" class="text-red-600 hover:text-red-900">
+                                <i class="fas fa-trash"></i>
+                                <span class="sm:hidden">Supprimer</span>
+                            </button>
+                        </div>
                     </td>
                 </tr>
                 
                 <!-- Exemple de locataire sans logement -->
                 <tr>
-                    <td class="px-6 py-4">
+                    <td class="px-4 sm:px-6 py-4">
                         <div class="flex items-center">
                             <div class="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600">
                                 <i class="fas fa-user"></i>
@@ -124,26 +129,31 @@
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
                         <div class="text-sm text-gray-900">fatoutraore@example.com</div>
                         <div class="text-sm text-gray-500">+225 01 02 03 04 05</div>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         Aucun logement
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
                         <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">En attente</span>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button onclick="assignApartment(2)" class="text-purple-600 hover:text-purple-900 mr-3" title="Attribuer un logement">
-                            <i class="fas fa-home"></i>
-                        </button>
-                        <button onclick="editTenant(2)" class="text-blue-600 hover:text-blue-900 mr-3">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button onclick="deleteTenant(2)" class="text-red-600 hover:text-red-900">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex flex-col sm:flex-row gap-2">
+                            <button onclick="assignApartment(2)" class="text-purple-600 hover:text-purple-900" title="Attribuer un logement">
+                                <i class="fas fa-home"></i>
+                                <span class="sm:hidden">Attribuer</span>
+                            </button>
+                            <button onclick="editTenant(2)" class="text-blue-600 hover:text-blue-900">
+                                <i class="fas fa-edit"></i>
+                                <span class="sm:hidden">Modifier</span>
+                            </button>
+                            <button onclick="deleteTenant(2)" class="text-red-600 hover:text-red-900">
+                                <i class="fas fa-trash"></i>
+                                <span class="sm:hidden">Supprimer</span>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             </tbody>
@@ -151,7 +161,7 @@
     </div>
     
     <!-- Pagination -->
-    <div class="bg-gray-50 px-6 py-3 flex items-center justify-between border-t border-gray-200">
+    <div class="bg-gray-50 px-4 sm:px-6 py-3 flex items-center justify-between border-t border-gray-200">
         <div class="text-sm text-gray-500">
             Affichage de <span>1</span> à <span>2</span> sur <span>2</span> locataires
         </div>
@@ -166,23 +176,151 @@
     </div>
 </div>
 
-<!-- Modal Attribution d'appartement -->
-<div id="assignApartmentModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
-        <div class="flex justify-between items-center border-b px-6 py-4">
+<!-- Modal Ajout de locataire -->
+<div id="addTenantModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 sm:p-6">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 sm:mx-6 overflow-y-auto" style="max-height: 90vh;">
+        <div class="flex justify-between items-center border-b px-4 sm:px-6 py-4 sticky top-0 bg-white z-10">
             <h3 class="text-lg font-bold text-gray-800">
-                <i class="fas fa-home text-purple-500 mr-2"></i> Attribuer un logement
+                <i class="fas fa-user-plus text-blue-500 mr-2"></i> Ajouter un locataire
             </h3>
-            <button onclick="closeModal('assignApartmentModal')" class="text-gray-400 hover:text-gray-500">
+            <button onclick="closeModal('addTenantModal')" class="text-gray-400 hover:text-gray-500 text-xl">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <form id="assignApartmentForm" class="p-6">
+        <form id="addTenantForm" class="p-4 sm:p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nom*</label>
+                    <input type="text" name="last_name" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Prénom*</label>
+                    <input type="text" name="first_name" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">CNI/Passport*</label>
+                    <input type="file" name="identity_number" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Date de naissance</label>
+                    <input type="date" name="birth_date" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Téléphone*</label>
+                    <input type="tel" name="phone" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" name="email" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Adresse</label>
+                    <input type="text" name="address" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Profession</label>
+                    <input type="text" name="profession" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nationalité</label>
+                    <input type="text" name="nationality" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 mt-6">
+                <button type="button" onclick="closeModal('addTenantModal')" 
+                        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 order-2 sm:order-1">
+                    Annuler
+                </button>
+                <button type="submit" 
+                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center order-1 sm:order-2 mb-3 sm:mb-0">
+                    <i class="fas fa-save mr-2"></i> Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Modification de locataire -->
+<div id="editTenantModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 sm:p-6">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 sm:mx-6 overflow-y-auto" style="max-height: 90vh;">
+        <div class="flex justify-between items-center border-b px-4 sm:px-6 py-4 sticky top-0 bg-white z-10">
+            <h3 class="text-lg font-bold text-gray-800">
+                <i class="fas fa-user-edit text-blue-500 mr-2"></i> Modifier le locataire
+            </h3>
+            <button onclick="closeModal('editTenantModal')" class="text-gray-400 hover:text-gray-500 text-xl">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="editTenantForm" class="p-4 sm:p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nom*</label>
+                    <input type="text" name="last_name" value="KOUADIO" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Prénom*</label>
+                    <input type="text" name="first_name" value="Amani" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">CNI/Passport*</label>
+                    <input type="file" name="identity_number" value="CI-12345678" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Date de naissance</label>
+                    <input type="date" name="birth_date" value="1985-06-15" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Téléphone*</label>
+                    <input type="tel" name="phone" value="0708091011" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" name="email" value="amanikouadio@example.com" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Adresse</label>
+                    <input type="text" name="address" value="Rue des Jardins, Cocody" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Profession</label>
+                    <input type="text" name="profession" value="Commercial" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nationalité</label>
+                    <input type="text" name="nationality" value="Ivoirienne" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+            </div>
+            <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 mt-6">
+                <button type="button" onclick="closeModal('editTenantModal')" 
+                        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 order-2 sm:order-1">
+                    Annuler
+                </button>
+                <button type="submit" 
+                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center order-1 sm:order-2 mb-3 sm:mb-0">
+                    <i class="fas fa-save mr-2"></i> Enregistrer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Attribution d'appartement -->
+<div id="assignApartmentModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 sm:p-6">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 sm:mx-6 overflow-y-auto" style="max-height: 90vh;">
+        <div class="flex justify-between items-center border-b px-4 sm:px-6 py-4 sticky top-0 bg-white z-10">
+            <h3 class="text-lg font-bold text-gray-800">
+                <i class="fas fa-home text-purple-500 mr-2"></i> Attribuer un logement
+            </h3>
+            <button onclick="closeModal('assignApartmentModal')" class="text-gray-400 hover:text-gray-500 text-xl">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="assignApartmentForm" class="p-4 sm:p-6">
             <div class="mb-4">
                 <h4 class="font-medium text-gray-900 mb-2">Locataire: <span id="tenantName" class="font-bold">KOUADIO Amani</span></h4>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Bâtiment*</label>
                     <select id="buildingSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md" onchange="updateAvailableApartments()">
@@ -202,7 +340,7 @@
             <div class="border-t border-gray-200 pt-4 mb-4">
                 <h4 class="font-medium text-gray-900 mb-4">Détails du contrat</h4>
                 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Date de début*</label>
                         <input type="date" name="start_date" required 
@@ -226,13 +364,13 @@
                 </div>
             </div>
             
-            <div class="flex justify-end space-x-3 mt-6">
+            <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 mt-6">
                 <button type="button" onclick="closeModal('assignApartmentModal')" 
-                        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 order-2 sm:order-1">
                     Annuler
                 </button>
                 <button type="submit" 
-                        class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 flex items-center">
+                        class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 flex items-center justify-center order-1 sm:order-2 mb-3 sm:mb-0">
                     <i class="fas fa-save mr-2"></i> Enregistrer la location
                 </button>
             </div>
@@ -242,27 +380,27 @@
 
 <!-- Modal Suppression -->
 <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-md">
-        <div class="flex justify-between items-center border-b px-6 py-4">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+        <div class="flex justify-between items-center border-b px-4 sm:px-6 py-4">
             <h3 class="text-lg font-bold text-gray-800">
                 <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i> Confirmer la suppression
             </h3>
-            <button onclick="closeModal('deleteModal')" class="text-gray-400 hover:text-gray-500">
+            <button onclick="closeModal('deleteModal')" class="text-gray-400 hover:text-gray-500 text-xl">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="p-6">
+        <div class="p-4 sm:p-6">
             <p class="text-gray-600 mb-4">Êtes-vous sûr de vouloir supprimer ce locataire ?</p>
             <p class="text-sm text-red-600 mb-4">
                 <i class="fas fa-exclamation-circle mr-1"></i> Cette action est irréversible.
             </p>
-            <div class="flex justify-end space-x-3">
+            <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-3">
                 <button onclick="closeModal('deleteModal')" 
-                        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 order-2 sm:order-1">
                     Annuler
                 </button>
                 <button id="confirmDeleteBtn" 
-                        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 flex items-center">
+                        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 flex items-center justify-center order-1 sm:order-2">
                     <i class="fas fa-trash mr-2"></i> Supprimer
                 </button>
             </div>
@@ -281,6 +419,31 @@
         document.getElementById(modalId).classList.add('hidden');
         document.body.classList.remove('overflow-hidden');
     }
+
+    // Ajout de locataire
+    document.getElementById('addTenantForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+        console.log('Nouveau locataire:', data);
+        alert('Locataire ajouté avec succès !');
+        closeModal('addTenantModal');
+    });
+
+    // Modification de locataire
+    function editTenant(id) {
+        // Pré-remplir avec les données du locataire
+        openModal('editTenantModal');
+    }
+
+    document.getElementById('editTenantForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData);
+        console.log('Locataire modifié:', data);
+        alert('Locataire modifié avec succès !');
+        closeModal('editTenantModal');
+    });
 
     // Attribution d'appartement
     function assignApartment(tenantId) {
@@ -395,18 +558,13 @@
         openModal('deleteModal');
     }
 
-    // Édition d'un locataire
-    function editTenant(id) {
-        alert(`Édition du locataire ${id} - À implémenter`);
-    }
-
     // Fermer les modals en cliquant en dehors
     document.addEventListener('click', function(event) {
-        if (event.target === document.getElementById('assignApartmentModal')) {
-            closeModal('assignApartmentModal');
-        }
-        if (event.target === document.getElementById('deleteModal')) {
-            closeModal('deleteModal');
+        if (event.target === document.getElementById('addTenantModal') || 
+            event.target === document.getElementById('editTenantModal') || 
+            event.target === document.getElementById('assignApartmentModal') || 
+            event.target === document.getElementById('deleteModal')) {
+            closeModal(event.target.id);
         }
     });
 </script>
