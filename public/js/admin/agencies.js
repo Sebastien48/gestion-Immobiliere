@@ -44,8 +44,9 @@ async function loadAgencies(page = 1) {
                         <td class="px-6 py-4">${agence.adresse}</td>
                         <td class="px-6 py-4">${agence.telephoneAgence}</td>
                         <td class="px-6 py-4">${agence.fondateur}</td>
+                       
                         <td class="px-6 py-4">
-                            <button class="text-blue-600 hover:underline" onclick="viewAgency(${agence.id})">Voir</button>
+                            <p class="text-blue-600 hover:underline ml-2"> ${agence.users?agence.users.length:0} agents</p>
                             <button class="text-red-600 hover:underline ml-2" onclick="deleteAgency(${agence.id})">Supprimer</button>
                             <button class="text-yellow-600 hover:underline ml-2" onclick="editAgency(${agence.id})">Modifier</button>
                         </td>
@@ -157,7 +158,6 @@ async function loadAgencies(page = 1) {
         // Édition agence
         function editAgency(agencyId) {
             fetch(`/admin/agences/${agencyId}/edit`)
-            .method('GET')
                 .then(response => response.json())
                 .then(agence => {
                     document.getElementById('numero').value = agence.numero;

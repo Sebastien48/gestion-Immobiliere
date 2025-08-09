@@ -41,20 +41,14 @@
                         </svg>
                         Email
                     </button>
-                    <button 
-                        class="tab-button flex-1 py-2 px-4 rounded-lg text-sm font-semibold text-gray-600" 
-                        onclick="switchTab('phone')"
-                        id="phone-tab"
-                    >
-                        <svg class="w-4 h-4 inline-block mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                        </svg>
-                        Téléphone
-                    </button>
+                   
+
                 </div>
                 
-                <form id="forgot-password-form" class="space-y-6">
+                <form id="forgot-password-form" action="{{route('forget.password.post')}}" method="POST" class="space-y-6">
                     <!-- Formulaire Email -->
+                    @csrf
+                    
                     <div id="email-form" class="form-content">
                         <div class="relative">
                             <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Adresse e-mail</label>
@@ -72,30 +66,15 @@
                         </div>
                     </div>
                     
-                    <!-- Formulaire Téléphone -->
-                    <div id="phone-form" class="form-content" style="display: none;">
-                        <div class="relative">
-                            <label for="phone" class="block text-sm font-semibold text-gray-700 mb-2">Numéro de téléphone</label>
-                            <div class="relative">
-                                <input 
-                                    type="tel" 
-                                    id="phone" 
-                                    name="phone" 
-                                    class="input-field has-icon w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-800"
-                                    placeholder="+225 01 02 03 04 05"
-                                >
-                                
-                            </div>
-                            <p class="text-xs text-gray-500 mt-2">Format: +225 XX XX XX XX XX</p>
-                        </div>
-                    </div>
+                  
+             
                     
                     <button 
                         type="submit" 
                         class="btn-primary w-full text-white font-bold py-3 px-6 rounded-xl transition-all duration-300"
                         id="submit-btn"
                     >
-                        Rédirection en cour ... <i class="fas fa-spinner fa-spin ml-2"></i>
+                        Envoyer le lien de réinitialisation ... <i class="fas fa-spinner fa-spin ml-2"></i>
                     </button>
                 </form>
                 

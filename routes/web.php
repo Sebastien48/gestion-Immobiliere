@@ -29,31 +29,36 @@ Route::post('/login', [LoginController::class, 'login'])->name('login.post ');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/logout', [LoginController::class, 'logout'])->name('logout.get');
 Route::get('/forget-password', [PasswordController::class, 'index'])->name('forget.password');
-//Route::post('/forget-password', [PasswordController::class, 'sendResetLinkEmail'])->name('forget.password.post');
-Route::get('/password/reset',[resetController::class, 'index'])->name('reset.password');   
+Route::post('/forget-password', [PasswordController::class, 'check'])->name('forget.password.post');
+//Route::get('/password/reset',[resetController::class, 'showLinkRequestForm'])->name('reset.password');
 
+ 
+// Route pour afficher le formulaire (votre méthode index originale)
+Route::get('/reset-password', [ResetController::class, 'index'])
+    ->middleware('guest')
+    ->name('reset.password');
+
+// Route pour afficher le formulaire avec token
+Route::get('/reset-password/{token}', [ResetController::class, 'showResetForm'])
+    ->middleware('guest')
+    ->name('password.reset');
+
+// Route pour traiter la réinitialisation
+Route::post('/reset-password', [ResetController::class, 'reset'])
+    ->middleware('guest')
+    ->name('password.update');
+
+// Route de connexion (si elle n'existe pas déjà)
+Route::get('/login', function () {
+    return view('auth.login');
+})->middleware('guest')->name('login');
 Route::prefix('/agence-immbolière')->middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('home');
 });
 
 
 // Admin routes
-/*
-Route::prefix('/agence-immbolière')->group(function () {
-    Route::get('/dashboard',[DashboardController::class, 'index'])->name('home');
-});
-*/
-//
-/*
-Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-    Route::get('/users/create', [UserController::class, 'create'])->name('admin.users.create');
-    Route::post('/users', [UserController::class, 'store'])->name('admin.users.store');
-    Route::get('/agences/create', [AgenceController::class, 'create'])->name('admin.agences.create');
-    Route::post('/agences', [AgenceController::class, 'store'])->name('admin.agences.store');
- 
-});
-*/
+
 
 
 Route::prefix('admin')->middleware(['auth','admin'])->group(function () {
@@ -63,7 +68,8 @@ Route::prefix('admin')->middleware(['auth','admin'])->group(function () {
     Route::post('/users/store', [UserController::class, 'store'])->name('admin.users.store');
     Route::get('/agences/create', [AgenceController::class, 'create'])->name('admin.agences.create');
     Route::post('/agences', [AgenceController::class, 'store'])->name('admin.agences.store');
-    Route::get('users/validated', [UserController::class, 'index'])->name('admin.users.index');
+    Route::get('/users/validated', [UserController::class, 'index'])->name('admin.users.index');
+    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
     Route::get('/agences/{id}/edit', [AgenceController::class, 'edit'])->name('admin.agences.edit');
     Route::get('/stats', [AgenceController::class, 'stats'])->name('admin.stats');
 

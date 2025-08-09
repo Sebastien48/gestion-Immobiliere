@@ -46,7 +46,7 @@
                             <td class="px-6 py-4">
                                 
                             </td>
-                            <td class="px-6 py-4">${user.nomAgence || '-'}</td>
+                            <td class="px-6 py-4">${user.agence ? user.agence.nomAgence : '-'}</td>
                             <td class="px-6 py-4">
                                 <button class="text-blue-600 hover:underline" onclick="editUser(${user.id})">Modifier</button>
                                 <button class="text-red-600 hover:underline ml-2" onclick="deleteUser(${user.id})">Supprimer</button>
@@ -84,21 +84,26 @@
         function editUser(userId) {
             fetch(`/admin/users/${userId}/edit`)
                 .then(response => response.json())
-                .then(user => {
-                    document.getElementById('code').value = user.code;
-                    document.getElementById('nom').value = user.nom;
-                    document.getElementById('prenom').value = user.prenom;
-                    document.getElementById('agence').value = user.agence || '';
-                    document.getElementById('telephone').value = user.telephone;
-                    document.getElementById('role').value = user.role;
-                    document.getElementById('email').value = user.email;
-                    
-                    // Modifier le formulaire pour l'édition
-                    const form = document.getElementById('userForm');
-                    form.action = `/admin/users/${userId}`;
-                    form.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-sync mr-2"></i> Mettre à jour';
-                    
-                    showUserForm();
+                .then(data => {
+                    if (data.success) {
+                        const user = data.user;
+                        document.getElementById('code').value = user.code;
+                        document.getElementById('nom').value = user.nom;
+                        document.getElementById('prenom').value = user.prenom;
+                        document.getElementById('agence').value = user.agence || '';
+                        document.getElementById('telephone').value = user.telephone;
+                        document.getElementById('role').value = user.role;
+                        document.getElementById('email').value = user.email;
+                        
+                        // Modifier le formulaire pour l'édition
+                        const form = document.getElementById('userForm');
+                        form.action = `/admin/users/${userId}`;
+                        form.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-sync mr-2"></i> Mettre à jour';
+                        
+                        showUserForm();
+                    } else {
+                        alert('Erreur lors du chargement des données utilisateur');
+                    }
                 });
         }
 

@@ -24,7 +24,10 @@ class Agence extends Model
     protected $hidden = [
         'created_at', 'updated_at',
     ];
-    
 
-    
+    // Relation avec les utilisateurs
+    public function users()
+    {
+        return $this->hasMany(User::class, 'numero', 'numero');
+    }
 }

@@ -178,15 +178,19 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i class="fas fa-building text-gray-400"></i>
                                 </div>
-                                <select id="nomAgence" name="nomAgence" required
-                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('nomAgence') border-red-500 @enderror">
-                                    <option value="">Sélectionnez votre agence</option>
-                                    @foreach($agences as $agence)
-                                        <option value="{{ $agence->nomAgence }}" {{ old('nomAgence') == $agence->nomAgence ? 'selected' : '' }}>
-                                            {{ $agence->nomAgence }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <div class="relative">
+                                    <input type="text" id="searchAgence" 
+                                        class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('nomAgence') border-red-500 @enderror"
+                                        placeholder="Rechercher une agence..." autocomplete="off">
+                                    <div id="agenceDropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                        @foreach($agences as $agence)
+                                            <div class="agence-option px-4 py-2 hover:bg-gray-100 cursor-pointer" data-value="{{ $agence->nomAgence }}">
+                                                {{ $agence->nomAgence }}
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <input type="hidden" id="nomAgence" name="nomAgence" value="{{ old('nomAgence') }}" required>
                                 @error('nomAgence')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -219,7 +223,7 @@
                                     <i class="fas fa-lock text-gray-400"></i>
                                 </div>
                                 <input type="password" id="confirmPassword" name="password_confirmation" required 
-                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('password_confirmation') border-red-500 @enderror"
+                                    class="pl-10 w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('password_confirmation') border-red-500 @else border-gray-300 @enderror"
                                     placeholder="Confirmez votre mot de passe">
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
                                     <i class="fas fa-eye text-gray-400 cursor-pointer toggle-password"></i>
@@ -285,6 +289,103 @@
                 input.setAttribute('type', type);
                 this.classList.toggle('fa-eye-slash');
                 this.classList.toggle('fa-eye');
+            });
+        });
+
+        // Contrôler la validation du mot de passe 
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        
+        function validatePassword() {
+            if (password.value === confirmPassword.value) {
+                confirmPassword.setCustomValidity('');
+            } else {
+                confirmPassword.setCustomValidity('Les mots de passe ne correspondent pas');
+            }
+        }
+        
+        password.addEventListener('input', validatePassword);
+        confirmPassword.addEventListener('input', validatePassword);
+        // Composant de recherche d'agence
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchAgence');
+            const dropdown = document.getElementById('agenceDropdown');
+            const hiddenInput = document.getElementById('nomAgence');
+            const options = document.querySelectorAll('.agence-option');
+
+            // Afficher le dropdown au focus
+            searchInput.addEventListener('focus', function() {
+                dropdown.classList.remove('hidden');
+            });
+
+            // Recherche en temps réel
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                let hasVisibleOptions = false;
+
+                options.forEach(option => {
+                    const text = option.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        option.style.display = 'block';
+                        hasVisibleOptions = true;
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+
+                dropdown.classList.toggle('hidden', !hasVisibleOptions);
+            });
+
+            // Sélection d'une option
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    const value = this.getAttribute('data-value');
+                    searchInput.value = this.textContent;
+                    hiddenInput.value = value;
+                    dropdown.classList.add('hidden');
+                });
+            });
+
+            // Fermer le dropdown en cliquant ailleurs
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+
+            // Navigation au clavier
+            searchInput.addEventListener('keydown', function(e) {
+                const visibleOptions = Array.from(options).filter(option => 
+                    option.style.display !== 'none'
+                );
+                const currentIndex = visibleOptions.findIndex(option => 
+                    option.classList.contains('bg-blue-100')
+                );
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    const nextIndex = (currentIndex + 1) % visibleOptions.length;
+                    visibleOptions.forEach(option => option.classList.remove('bg-blue-100'));
+                    visibleOptions[nextIndex].classList.add('bg-blue-100');
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    const prevIndex = currentIndex <= 0 ? visibleOptions.length - 1 : currentIndex - 1;
+                    visibleOptions.forEach(option => option.classList.remove('bg-blue-100'));
+                    visibleOptions[prevIndex].classList.add('bg-blue-100');
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const selectedOption = visibleOptions.find(option => 
+                        option.classList.contains('bg-blue-100')
+                    );
+                    if (selectedOption) {
+                        const value = selectedOption.getAttribute('data-value');
+                        searchInput.value = selectedOption.textContent;
+                        hiddenInput.value = value;
+                        dropdown.classList.add('hidden');
+                    }
+                } else if (e.key === 'Escape') {
+                    dropdown.classList.add('hidden');
+                }
             });
         });
     </script>

@@ -26,8 +26,7 @@ public function list(Request $request)
 {
     $perPage = 10;
     $page = $request->input('page', 1);
-    $query = Agence::orderBy('created_at', 'desc');
-    $agences = $query->paginate(10);
+    $query = Agence::with('users')->orderBy('created_at', 'desc');
     $total = $query->count();
     $agences = $query->skip(($page - 1) * $perPage)
                      ->take($perPage)
@@ -41,15 +40,15 @@ public function list(Request $request)
         'agences' => $agences,
         'to' => min($page * $perPage, $total),
         'from' => ($page - 1) * $perPage + 1,
-        
-        
+        'current_page' => $page,
+        'last_page' => ceil($total / $perPage),
     ]);
 }
  public function stats(Request $request)
  {
     $months = [];
     $counts = [];
-    for ($i = 5; $i >= 0; $i--) {
+    for ($i = 12; $i >= 0; $i--) {
         $month = Carbon::now()->subMonths($i)->format('Y-m');
         $months[] = Carbon::now()->subMonths($i)->format('M Y');
         $counts[] = User::whereYear('created_at', Carbon::now()->subMonths($i)->year)

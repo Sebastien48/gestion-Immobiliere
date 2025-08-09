@@ -20,30 +20,11 @@ class DashboardController extends Controller
             return redirect()->route('login')->with('error', 'Veuillez vous connecter');
         }
         
-        // 2. Récupérer l'agence liée à cet utilisateur
-        // En supposant que l'utilisateur a un champ 'agence_code' ou 'nomAgence'
-        $agence = null;
-        $nomAgence = 'Agence non trouvée';
-        $logo1 = null;
+        // 2. Récupérer l'agence liée à cet utilisateur via la relation
+        $agence = $user->agence;
         
-        // Option 1: Si l'utilisateur a un champ 'code_agence' qui correspond au 'numero' de l'agence
-        if ($user->code_agence) {
-            $agence = Agence::where('numero', $user->code_agence)->first();
-        }
-        
-        // Option 2: Si l'utilisateur a un champ 'nomAgence' directement
-        if (!$agence && $user->nomAgence) {
-            $agence = Agence::where('nomAgence', $user->nomAgence)->first();
-        }
-        
-        // Option 3: Si vous avez une relation définie dans le modèle User
-        // $agence = $user->agence; // Si relation définie
-        
-        // Récupérer les informations de l'agence
-        if ($agence) {
-            $nomAgence = $agence->nomAgence;
-            $logo1 = $agence->logo ?? null;
-        }
+        $nomAgence = $agence ? $agence->nomAgence : 'Agence non trouvée';
+        $logo1 = $agence ? $agence->logo : null;
         
         // 3. Concaténer les initiales
         $initiales = '';
@@ -52,15 +33,6 @@ class DashboardController extends Controller
             $premiereLettrePrenom = substr($user->prenom, 0, 1);
             $initiales = strtoupper($premiereLettreNom . $premiereLettrePrenom);
         }
-        
-        // Debug pour voir les valeurs (à supprimer en production)
-        // dd([
-        //     'user' => $user,
-        //     'agence' => $agence,
-        //     'nomAgence' => $nomAgence,
-        //     'initiales' => $initiales,
-        //     'logo1' => $logo1
-        // ]);
         
         return view('dashboard', compact('user', 'agence', 'nomAgence', 'initiales', 'logo1'));
     }

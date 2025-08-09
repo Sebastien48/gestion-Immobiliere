@@ -20,20 +20,23 @@ class UserController extends Controller
     {
         $perPage = 10; // Nombre d'utilisateurs par page
         $page = request()->input('page', 1); // Page actuelle, par défaut 1
-         // Nombre d'utilisateurs par page
-        // Récupérer les utilisateurs avec pagination
-        $query = User::orderBy('created_at', 'desc');
-        $users = $query->paginate(10); // Pagination de 10 utilisateurs par page
-        $users =$query->skip(($page - 1) * $perPage)
+        
+        // Récupérer les utilisateurs avec pagination et relation agence
+        $query = User::with('agence')->orderBy('created_at', 'desc');
+        $total = $query->count();
+        
+        $users = $query->skip(($page - 1) * $perPage)
                      ->take($perPage)
                      ->get();
-          $total =$query->count();
-          //calculer le nombre d'utilisateurs inscrit cette semaine
-          $semaine = Carbon::now()->subDays(7);
-          $userssemaine = User::where('created_at', '>=', $semaine)->count();
-          //calculer le nombre d'utilisateurs inscrit ce mois
-          $mois = Carbon::now()->subMonth();
-          $usersmois = User::where('created_at', '>=', $mois)->count();
+        
+        //calculer le nombre d'utilisateurs inscrit cette semaine
+        $semaine = Carbon::now()->subDays(7);
+        $userssemaine = User::where('created_at', '>=', $semaine)->count();
+        
+        //calculer le nombre d'utilisateurs inscrit ce mois
+        $mois = Carbon::now()->subMonth();
+        $usersmois = User::where('created_at', '>=', $mois)->count();
+        
         return response()->json([
             'success' => true,
             'total' => $total,
@@ -42,6 +45,8 @@ class UserController extends Controller
             'users' => $users,
             'from' => ($page - 1) * $perPage + 1,
             'to' => min($page * $perPage, $total),
+            'current_page' => $page,
+            'last_page' => ceil($total / $perPage),
             'userssemaine' => $userssemaine,
             'usersmois' => $usersmois
         ]);
@@ -67,23 +72,11 @@ class UserController extends Controller
             return response()->json(['success' => false, 'message' => "Le nom de l'agence n'existe pas."], 422);
         }
 
-        /* User::create([
-            'code' => Str::random(5), // Génération d'un code aléatoire
-            'nom' => $validated['nom'],
-            'prenom' => $validated['prenom'],
-            'telephone' => $validated['telephone'],
-            'nomAgence' => $validated['nomAgence'],
-            'role' => $validated['role'],
-            'numero' => $agence->numero,
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']),
-        ]);*/
         User::create([
             'code' => Str::random(5), // Génération d'un code aléatoire
             'nom' => $validated['nom'],
             'prenom' => $validated['prenom'],
             'telephone' => $validated['telephone'],
-            'nomAgence' => $validated['nomAgence'],
             'role' => $validated['role'],
             'numero' => $agence->numero,
             'email' => $validated['email'],
@@ -95,6 +88,29 @@ class UserController extends Controller
 
     return redirect()->back()->with('error', 'Requête invalide.');
 }
+
+    public function edit($id)
+    {
+        $user = User::with('agence')->find($id);
+        
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Utilisateur non trouvé'], 404);
+        }
+        
+        return response()->json([
+            'success' => true,
+            'user' => [
+                'id' => $user->id,
+                'code' => $user->code,
+                'nom' => $user->nom,
+                'prenom' => $user->prenom,
+                'telephone' => $user->telephone,
+                'agence' => $user->agence ? $user->agence->nomAgence : null,
+                'role' => $user->role,
+                'email' => $user->email
+            ]
+        ]);
+    }
 
        // Si ce n’est pas une requête AJAX, on peut rediriger
    

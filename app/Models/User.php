@@ -22,7 +22,7 @@ class User extends Authenticatable
 
     // Les attributs qui sont assignables en masse
     protected $fillable = [
-        'code', 'nom', 'prenom', 'telephone', 'nomAgence', 'role', 'email', 'password', 'numero'
+        'code', 'nom', 'prenom', 'telephone', 'numero', 'role', 'email', 'password'
     ];
 
     // Les attributs qui doivent être cachés pour les tableaux
@@ -34,6 +34,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // Relation avec l'agence
+    public function agence()
+    {
+        return $this->belongsTo(Agence::class, 'numero', 'numero');
+    }
 
     // Générer un code unique pour l'utilisateur lors de la création
     protected static function boot()

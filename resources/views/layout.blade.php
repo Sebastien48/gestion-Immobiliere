@@ -17,7 +17,7 @@
                 <button id="sidebarToggle" class="lg:hidden text-gray-600 hover:text-gray-900">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
-                <h1 class="text-xl font-bold text-gray-800 hidden md:block">{{$agence->nomAgence}} </h1>
+                <h1 class="text-xl font-bold text-gray-800 hidden md:block">{{$agence ? $agence->nomAgence : 'Agence'}} </h1>
                 
                 <!-- Barre de recherche - Visible sur desktop -->
                 <div class="hidden lg:flex items-center bg-gray-100 rounded-lg px-3 py-2 ml-4">

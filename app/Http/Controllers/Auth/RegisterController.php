@@ -14,6 +14,10 @@ class RegisterController extends Controller
     {
         // Récupérer toutes les agences pour les afficher
         $agences = Agence::select('nomAgence')->get();
+        
+        // Debug: Afficher les agences disponibles
+        \Log::info('Agences disponibles:', $agences->toArray());
+        
         return view('auth.register', compact('agences'));
     }
 /*
@@ -102,6 +106,12 @@ class RegisterController extends Controller
         ]);
     }
 
+    // Debug: Vérifier les données de l'agence
+    \Log::info('Agence trouvée:', [
+        'numero' => $agence->numero,
+        'nomAgence' => $agence->nomAgence,
+    ]);
+
     // Génération du code unique
     $code = '';
     $maxAttempts = 10;
@@ -120,12 +130,22 @@ class RegisterController extends Controller
 
     // Création de l'utilisateur
     try {
+        // Debug: Afficher les données avant création
+       /* \Log::info('Données utilisateur à créer:', [
+            'code' => $code,
+            'nom' => $validatedData['nom'],
+            'prenom' => $validatedData['prenom'],
+            'telephone' => $validatedData['telephone'],
+            'numero' => $agence->numero,
+            'email' => $validatedData['email'],
+            'role' => 'utilisateur',
+        ]);*/
+
         $user = User::create([
             'code' => $code,
             'nom' => $validatedData['nom'],
             'prenom' => $validatedData['prenom'],
             'telephone' => $validatedData['telephone'],
-            'nomAgence' => $validatedData['nomAgence'],
             'numero' => $agence->numero,
             'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
@@ -141,9 +161,10 @@ class RegisterController extends Controller
     } catch (\Exception $e) {
         // Log de l'erreur pour le debug
         \Log::error('Erreur lors de l\'inscription: ' . $e->getMessage());
+        \Log::error('Stack trace: ' . $e->getTraceAsString());
         
         return back()->withInput()->withErrors([
-            'database' => 'Erreur lors de la création du compte. Veuillez réessayer ou contacter le support.',
+            'database' => 'Erreur lors de la création du compte: ' . $e->getMessage(),
         ]);
     }
 }
