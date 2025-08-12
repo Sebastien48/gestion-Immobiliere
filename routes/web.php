@@ -13,11 +13,19 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\AgenceController;
+use App\Http\Controllers\IndexController;
+use App\Http\Controllers\ErreurController;
 
-
+/*
 Route::get('/', function () {
     return view('index');
 });
+*/
+Route::get('/',[IndexController::class, 'index'])->name('index');
+//définir une route pour la page d'erreur 404 lorsque l'utilisateur accède à une page inexistante
+
+Route::fallback([ErreurController::class,'show404'])->name('error.404');
+
 
 // Routes for client-side registration
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');

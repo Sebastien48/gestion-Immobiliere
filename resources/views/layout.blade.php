@@ -45,19 +45,18 @@
                 <div class="relative">
                     <button id="userMenuButton" class="flex items-center space-x-2 text-gray-600 hover:text-gray-900">
                         <!-- afficher le logo de l'agence avec les initiales superposées -->
+                        
+                        
                         <div class="relative">
-                            @if(isset($logo1) && $logo1)
-                                <img src="{{ asset('storage/' . $logo1) }}" alt="Logo Agence" class="w-8 h-8 rounded-full object-cover"> 
-                                <!-- Initiales superposées sur le logo -->
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <span class="text-white font-bold text-xs drop-shadow-lg">{{$initiales ?? 'AG'}}</span>
-                                </div>
-                            @else
-                                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xl">
-                                    {{ $initiales ?? 'AG' }}
-                                </div>
-                            @endif
+                                @if(isset($logo1) && $logo1)
+                                    <img src="{{ asset('storage/' . $logo1) }}" alt="Logo Agence" class="w-8 h-8 rounded-full object-cover"> 
+                                @else
+                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xl">
+                                        {{ $initiales ?? 'AG' }}
+                                    </div>
+                                @endif
                         </div>
+                        
                         <span class="hidden md:block text-xl font-medium">{{$initiales ?? 'Agent'}}</span>
                         <i class="fas fa-chevron-down text-xs"></i>
                     </button>

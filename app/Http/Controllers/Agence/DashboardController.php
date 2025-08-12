@@ -7,7 +7,7 @@ use App\Models\Agence;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-
+// normalement est déja gérer le providersserice
 class DashboardController extends Controller
 {
     public function index()
@@ -27,12 +27,10 @@ class DashboardController extends Controller
         $logo1 = $agence ? $agence->logo : null;
         
         // 3. Concaténer les initiales
-        $initiales = '';
-        if ($user->nom && $user->prenom) {
-            $premiereLettreNom = substr($user->nom, 0, 1);
-            $premiereLettrePrenom = substr($user->prenom, 0, 1);
-            $initiales = strtoupper($premiereLettreNom . $premiereLettrePrenom);
-        }
+        $initiales = strtoupper(
+            substr($user->nom ?? '', 0, 1). substr($user->prenom ?? '', 0, 1)
+        );
+   
         
         return view('dashboard', compact('user', 'agence', 'nomAgence', 'initiales', 'logo1'));
     }
