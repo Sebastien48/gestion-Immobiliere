@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Agence;
 
 class LoginController extends Controller
 {
@@ -21,9 +24,9 @@ class LoginController extends Controller
         ]);
 
         // Tenter de connecter l'utilisateur
-        if (auth()->attempt($credentials)) {
+        if (Auth::attempt($credentials)) {
             // Récupérer l'utilisateur authentifié
-            $user = auth()->user();
+            $user = Auth::user();
 
             // Rediriger en fonction du rôle de l'utilisateur
             if ($user->role === 'administrateur') {
@@ -39,7 +42,7 @@ class LoginController extends Controller
 
     public function logout()
     {
-        auth()->logout();
+        Auth::logout();
         return redirect('/login')->with('success', 'Déconnexion réussie !');
     }
 }
