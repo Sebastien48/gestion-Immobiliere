@@ -7,8 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-      <meta name="csrf-token" content="{{ csrf_token() }}">
-      <link rel="stylesheet" href="{{asset('css/app5.css')}}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="{{asset('css/app5.css')}}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
 </head>
 <body class="bg-gray-100">
@@ -44,23 +45,24 @@
                         <!-- Dropdown pour l'admin avec bouton de déconnexion -->
                         <div class="relative">
                             <button onclick="toggleDropdown()" class="bg-blue-700 hover:bg-blue-600 px-4 py-2 rounded-lg flex items-center text-sm">
-                                <i class="fas fa-user-circle mr-2"></i> Admin
+                                <i class="fas fa-user-circle mr-2"></i> {{$initiales ?? 'AG'}}
                                 <i class="fas fa-chevron-down ml-2"></i>
                             </button>
                             
                             <!-- Menu dropdown -->
                             <div id="adminDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                                 <a href="{{route('logout')}}" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                            <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
-                         </a>
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </header>
+
         <!-- Zone pour afficher les messages -->
-    <div id="formMessage" class="mb-4"></div>
+        <div id="formMessage" class="mb-4"></div>
 
         <!-- Contenu principal -->
         <main class="container mx-auto px-4 py-8">
@@ -76,7 +78,7 @@
                         <div class="flex justify-between">
                             <div>
                                 <p class="text-gray-500 text-sm font-medium">Total Utilisateurs</p>
-                                <p class="text-3xl font-bold mt-2" id="totalUsers">0</p>
+                                <p class="text-3xl font-bold mt-2" id="agencesTotal">0</p>
                             </div>
                             <div class="bg-blue-100 text-blue-600 p-3 rounded-full h-12 w-12 flex items-center justify-center">
                                 <i class="fas fa-users"></i>
@@ -129,8 +131,8 @@
                     <div class="stat-card bg-white rounded-lg shadow-md p-6 border-t-4 border-orange-500">
                         <div class="flex justify-between">
                             <div>
-                                <p class="text-gray-500 text-sm font-medium" >Total Agences</p>
-                                <p class="text-3xl font-bold mt-2" id="agencesTotal">0</p>
+                                <p class="text-gray-500 text-sm font-medium">Total Agences</p>
+                                <p class="text-3xl font-bold mt-2" id="agencesTotaux">0</p>
                             </div>
                             <div class="bg-orange-100 text-orange-600 p-3 rounded-full h-12 w-12 flex items-center justify-center">
                                 <i class="fas fa-building"></i>
@@ -140,6 +142,7 @@
                             <span class="text-orange-600 text-sm font-medium">
                                 <i class="fas fa-check-circle"></i> Agences enregistrées
                             </span>
+
                         </div>
                     </div>
                 </div>
@@ -174,14 +177,11 @@
 
                 <!-- Formulaire pour ajouter un utilisateur -->
                 <div id="userFormContainer" class="bg-white rounded-lg shadow-md p-6 hidden">
-                    <form id="userForm" method="POST"    action=" {{route ('admin.users.store')}}" class="space-y-4"  enctype="multipart/form-data" >
+                    <form id="userForm" method="POST" action="{{route('admin.users.store')}}" class="space-y-4" enctype="multipart/form-data">
                         @csrf
                        
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="code" class="block text-sm font-medium text-gray-700">Code *</label>
-                                <input type="text" id="code" name="code" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
-                            </div>
+                            
                             <div>
                                 <label for="nom" class="block text-sm font-medium text-gray-700">Nom *</label>
                                 <input type="text" id="nom" name="nom" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
@@ -249,7 +249,7 @@
 
                 <!-- Formulaire pour ajouter une agence -->
                 <div id="agenceFormContainer" class="bg-white rounded-lg shadow-md p-6 hidden">
-                    <form id="agenceForm" method="POST" action="{{route('admin.agences.store')}}" enctype="multipart/form-data">
+                    <form id="agenceForm" method="POST" action="{{ route('admin.agences.store') }}" enctype="multipart/form-data">
                         @csrf
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -279,11 +279,11 @@
                             </div>
                             <div>
                                 <label for="logo" class="block text-sm font-medium text-gray-700">Logo de l'agence *</label>
-                                <input type="file" id="logo" name="logo" accept="image/*"  class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                <input type="file" id="logo" name="logo" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                             </div>
                             <div>
                                 <label for="document" class="block text-sm font-medium text-gray-700">Image de vérification officielle *</label>
-                                <input type="file" id="document" name="document" accept="image/*"  class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                <input type="file" id="document" name="document" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                             </div>
                         </div>
                         <div class="flex justify-end space-x-4">
@@ -331,7 +331,7 @@
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200" id="validatedUsersTable">
                                 <tr id="skeletonRow">
-                                    <td colspan="5" class="px-6 py-4 text-center">
+                                    <td colspan="6" class="px-6 py-4 text-center">
                                         <div class="flex flex-col items-center space-y-3">
                                             <div class="skeleton skeleton-text w-3/4"></div>
                                             <div class="skeleton skeleton-text w-1/2"></div>
@@ -347,7 +347,7 @@
                             Affichage de <span id="validatedStart">0</span> à <span id="validatedEnd">0</span> sur <span id="validatedTotal">0</span> utilisateurs
                         </div>
                         <div class="flex space-x-2">
-                            <button id="prevValidated" class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 bg-white cursor-not-allowed" disabled>
+                            <button id="prevValidated" class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 bg-white cursor-not-allowed" >
                                 Précédent
                             </button>
                             <button id="nextValidated" class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
@@ -360,50 +360,51 @@
 
             <!-- Section Liste des agences -->
             <section class="mb-12">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-gray-800 flex items-center">
-            <i class="fas fa-building text-blue-600 mr-3"></i> Liste des agences
-        </h2>
-    </div>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800 flex items-center">
+                        <i class="fas fa-building text-blue-600 mr-3"></i> Liste des agences
+                    </h2>
+                </div>
 
-    <div class="bg-white rounded-lg shadow-md overflow-hidden">
-        <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Numéro d'enregistrement</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Adresse</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Téléphone</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fondateur</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="agencesTable" class="bg-white divide-y divide-gray-200">
-                    <tr id="skeletonRowAgencies">
-                        <td colspan="5" class="text-center px-6 py-4">
-                            <div class="flex flex-col items-center space-y-3">
-                                <div class="w-3/4 h-4 bg-gray-200 rounded animate-pulse"></div>
-                                <div class="w-1/2 h-4 bg-gray-200 rounded animate-pulse"></div>
-                                <div class="w-2/3 h-4 bg-gray-200 rounded animate-pulse"></div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Numéro d'enregistrement</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Adresse</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Téléphone</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fondateur</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="agencesTable" class="bg-white divide-y divide-gray-200">
+                                <tr id="skeletonRowAgencies">
+                                    <td colspan="7" class="text-center px-6 py-4">
+                                        <div class="flex flex-col items-center space-y-3">
+                                            <div class="w-3/4 h-4 bg-gray-200 rounded animate-pulse"></div>
+                                            <div class="w-1/2 h-4 bg-gray-200 rounded animate-pulse"></div>
+                                            <div class="w-2/3 h-4 bg-gray-200 rounded animate-pulse"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-        <div class="px-6 py-4 bg-gray-50 flex items-center justify-between border-t">
-            
-            <div class="flex space-x-2">
-                <button id="prevAgences" class="px-3 py-1 border rounded text-gray-700 bg-white cursor-not-allowed" disabled>Précédent</button>
-                <button id="nextAgences" class="px-3 py-1 border rounded text-gray-700 bg-white hover:bg-gray-50">Suivant</button>
-            </div>
-        </div>
-    </div>
-</section>
-
+                    <div class="px-6 py-4 bg-gray-50 flex items-center justify-between border-t">
+                        <div class="text-sm text-gray-500">
+                            Total: <span id="agencesTotalCount">0</span> agences
+                        </div>
+                        <div class="flex space-x-2">
+                            <button id="prevAgences" class="px-3 py-1 border rounded text-gray-700 bg-white cursor-not-allowed" disabled>Précédent</button>
+                            <button id="nextAgences" class="px-3 py-1 border rounded text-gray-700 bg-white hover:bg-gray-50">Suivant</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -422,357 +423,126 @@
         </div>
     </footer>
 
+    <!-- Scripts généraux -->
     <script>
         // Variables globales
         let inscriptionsChart, rolesChart;
 
-        // Fonction pour basculer la visibilité du mot de passe
-function togglePassword(fieldId) {
-    const passwordInput = document.getElementById(fieldId);
-    const passwordIcon = document.getElementById(fieldId + 'ToggleIcon');
-
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        passwordIcon.classList.remove('fa-eye');
-        passwordIcon.classList.add('fa-eye-slash');
-    } else {
-        passwordInput.type = 'password';
-        passwordIcon.classList.remove('fa-eye-slash');
-        passwordIcon.classList.add('fa-eye');
-    }
-}
-
-// Fonction pour afficher/masquer le dropdown admin
-function toggleDropdown() {
-    const dropdown = document.getElementById('adminDropdown');
-    dropdown.classList.toggle('hidden');
-}
-
-// Fermer le dropdown si on clique ailleurs
-document.addEventListener('click', function(event) {
-    const dropdown = document.getElementById('adminDropdown');
-    const button = event.target.closest('[onclick="toggleDropdown()"]');
-
-    if (!button && !dropdown.contains(event.target)) {
-        dropdown.classList.add('hidden');
-    }
-});
-
-// Fonction de déconnexion
-function logout() {
-    if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
-        // Rediriger vers la page de déconnexion
-        window.location.href = '/logout';
-    }
-}
-
-// Fonction pour afficher le formulaire d'ajout d'utilisateur
-function showUserForm() {
-    const formContainer = document.getElementById('userFormContainer');
-    formContainer.classList.remove('hidden');
-}
-
-// Fonction pour masquer le formulaire d'ajout d'utilisateur
-function hideUserForm() {
-    const formContainer = document.getElementById('userFormContainer');
-    formContainer.classList.add('hidden');
-    document.getElementById('userForm').reset();
-}
-
-// Fonction pour afficher le formulaire d'ajout d'agence
-function showAgenceForm() {
-    const formContainer = document.getElementById('agenceFormContainer');
-    formContainer.classList.remove('hidden');
-}
-
-// Fonction pour masquer le formulaire d'ajout d'agence
-function hideAgenceForm() {
-    const formContainer = document.getElementById('agenceFormContainer');
-    formContainer.classList.add('hidden');
-    document.getElementById('agenceForm').reset();
-}
-
-// Fonction pour réinitialiser les formulaires
-function resetformsAgence() {
-    document.getElementById('agenceForm').reset();
-}
-
-function resetformsUser() {
-    document.getElementById('userForm').reset();
-}
-
-// Gestion du formulaire d'ajout d'utilisateur
-
-async function handleUserFormSubmit(event) {
-    event.preventDefault();
-
-    const form = event.target;
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const messageDiv = document.getElementById('formMessage');
-    const token = document.querySelector('meta[name="csrf-token"]').content;
-
-    // Reset messages
-    messageDiv.innerHTML = '';
-    messageDiv.className = '';
-
-    // Validation des mots de passe
-    const password = form.querySelector('#password').value;
-    const confirmPassword = form.querySelector('#confirmPassword').value;
-
-    if (password !== confirmPassword) {
-        alert('❌ Les mots de passe ne correspondent pas.');
-        return;
-    }
-
-    // Préparer les données du formulaire (inclut les fichiers, multipart)
-    const formData = new FormData(form);
-
-    try {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enregistrement...';
-
-        const response = await fetch(form.action, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': token,
-                // Ne mets PAS 'Content-Type', le navigateur le gère automatiquement avec FormData
-            },
-            body: formData
-        });
-
-        const contentType = response.headers.get("content-type") || '';
-
-        if (contentType.includes("application/json")) {
-            const data = await response.json();
-
-            if (response.ok && data.success) {
-                messageDiv.innerHTML = `<div class="bg-green-100 text-green-800 p-3 rounded">✅ ${data.message}</div>`;
-                form.reset();
-                if (typeof resetformsUser === 'function') resetformsUser();
+        // Fonctions communes
+        function togglePassword(fieldId) {
+            const passwordInput = document.getElementById(fieldId);
+            const passwordIcon = document.getElementById(fieldId + 'ToggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.classList.replace('fa-eye', 'fa-eye-slash');
             } else {
-                messageDiv.innerHTML = `<div class="bg-red-100 text-red-800 p-3 rounded">❌ ${data.message || 'Erreur inconnue'}</div>`;
+                passwordInput.type = 'password';
+                passwordIcon.classList.replace('fa-eye-slash', 'fa-eye');
             }
-        } else {
-            // Réponse inattendue (souvent HTML)
-            const text = await response.text();
-            console.error("❌ Réponse non JSON reçue :", text);
-            messageDiv.innerHTML = `<div class="bg-red-100 text-red-800 p-3 rounded">❌ Le serveur a retourné une réponse inattendue (voir console).</div>`;
-        }
-    } catch (error) {
-        console.error("❌ Erreur lors de la requête :", error);
-        messageDiv.innerHTML = `<div class="bg-red-100 text-red-800 p-3 rounded">❌ Une erreur est survenue : ${error.message}</div>`;
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<i class="fas fa-save mr-2"></i> Enregistrer`;
-    }
-}
-
-
-// Gestion du formulaire d'ajout d'agence
-
-
-// nouveau 
-async function handleAgenceFormSubmit(event) {
-    event.preventDefault();
-
-    const form = event.target;
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const messageDiv = document.getElementById('formMessage');
-
-    // Réinitialise l'affichage du message
-    messageDiv.innerHTML = '';
-    messageDiv.className = '';
-
-    const originalText = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enregistrement...';
-
-    try {
-        const formData = new FormData(form);
-        const token = document.querySelector('meta[name="csrf-token"]').content;
-
-        const response = await fetch(form.action, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': token
-            },
-            body: formData
-        });
-
-        const data = await response.json();
-
-        if (!response.ok || !data.success) {
-            throw new Error(data.message || 'Erreur lors de l\'enregistrement');
         }
 
-        form.reset(); // Réinitialise le formulaire
-        hideAgenceForm(); // si cette fonction existe
-        loadData(); // recharger les données
+        function toggleDropdown() {
+            const dropdown = document.getElementById('adminDropdown');
+            dropdown.classList.toggle('hidden');
+        }
 
-        // Afficher un message de succès
-        messageDiv.innerHTML = `<div class="bg-green-100 text-green-800 p-3 rounded">✅ ${data.message}</div>`;
-    } catch (error) {
-        messageDiv.innerHTML = `<div class="bg-red-100 text-red-800 p-3 rounded">❌ ${error.message}</div>`;
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-    }
-}
-// Fonction pour initialiser les graphiques
-function initCharts() {
-    const ctxInscriptions = document.getElementById('inscriptionsChart').getContext('2d');
-    inscriptionsChart = new Chart(ctxInscriptions, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
-            datasets: [{
-                label: 'Inscriptions',
-                data: [12, 19, 3, 5, 2, 3, 7],
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                fill: true,
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
+        function showUserForm() {
+            document.getElementById('userFormContainer').classList.remove('hidden');
+        }
+
+        function hideUserForm() {
+            document.getElementById('userFormContainer').classList.add('hidden');
+            document.getElementById('userForm').reset();
+        }
+
+        function showAgenceForm() {
+            document.getElementById('agenceFormContainer').classList.remove('hidden');
+        }
+
+        function hideAgenceForm() {
+            document.getElementById('agenceFormContainer').classList.add('hidden');
+            document.getElementById('agenceForm').reset();
+        }
+
+        function initCharts() {
+            const ctxInscriptions = document.getElementById('inscriptionsChart').getContext('2d');
+            inscriptionsChart = new Chart(ctxInscriptions, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+                    datasets: [{
+                        label: 'Inscriptions',
+                        data: [12, 19, 3, 5, 2, 3, 7],
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: true,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
                 }
-            }
-        }
-    });
+            });
 
-    const ctxRoles = document.getElementById('rolesChart').getContext('2d');
-    rolesChart = new Chart(ctxRoles, {
-        type: 'pie',
-        data: {
-            labels: ['Utilisateurs', 'Administrateurs'],
-            datasets: [{
-                data: [300, 50],
-                backgroundColor: ['#36A2EB', '#FF6384'],
-                hoverOffset: 4
-            }]
-        },
-        options: {
-            responsive: true,
-        }
-    });
-}
-
-// Fonction pour charger les données depuis le serveur
-let currentPage = 1;
-
-async function loadData(page = 1) {
-    const tableBody = document.getElementById('agencesTable');
-    const totalSpan = document.getElementById('agencesTotal');
-    //const startSpan = document.getElementById('agencesStart');
-   // const endSpan = document.getElementById('agencesEnd');
-    const prevBtn = document.getElementById('prevAgences');
-    const nextBtn = document.getElementById('nextAgences');
-
-    tableBody.innerHTML = document.getElementById('skeletonRowAgencies').outerHTML;
-
-    try {
-        const response = await fetch(`/admin/agences/list?page=${page}`, {
-            method: 'GET',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const responseText = await response.text(); // Obtenez la réponse en tant que texte brut
-
-        if (!responseText) {
-            throw new Error("Empty response from server");
-        }
-
-        const data = JSON.parse(responseText); // Analysez le texte en JSON
-
-        if (!data.success) throw new Error("Erreur de récupération");
-
-        currentPage = page;
-        tableBody.innerHTML = '';
-
-        if (data.agences.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-gray-500">Aucune agence trouvée.</td></tr>`;
-        } else {
-            data.agences.forEach((agence) => {
-                const row = `
-                    <tr>
-                        <td class="px-6 py-4">${agence.numero}</td>
-                        <td class="px-6 py-4">${agence.nomAgence}</td>
-                        <td class="px-6 py-4">${agence.emailAgence}</td>
-                        <td class="px-6 py-4">${agence.adresse}</td>
-                        <td class="px-6 py-4">${agence.telephoneAgence}</td>
-                        <td class="px-6 py-4">${agence.fondateur}</td>
-                        <td class="px-6 py-4">
-                            <button class="text-blue-600 hover:underline">Voir</button>
-                            <button class="text-red-600 hover:underline ml-2" onclick="if(confirm('Êtes-vous sûr de vouloir supprimer cette agence ?')) { window.location.href='/admin/agences/delete/${agence.id}'; }">Supprimer</button>
-                            <button class="text-yellow-600 hover:underline ml-2" onclick="window.location.href='/admin/agences/edit/${agence.id}'">Modifier</button>
-                        </td>
-                    </tr>
-                `;
-                tableBody.insertAdjacentHTML('beforeend', row);
+            const ctxRoles = document.getElementById('rolesChart').getContext('2d');
+            rolesChart = new Chart(ctxRoles, {
+                type: 'pie',
+                data: {
+                    labels: ['Utilisateurs', 'Administrateurs'],
+                    datasets: [{
+                        data: [300, 50],
+                        backgroundColor: ['#36A2EB', '#FF6384'],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                }
             });
         }
+        function updateCharts() {
+    fetch('/admin/stats')
+        .then(response => response.json())
+        .then(data => {
+            // Met à jour le graphique des inscriptions
+            inscriptionsChart.data.labels = data.months;
+            inscriptionsChart.data.datasets[0].data = data.inscriptions;
+            inscriptionsChart.update();
 
-        totalSpan.textContent = data.total;
-        //startSpan.textContent = data.start;
-        //endSpan.textContent = data.end;
-
-        prevBtn.disabled = data.start <= 1;
-        nextBtn.disabled = data.end >= data.total;
-
-        prevBtn.classList.toggle('cursor-not-allowed', prevBtn.disabled);
-        nextBtn.classList.toggle('cursor-not-allowed', nextBtn.disabled);
-
-    } catch (err) {
-        console.error("Erreur:", err);
-        tableBody.innerHTML = `<tr><td colspan="5" class="text-center p-4 text-red-600">Erreur de chargement: ${err.message}</td></tr>`;
-    }
+            // Met à jour le graphique des rôles
+            rolesChart.data.labels = Object.keys(data.roles);
+            rolesChart.data.datasets[0].data = Object.values(data.roles);
+            rolesChart.update();
+        });
 }
 
-
-// Pagination
-document.getElementById('prevAgences').addEventListener('click', () => {
-    if (currentPage > 1) loadData(currentPage - 1);
-});
-
-document.getElementById('nextAgences').addEventListener('click', () => {
-    loadData(currentPage + 1);
-});
-
-
-// Fonction pour mettre à jour la pagination
-function updatePagination(type, start, end, total) {
-    document.getElementById(type + 'Total').textContent = total;
-    document.getElementById(type + 'Start').textContent = start;
-    document.getElementById(type + 'End').textContent = end;
-}
-
-// Initialisation au chargement de la page
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialiser les graphiques
     initCharts();
-
-    // Charger les données
-    loadData();
-
-    // Ajouter les gestionnaires d'événements pour les formulaires
-    document.getElementById('userForm').addEventListener('submit', handleUserFormSubmit);
-    document.getElementById('agenceForm').addEventListener('submit', handleAgenceFormSubmit);
-
-    // Ajouter le gestionnaire pour le filtre des utilisateurs validés
-    document.getElementById('filterValidated').addEventListener('change', function() {
-        loadData(); // Recharger les données avec le nouveau filtre
-    });
+    updateCharts();
 });
+        // Fermer le dropdown si on clique ailleurs
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('adminDropdown');
+            const button = event.target.closest('[onclick="toggleDropdown()"]');
+            
+            if (!button && !dropdown.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
 
+        // Initialisation générale
+        document.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+        });
+   
+        
     </script>
+    <script src="{{ asset('js/admin/users.js') }}"></script>
+    <script src="{{ asset('js/admin/agencies.js') }}"></script>
 </body>
 </html>

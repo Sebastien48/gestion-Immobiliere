@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription Agent - Gestion Immobilière</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .blue-gradient {
@@ -27,13 +27,16 @@
                     </a>
                 </div>
                 <div class="flex items-center">
-                    <a href="login.html" class="text-blue-600 hover:text-blue-700 font-medium">
+                    <a href="{{route('login')}}" class="text-blue-600 hover:text-blue-700 font-medium">
                         Déjà inscrit ? <span class="font-bold">Se connecter</span>
                     </a>
                 </div>
             </div>
         </div>
     </nav>
+     <!-- Zone pour afficher les messages -->
+     <div id="formMessage" class="mb-4"></div> <!-- Zone pour afficher les messages -->
+     
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -83,7 +86,31 @@
                         <p class="text-gray-600">Inscrivez-vous pour gérer vos propriétés et locataires</p>
                     </div>
 
-                    <form class="space-y-4" action="/inscription" method="POST">
+                    <!-- Affichage des erreurs générales -->
+                    @if ($errors->any())
+                        <div class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-exclamation-triangle text-red-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <h3 class="text-sm font-medium text-red-800">
+                                        Erreurs de validation
+                                    </h3>
+                                    <div class="mt-2 text-sm text-red-700">
+                                        <ul class="list-disc pl-5 space-y-1">
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @endif
+
+                    <form class="space-y-4" action="{{route('register.post')}}" method="POST">
+                        @csrf
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label for="nom" class="block text-sm font-medium text-gray-700 mb-1">Nom</label>
@@ -92,8 +119,11 @@
                                         <i class="fas fa-user text-gray-400"></i>
                                     </div>
                                     <input type="text" id="nom" name="nom" required 
-                                        class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="Votre nom">
+                                        class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('nom') border-red-500 @enderror"
+                                        placeholder="Votre nom" value="{{ old('nom') }}">
+                                    @error('nom')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                             <div>
@@ -103,8 +133,11 @@
                                         <i class="fas fa-user text-gray-400"></i>
                                     </div>
                                     <input type="text" id="prenom" name="prenom" required 
-                                        class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        placeholder="Votre prénom">
+                                        class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('prenom') border-red-500 @enderror"
+                                        placeholder="Votre prénom" value="{{ old('prenom') }}">
+                                    @error('prenom')
+                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -116,8 +149,11 @@
                                     <i class="fas fa-envelope text-gray-400"></i>
                                 </div>
                                 <input type="email" id="email" name="email" required 
-                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="email@agence.com">
+                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('email') border-red-500 @enderror"
+                                    placeholder="email@agence.com" value="{{ old('email') }}">
+                                @error('email')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
@@ -128,20 +164,36 @@
                                     <i class="fas fa-phone text-gray-400"></i>
                                 </div>
                                 <input type="tel" id="telephone" name="telephone" required 
-                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="Votre numéro de téléphone">
+                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('telephone') border-red-500 @enderror"
+                                    placeholder="Votre numéro de téléphone" value="{{ old('telephone') }}">
+                                @error('telephone')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
                         <div>
-                            <label for="agence" class="block text-sm font-medium text-gray-700 mb-1">Agence</label>
+                            <label for="nomAgence" class="block text-sm font-medium text-gray-700 mb-1">Agence</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i class="fas fa-building text-gray-400"></i>
                                 </div>
-                                <input type="text" id="agence" name="agence" required
-                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="Nom de votre agence">
+                                <div class="relative">
+                                    <input type="text" id="searchAgence" 
+                                        class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('nomAgence') border-red-500 @enderror"
+                                        placeholder="Rechercher une agence..." autocomplete="off">
+                                    <div id="agenceDropdown" class="hidden absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                        @foreach($agences as $agence)
+                                            <div class="agence-option px-4 py-2 hover:bg-gray-100 cursor-pointer" data-value="{{ $agence->nomAgence }}">
+                                                {{ $agence->nomAgence }}
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <input type="hidden" id="nomAgence" name="nomAgence" value="{{ old('nomAgence') }}" required>
+                                @error('nomAgence')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
                             </div>
                         </div>
 
@@ -152,13 +204,16 @@
                                     <i class="fas fa-lock text-gray-400"></i>
                                 </div>
                                 <input type="password" id="password" name="password" required 
-                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('password') border-red-500 @enderror"
                                     placeholder="Créez un mot de passe">
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
                                     <i class="fas fa-eye text-gray-400 cursor-pointer toggle-password"></i>
                                 </div>
                             </div>
-                            <p class="mt-1 text-xs text-gray-500">Minimum 8 caractères avec des chiffres et lettres</p>
+                            <p class="mt-1 text-xs text-gray-500">Minimum 4 à 8 caractères avec des chiffres et lettres</p>
+                            @error('password')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div>
@@ -167,13 +222,16 @@
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i class="fas fa-lock text-gray-400"></i>
                                 </div>
-                                <input type="password" id="confirmPassword" name="confirmPassword" required 
-                                    class="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                <input type="password" id="confirmPassword" name="password_confirmation" required 
+                                    class="pl-10 w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('password_confirmation') border-red-500 @else border-gray-300 @enderror"
                                     placeholder="Confirmez votre mot de passe">
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center">
                                     <i class="fas fa-eye text-gray-400 cursor-pointer toggle-password"></i>
                                 </div>
                             </div>
+                            @error('password_confirmation')
+                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
                         </div>
 
                         <div class="flex items-start">
@@ -197,7 +255,7 @@
 
                         <div class="text-center text-sm text-gray-600">
                             Déjà inscrit ? 
-                            <a href="login.html" class="font-medium text-blue-600 hover:text-blue-500">
+                            <a href="{{route('login')}}" class="font-medium text-blue-600 hover:text-blue-500">
                                 Connectez-vous ici
                             </a>
                         </div>
@@ -231,6 +289,103 @@
                 input.setAttribute('type', type);
                 this.classList.toggle('fa-eye-slash');
                 this.classList.toggle('fa-eye');
+            });
+        });
+
+        // Contrôler la validation du mot de passe 
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        
+        function validatePassword() {
+            if (password.value === confirmPassword.value) {
+                confirmPassword.setCustomValidity('');
+            } else {
+                confirmPassword.setCustomValidity('Les mots de passe ne correspondent pas');
+            }
+        }
+        
+        password.addEventListener('input', validatePassword);
+        confirmPassword.addEventListener('input', validatePassword);
+        // Composant de recherche d'agence
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchAgence');
+            const dropdown = document.getElementById('agenceDropdown');
+            const hiddenInput = document.getElementById('nomAgence');
+            const options = document.querySelectorAll('.agence-option');
+
+            // Afficher le dropdown au focus
+            searchInput.addEventListener('focus', function() {
+                dropdown.classList.remove('hidden');
+            });
+
+            // Recherche en temps réel
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                let hasVisibleOptions = false;
+
+                options.forEach(option => {
+                    const text = option.textContent.toLowerCase();
+                    if (text.includes(searchTerm)) {
+                        option.style.display = 'block';
+                        hasVisibleOptions = true;
+                    } else {
+                        option.style.display = 'none';
+                    }
+                });
+
+                dropdown.classList.toggle('hidden', !hasVisibleOptions);
+            });
+
+            // Sélection d'une option
+            options.forEach(option => {
+                option.addEventListener('click', function() {
+                    const value = this.getAttribute('data-value');
+                    searchInput.value = this.textContent;
+                    hiddenInput.value = value;
+                    dropdown.classList.add('hidden');
+                });
+            });
+
+            // Fermer le dropdown en cliquant ailleurs
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.classList.add('hidden');
+                }
+            });
+
+            // Navigation au clavier
+            searchInput.addEventListener('keydown', function(e) {
+                const visibleOptions = Array.from(options).filter(option => 
+                    option.style.display !== 'none'
+                );
+                const currentIndex = visibleOptions.findIndex(option => 
+                    option.classList.contains('bg-blue-100')
+                );
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    const nextIndex = (currentIndex + 1) % visibleOptions.length;
+                    visibleOptions.forEach(option => option.classList.remove('bg-blue-100'));
+                    visibleOptions[nextIndex].classList.add('bg-blue-100');
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    const prevIndex = currentIndex <= 0 ? visibleOptions.length - 1 : currentIndex - 1;
+                    visibleOptions.forEach(option => option.classList.remove('bg-blue-100'));
+                    visibleOptions[prevIndex].classList.add('bg-blue-100');
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const selectedOption = visibleOptions.find(option => 
+                        option.classList.contains('bg-blue-100')
+                    );
+                    if (selectedOption) {
+                        const value = selectedOption.getAttribute('data-value');
+                        searchInput.value = selectedOption.textContent;
+                        hiddenInput.value = value;
+                        dropdown.classList.add('hidden');
+                    }
+                } else if (e.key === 'Escape') {
+                    dropdown.classList.add('hidden');
+                }
             });
         });
     </script>

@@ -1,9 +1,24 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 
+
+use App\Http\Controllers\Agence\DashboardController;
+use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\Auth\resetController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\UserController;
+
+use App\Http\Controllers\AdminController;
+
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Admin\AgenceController;
+use App\Http\Controllers\IndexController;
+use App\Http\Controllers\ErreurController;
+
+/*
 Route::get('/', function () {
-    return view('index');
+    return view('welcome');
 });
 
 Route::get('/dashboard', function () {
