@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="mt-4">
-                <a href="/batiments" class="text-blue-600 hover:text-blue-800 text-sm flex items-center">
+                <a href="{{route('batiments.index')}}" class="text-blue-600 hover:text-blue-800 text-sm flex items-center">
                     Voir la liste complète <i class="fas fa-arrow-right ml-2"></i>
                 </a>
             </div>

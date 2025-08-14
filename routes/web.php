@@ -11,12 +11,14 @@ use App\Http\Controllers\Agence\DashboardController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AgenceController;
+use App\Http\Controllers\Agence\BatimentsController;
+
 
 // Accueil
 Route::get('/', [IndexController::class, 'index'])->name('index');
 
 // Fallback pour 404 personnalisé
-Route::fallback([ErreurController::class, 'show404'])->name('error.404');
+//Route::fallback([ErreurController::class, 'show404'])->name('error.404');
 
 // Authentification & inscription
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
@@ -38,36 +40,22 @@ Route::post('/reset-password', [ResetController::class, 'reset'])->middleware('g
 // Utilisateur agence - Dashboard (auth obligatoire)
 Route::prefix('agence-immbolière')->middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('home');
-});
+    Route::get('/batiments',[BatimentsController::class, 'index'])->name('batiments.index');
+    Route::post('/batiments/store', [BatimentsController::class, 'store'])->name('batiments.post');
+    
+   // Route::get('/batiments/create', [BatimentsController::class, 'create'])->name('batiments.create');
+    Route::get('/batiments/{code_batiment}', [BatimentsController::class, 'show'])->name('batiments.show');
 
-// Admin routes (auth & admin middlewares)
-Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-    Route::get('/agences/list', [AgenceController::class, 'list'])->name('admin.agences.index');
-    Route::get('/users/create', [UserController::class, 'create'])->name('admin.users.create');
-    Route::post('/users/store', [UserController::class, 'store'])->name('admin.users.store');
-    Route::get('/agences/create', [AgenceController::class, 'create'])->name('admin.agences.create');
-    Route::post('/agences', [AgenceController::class, 'store'])->name('admin.agences.store');
-    Route::get('/users/validated', [UserController::class, 'index'])->name('admin.users.index');
-    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
-    Route::get('/agences/{id}/edit', [AgenceController::class, 'edit'])->name('admin.agences.edit');
-    Route::get('/stats', [AgenceController::class, 'stats'])->name('admin.stats');
-});
-
-// Dashboard utilisateur générique (si besoin)
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->name('dashboard');
-
-// Gestion des bâtiments
-Route::get('/batiments', function () {
-    return view('batiments.index');
-})->name('batiments.index');
-Route::get('/batiments/{id}', function ($id) {
+    /*
+    Route::get('/batiments/{id}/edit', [BatimentsController::class, 'edit'])->name('batiments.edit');
+    Route::put('/batiments/{id}', [BatimentsController::class, 'update'])->name('batiments.update');
+    Route::delete('/batiments/{id}', [BatimentsController::class, 'destroy'])->name('batiments.destroy');
+    
+ 
+    Route::get('/batiments/{id}', function ($id) {
     return view('batiments.show', ['id' => $id]);
 })->name('batiments.show');
 
-// Appartements
 Route::get('/appartements', function () {
     return view('appartements.index');
 })->name('appartements.index');
@@ -93,3 +81,20 @@ Route::get('/locataires', function () {
 Route::get('/locataires/{id}', function ($id) {
     return view('locataires.show', ['id' => $id]);
 })->name('locataires.show');
+*/
+});
+
+// Admin routes (auth & admin middlewares)
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/agences/list', [AgenceController::class, 'list'])->name('admin.agences.index');
+    Route::get('/users/create', [UserController::class, 'create'])->name('admin.users.create');
+    Route::post('/users/store', [UserController::class, 'store'])->name('admin.users.store');
+    Route::get('/agences/create', [AgenceController::class, 'create'])->name('admin.agences.create');
+    Route::post('/agences', [AgenceController::class, 'store'])->name('admin.agences.store');
+    Route::get('/users/validated', [UserController::class, 'index'])->name('admin.users.index');
+    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
+    Route::get('/agences/{id}/edit', [AgenceController::class, 'edit'])->name('admin.agences.edit');
+    Route::get('/stats', [AgenceController::class, 'stats'])->name('admin.stats');
+});
+

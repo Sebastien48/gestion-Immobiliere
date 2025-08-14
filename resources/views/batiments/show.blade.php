@@ -8,11 +8,12 @@
     <div>
         <h2 class="text-2xl font-bold text-gray-800 flex items-center">
             <i class="fas fa-building text-blue-600 mr-3"></i>
-            <span id="buildingName">Résidence Yasmina</span>
+            <!-- lien  à appuyer--> 
+            <span id="buildingName">{{$batiment->nom}}</span>
         </h2>
         <p class="text-gray-600 mt-1">
             <i class="fas fa-map-marker-alt text-gray-400 mr-1"></i>
-            <span id="buildingAddress">Avenue 15 rue princesse, 00225 Abiadjan</span>
+            <span id="buildingAddress">{{$batiment->adresse}}</span>
         </p>
     </div>
     <div class="flex space-x-3">
@@ -20,7 +21,7 @@
             class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
             <i class="fas fa-edit mr-2"></i> Modifier
         </button>
-        <button onclick="window.location.href='/batiments'" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg flex items-center">
+        <button onclick=window.location.href="{{route('batiments.index')}}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg flex items-center">
             <i class="fas fa-arrow-left mr-2"></i> Retour
         </button>
     </div>
@@ -37,22 +38,22 @@
             <ul class="space-y-3">
                 <li class="flex justify-between">
                     <span class="text-gray-600">Propriétaire:</span>
-                    <span class="font-medium" id="buildingOwner">SCI Yasmina</span>
+                    <span class="font-medium" id="buildingOwner">{{$batiment->proprietaire}}</span>
                 </li>
                 <li class="flex justify-between">
                     <span class="text-gray-600">Appartements:</span>
                     <span>
-                        <span class="font-medium" id="buildingApartments">24</span>
-                        <span class="text-sm text-gray-500 ml-1">(18 occupés)</span>
+                        <span class="font-medium" id="buildingApartments">{{$batiment->nombre_Appartements}}</span>
+                        <span class="text-sm text-gray-500 ml-1">(18 occupés(l'opération après)))</span>
                     </span>
                 </li>
                 <li class="flex justify-between">
                     <span class="text-gray-600">Date création:</span>
-                    <span class="font-medium">15/06/2018</span>
+                    <span class="font-medium">{{$batiment->created_at}}</span>
                 </li>
                 <li class="flex justify-between">
                     <span class="text-gray-600">Statut:</span>
-                    <span id="buildingStatus" class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Actif</span>
+                    <span id="buildingStatus" class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">{{$batiment->statut}}</span>
                 </li>
             </ul>
         </div>
@@ -123,9 +124,7 @@
     </div>
     <div class="p-6">
         <p id="buildingDescription" class="text-gray-600">
-            Résidence haut de gamme située dans le 16ème arrondissement de Paris. 
-            Bâtiment de 5 étages avec ascenseur, comprenant 24 appartements allant 
-            du studio au 3 pièces. Espace vert commun et local à vélos sécurisé.
+            {{$batiment->description}}
         </p>
     </div>
 </div>
@@ -138,59 +137,6 @@
     </button>
 </div>
 
-<!-- Modal Modification Bâtiment -->
-<div id="editBuildingModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl">
-        <div class="flex justify-between items-center border-b px-6 py-4">
-            <h3 class="text-lg font-bold text-gray-800">
-                <i class="fas fa-edit text-blue-500 mr-2"></i> Modifier le bâtiment
-            </h3>
-            <button onclick="closeModal('editBuildingModal')" class="text-gray-400 hover:text-gray-500">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <form id="editBuildingForm" class="p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nom*</label>
-                    <input type="text" name="name" value="Résidence Yasmina" required 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Adresse*</label>
-                    <input type="text" name="address" value="Avenue 15 rue princesse, 00225 Abiadjan" required 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Propriétaire*</label>
-                    <input type="text" name="owner" value="SCI Yasmina" required 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Statut*</label>
-                    <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                        <option value="active" selected>Actif</option>
-                        <option value="inactive">Inactif</option>
-                    </select>
-                </div>
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                    <textarea name="description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md">Résidence haut de gamme située dans le 16ème arrondissement de Paris. Bâtiment de 5 étages avec ascenseur, comprenant 24 appartements allant du studio au 3 pièces. Espace vert commun et local à vélos sécurisé.</textarea>
-                </div>
-            </div>
-            <div class="flex justify-end space-x-3 mt-6">
-                <button type="button" onclick="closeModal('editBuildingModal')" 
-                        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                    Annuler
-                </button>
-                <button type="submit" 
-                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center">
-                    <i class="fas fa-save mr-2"></i> Enregistrer
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
 
 <script>
     // Fonctions pour gérer les modals

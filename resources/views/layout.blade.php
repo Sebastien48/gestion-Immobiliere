@@ -108,7 +108,7 @@
             </a>
             
             <!-- Bâtiments -->
-            <a href="{{ url('/batiments') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
+            <a href="{{route('batiments.index')}} " class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
                 <i class="fas fa-building w-5"></i>
                 <span>Bâtiments</span>
             </a>

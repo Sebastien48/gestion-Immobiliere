@@ -41,6 +41,13 @@ class User extends Authenticatable
         return $this->belongsTo(Agence::class, 'numero', 'numero');
     }
 
+    // Relation pour tous ses bâtiments
+    public function batiments()
+    {
+        return $this->hasMany(Batiments::class, 'user_id', 'code');
+    }
+
+
     // Générer un code unique pour l'utilisateur lors de la création
     protected static function boot()
     {
@@ -48,7 +55,7 @@ class User extends Authenticatable
 
         static::creating(function ($user) {
             if (empty($user->code)) {
-                $user->code = Str::random(5); // Génère un UUID comme code
+                $user->code = (string) Str::uuid();// Génère un UUID comme code
             }
         });
     }

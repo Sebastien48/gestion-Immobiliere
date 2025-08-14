@@ -5,8 +5,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Erreur 404</title>
 	<style>
-		body { font-family: Arial, sans-serif; background: #f8d7da; margin: 0; padding: 0; }
-		.container { max-width: 500px; margin: 100px auto; background: #fff; padding: 32px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; }
+		body { font-family: Arial, sans-serif; background: #ad0816; margin: 0; padding: 0; }
+		.container { max-width: 500px; margin: 100px auto; background: #d4d4e4; padding: 32px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; }
 		h1 { color: #721c24; }
 		p { color: #721c24; }
 		.btn {

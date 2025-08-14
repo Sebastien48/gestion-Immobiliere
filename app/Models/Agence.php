@@ -9,9 +9,13 @@ class Agence extends Model
 {
     // Model logic goes here
      use HasFactory;
+          // Assuming 'numero' is the primary key
      protected$primary ='numero'; 
-     // Assuming 'numero' is the primary key
+     protected$table='agences';
+
+
       public $incrementing = false;
+
 
       protected $keyType = 'string';
 
@@ -24,6 +28,11 @@ class Agence extends Model
     protected $hidden = [
         'created_at', 'updated_at',
     ];
+    // Relation avec les bâtiments respectant de plusieurs à plusieurs
+    public function batiments()
+    {
+        return $this->hasMany(Batiments::class, 'code_agence', 'numero');
+    }
 
     // Relation avec les utilisateurs
     public function users()
