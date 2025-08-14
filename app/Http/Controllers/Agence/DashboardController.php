@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Agence;
 
 use App\Http\Controllers\Controller;
 use App\Models\Agence;
+use App\Models\Batiments;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Batiment; // Import du modèle Batiment
 // normalement est déja gérer le providersserice
 class DashboardController extends Controller
 {
@@ -30,9 +32,13 @@ class DashboardController extends Controller
         $initiales = strtoupper(
             substr($user->nom ?? '', 0, 1). substr($user->prenom ?? '', 0, 1)
         );
+        
+       // 4. Compter le nombre de bâtiments par agence 
+        $buildingsCount = Batiments::where('code_agence', $agence ? $agence->numero : null)->count();
+ 
    
         
-        return view('dashboard', compact('user', 'agence', 'nomAgence', 'initiales', 'logo1'));
+        return view('dashboard', compact('user', 'agence', 'nomAgence', 'initiales', 'logo1', 'buildingsCount'));
     }
    
     

@@ -19,10 +19,26 @@ class BatimentsController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-
     {
-       $batiments = Batiments::paginate(10);
-        return view('Batiments.index',compact('batiments') );
+        $user = Auth::user(); // Utilisateur actuellement connecté
+
+        // Vérification que l'utilisateur est connecté
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Veuillez vous connecter');
+        }
+
+        // Récupérer l'agence de l'utilisateur
+        $agence = $user->agence;
+
+        // Pagination filtrée par agence
+        $batiments = Batiments::where('code_agence', $agence ? $agence->numero : null)->paginate(10);
+
+        //commeent implémanter la recherche 
+
+        //récuperer le numéro de l'agence à mettre par defaut dans  le placeholder de l'agence dans le formulaire de btiments
+        $numeroAgence = $agence ? $agence->numero : '';
+
+        return view('batiments.index', compact('batiments', 'agence', 'numeroAgence'));
     }
 
     /**
@@ -102,16 +118,41 @@ class BatimentsController extends Controller
      */
     public function edit(string $id)
     {
-        //
+       
+
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
+   public function update(Request $request, string $code_batiments)
+{
+    // 1. Trouver le bâtiment à modifier
+    $batiment = Batiments::where('code_batiment', $code_batiments)->first();
+    if (!$batiment) {
+        return response()->json(['error' => 'Bâtiment non trouvé'], 404);
+        // Ou => return redirect()->route('batiments.index')->with('error', 'Bâtiment non trouvé.');
     }
+
+    // 2. Valider les données
+    $validatedData = $request->validate([
+        'nom'                   => 'required|string|max:255',
+        'proprietaire'          => 'required|string|max:255',
+        'adresse'               => 'required|string|max:255',
+        'nombre_Appartements'   => 'required|integer|min:1',
+        'status'                => 'nullable|string|max:50',
+        'description'           => 'nullable|string|max:1000',
+        'code_agence'           => 'required|string|exists:agences,numero',
+    ]);
+
+    // 3. Mettre à jour
+    $batiment->update($validatedData);
+
+    // 4. Retourner une réponse
+    return redirect()
+        ->route('batiments.index')
+        ->with('success', 'Bâtiment modifié avec succès.');
+}
 
     /**
      * Remove the specified resource from storage.

@@ -165,7 +165,7 @@
                 </div>
                 <div>
                     <label for="buildingAgency" class="block text-sm font-medium text-gray-700 mb-1">Numéro d'agence*</label>
-                    <input type="text" id="buildingAgency" name="code_agence" required
+                    <input type="text" id="buildingAgency" name="code_agence" required placeholder="{{$numeroAgence}}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
                 </div>
                 <div>
@@ -215,54 +215,55 @@
             </button>
         </div>
 
-        <form id="editBuildingForm" method="PUT" action="#" class="p-6">
-            @csrf
-            <input type="hidden" id="editBuildingId" name="id">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label for="editBuildingName" class="block text-sm font-medium text-gray-700 mb-1">Nom du bâtiment*</label>
-                    <input type="text" id="editBuildingName" name="nom" required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>
-                <div>
-                    <label for="editBuildingOwner" class="block text-sm font-medium text-gray-700 mb-1">Propriétaire*</label>
-                    <input type="text" id="editBuildingOwner" name="proprietaire" required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>
-                <div class="md:col-span-2">
-                    <label for="editBuildingAddress" class="block text-sm font-medium text-gray-700 mb-1">Adresse complète*</label>
-                    <input type="text" id="editBuildingAddress" name="adresse" required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>
-                <div>
-                    <label for="editBuildingApartments" class="block text-sm font-medium text-gray-700 mb-1">Nombre d'appartements*</label>
-                    <input type="number" id="editBuildingApartments" name="nombre_Appartements" min="1" required
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>
-                <div>
-                    <label for="editBuildingStatus" class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
-                    <select id="editBuildingStatus" name="status"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                        <option value="actif">Actif</option>
-                        <option value="inactif">Inactif</option>
-                    </select>
-                </div>
-                <div class="md:col-span-2">
-                    <label for="editBuildingDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                    <textarea id="editBuildingDescription" name="description" rows="3"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
-                </div>
-            </div>
-            <div class="flex justify-end space-x-3 mt-6">
-                <button type="button" onclick="closeModal('editBuildingModal')"
-                    class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                    Annuler
-                </button>
-                <button type="submit"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center">
-                    <i class="fas fa-save mr-2"></i> Enregistrer
-                </button>
-            </div>
+                <form id="editBuildingForm" method="POST" action="#" class="p-6">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" id="editBuildingId" name="id" value="">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="editBuildingName" class="block text-sm font-medium text-gray-700 mb-1">Nom du bâtiment*</label>
+                            <input type="text" id="editBuildingName" name="nom" required value=""
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label for="editBuildingOwner" class="block text-sm font-medium text-gray-700 mb-1">Propriétaire*</label>
+                            <input type="text" id="editBuildingOwner" name="proprietaire" required value=""
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="editBuildingAddress" class="block text-sm font-medium text-gray-700 mb-1">Adresse complète*</label>
+                            <input type="text" id="editBuildingAddress" name="adresse" required value=""
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label for="editBuildingApartments" class="block text-sm font-medium text-gray-700 mb-1">Nombre d'appartements*</label>
+                            <input type="number" id="editBuildingApartments" name="nombre_Appartements" min="1" required value=""
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label for="editBuildingStatus" class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
+                            <select id="editBuildingStatus" name="status"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                <option value="actif">Actif</option>
+                                <option value="inactif">Inactif</option>
+                            </select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label for="editBuildingDescription" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                            <textarea id="editBuildingDescription" name="description" rows="3"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
+                        </div>
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button type="button" onclick="closeModal('editBuildingModal')"
+                            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                            Annuler
+                        </button>
+                        <button type="submit"
+                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center">
+                            <i class="fas fa-save mr-2"></i> Enregistrer
+                        </button>
+                    </div>
         </form>
     </div>
 </div>

@@ -18,7 +18,7 @@
             <div class="flex justify-between items-start">
                 <div>
                     <p class="text-gray-500 text-sm font-medium">Bâtiments gérés</p>
-                    <p class="text-3xl font-bold mt-2" id="buildingsCount">8</p>
+                    <p class="text-3xl font-bold mt-2" id="buildingsCount">{{$buildingsCount}}</p>
                 </div>
                 <div class="bg-blue-100 text-blue-600 p-3 rounded-full">
                     <i class="fas fa-building text-xl"></i>
@@ -227,7 +227,7 @@
 <script>
     // Données simulées pour le tableau de bord
     const dashboardData = {
-        buildings: 8,
+        buildings: {{ $buildingsCount ?? 0 }},
         apartments: {
             occupied: 24,
             available: 12
@@ -252,7 +252,7 @@
     // Initialisation du tableau de bord
     document.addEventListener('DOMContentLoaded', function() {
         // Mise à jour des cartes statistiques
-        document.getElementById('buildingsCount').textContent = dashboardData.buildings;
+        // document.getElementById('buildingsCount').textContent = dashboardData.buildings;
         document.getElementById('apartmentsOccupied').textContent = dashboardData.apartments.occupied;
         document.getElementById('apartmentsAvailable').textContent = dashboardData.apartments.available;
         document.getElementById('pendingPayments').textContent = dashboardData.pendingPayments;
