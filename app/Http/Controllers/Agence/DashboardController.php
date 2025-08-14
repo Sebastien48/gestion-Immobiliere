@@ -34,11 +34,11 @@ class DashboardController extends Controller
         );
         
        // 4. Compter le nombre de bâtiments par agence 
-        $buildingsCount = Batiments::where('code_agence', $agence ? $agence->numero : null)->count();
+       // $buildingsCount = Batiments::where('code_agence', $agence ? $agence->numero : null)->count();
  
-   
+          $buildingsCount = Batiments::where('code_agence', $agence->numero)->count();
         
-        return view('dashboard', compact('user', 'agence', 'nomAgence', 'initiales', 'logo1', 'buildingsCount'));
+        return view('dashboard', compact('user', 'agence', 'nomAgence', 'initiales', 'logo1','buildingsCount'));
     }
    
     

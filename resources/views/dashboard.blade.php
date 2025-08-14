@@ -55,7 +55,7 @@
                 </div>
             </div>
             <div class="mt-4">
-                <a href="/appartements" class="text-green-600 hover:text-green-800 text-sm flex items-center">
+                <a href="{{route('appartements.index')}}" class="text-green-600 hover:text-green-800 text-sm flex items-center">
                     Gérer les appartements <i class="fas fa-arrow-right ml-2"></i>
                 </a>
             </div>

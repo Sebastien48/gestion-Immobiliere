@@ -4,57 +4,44 @@ namespace App\Http\Controllers\Agence;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Batiments; 
-use Illuminate\Support\Str;
+use App\Models\Batiment;
+use App\Models\Appartement;
 use App\Models\Agence;
-use App\Models\User;
-use Illuminate\Support\Facades\Log;
-
+use App\Models\Appartements;
+use App\Models\Batiments;
 use Illuminate\Support\Facades\Auth;
-// Assurez-vous d'importer le modèle Batiment si nécessaire
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class BatimentsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Liste paginée des bâtiments pour l'agence courante
     public function index()
     {
-        $user = Auth::user(); // Utilisateur actuellement connecté
-
-        // Vérification que l'utilisateur est connecté
-        if (!$user) {
-            return redirect()->route('login')->with('error', 'Veuillez vous connecter');
-        }
-
-        // Récupérer l'agence de l'utilisateur
+        $user = Auth::user();
         $agence = $user->agence;
-
-        // Pagination filtrée par agence
-        $batiments = Batiments::where('code_agence', $agence ? $agence->numero : null)->paginate(10);
-
-        //commeent implémanter la recherche 
-
-        //récuperer le numéro de l'agence à mettre par defaut dans  le placeholder de l'agence dans le formulaire de btiments
         $numeroAgence = $agence ? $agence->numero : '';
+        // Bâtiments de l'agence paginés
+        $batiments = Batiments::where('code_agence', $numeroAgence)->paginate(10);
 
         return view('batiments.index', compact('batiments', 'agence', 'numeroAgence'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-   
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    /**
-     * Store a newly created resource in storage.
-     */
-   public function store(Request $request)
+    // Affiche les détails d'un bâtiment + la liste des appartements pour ce bâtiment
+    public function show($code_batiment)
     {
-        // Validation - code_agence est maintenant requis
+        $user = Auth::user();
+        $agence = $user->agence;
+        $numeroAgence = $agence ? $agence->numero : '';
+        $batiment = Batiments::where('code_batiment', $code_batiment)->firstOrFail();
+        $appartements = Appartements::where('code_batiment', $batiment->code_batiment)->get();
+
+        return view('batiments.show', compact('batiment', 'appartements', 'agence', 'numeroAgence'));
+    }
+
+    // Crée un bâtiment pour l'agence
+    public function store(Request $request)
+    {
         $validatedData = $request->validate([
             'nom'                   => 'required|string|max:255',
             'proprietaire'          => 'required|string|max:255',
@@ -97,66 +84,32 @@ class BatimentsController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $code_batiment)
-
+    // MAJ d'un bâtiment
+    public function update(Request $request, string $code_batiment)
     {
-        //affciher les détails du bâtiment
         $batiment = Batiments::where('code_batiment', $code_batiment)->first();
-
         if (!$batiment) {
-            return redirect()->route('batiments.index')->with('error', 'Bâtiment non trouvé.');
+            return response()->json(['error' => 'Bâtiment non trouvé'], 404);
         }
 
-        return view('batiments.show', compact('batiment'));
+        $validatedData = $request->validate([
+            'nom'                   => 'required|string|max:255',
+            'proprietaire'          => 'required|string|max:255',
+            'adresse'               => 'required|string|max:255',
+            'nombre_Appartements'   => 'required|integer|min:1',
+            'status'                => 'nullable|string|max:50',
+            'description'           => 'nullable|string|max:1000',
+            'code_agence'           => 'required|string|exists:agences,numero',
+        ]);
+
+        $batiment->update($validatedData);
+
+        return redirect()
+            ->route('batiments.index')
+            ->with('success', 'Bâtiment modifié avec succès.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-       
-
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-   public function update(Request $request, string $code_batiments)
-{
-    // 1. Trouver le bâtiment à modifier
-    $batiment = Batiments::where('code_batiment', $code_batiments)->first();
-    if (!$batiment) {
-        return response()->json(['error' => 'Bâtiment non trouvé'], 404);
-        // Ou => return redirect()->route('batiments.index')->with('error', 'Bâtiment non trouvé.');
-    }
-
-    // 2. Valider les données
-    $validatedData = $request->validate([
-        'nom'                   => 'required|string|max:255',
-        'proprietaire'          => 'required|string|max:255',
-        'adresse'               => 'required|string|max:255',
-        'nombre_Appartements'   => 'required|integer|min:1',
-        'status'                => 'nullable|string|max:50',
-        'description'           => 'nullable|string|max:1000',
-        'code_agence'           => 'required|string|exists:agences,numero',
-    ]);
-
-    // 3. Mettre à jour
-    $batiment->update($validatedData);
-
-    // 4. Retourner une réponse
-    return redirect()
-        ->route('batiments.index')
-        ->with('success', 'Bâtiment modifié avec succès.');
-}
-
-    /**
-     * Remove the specified resource from storage.
-     */
+    // Suppression d'un bâtiment (à compléter si besoin)
     public function destroy(string $id)
     {
         //

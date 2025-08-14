@@ -8,7 +8,7 @@
     <div>
         <h2 class="text-2xl font-bold text-gray-800 flex items-center">
             <i class="fas fa-building text-blue-600 mr-3"></i>
-            <!-- lien  à appuyer--> 
+           
             <span id="buildingName">{{$batiment->nom}}</span>
         </h2>
         <p class="text-gray-600 mt-1">
@@ -43,8 +43,9 @@
                 <li class="flex justify-between">
                     <span class="text-gray-600">Appartements:</span>
                     <span>
-                        <span class="font-medium" id="buildingApartments">{{$batiment->nombre_Appartements}}</span>
-                        <span class="text-sm text-gray-500 ml-1">(18 occupés(l'opération après)))</span>
+                        <span class="font-medium" id="buildingApartments">{{ $appartements->count() }}</span>
+                        <span class="text-sm text-gray-500 ml-1">{{ $appartements->where('statut', 'occupe')->count() }} occupés
+{{ $appartements->where('statut', 'libre')->count() }} libres</span>
                     </span>
                 </li>
                 <li class="flex justify-between">
@@ -131,7 +132,7 @@
 
 <!-- Bouton Voir les appartements -->
 <div class="text-center mb-8">
-    <button onclick="window.location.href='/appartements?batiment_id=1'" 
+    <button onclick="window.location.href='{{route('appartements.index')}}'"
             class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
         <i class="fas fa-home mr-2"></i> Voir les appartements de ce bâtiment
     </button>

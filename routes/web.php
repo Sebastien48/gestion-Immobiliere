@@ -11,6 +11,7 @@ use App\Http\Controllers\Agence\DashboardController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AgenceController;
+use App\Http\Controllers\Agence\AppartementsController;
 use App\Http\Controllers\Agence\BatimentsController;
 
 
@@ -46,7 +47,15 @@ Route::prefix('agence-immbolière')->middleware(['auth'])->group(function () {
    // Route::get('/batiments/create', [BatimentsController::class, 'create'])->name('batiments.create');
     Route::get('/batiments/{code_batiment}', [BatimentsController::class, 'show'])->name('batiments.show');
     Route::put('/batiments/update/{code_batiment}', [BatimentsController::class, 'update'])->name('batiments.update');
+   
+// route appartement 
+Route::get('/appartements', [AppartementsController::class,'index'])->name('appartements.index');
+Route::post('/appartement/store',[AppartementsController::class,'store'])->name('appartements.store');
+Route::get('/appartements/{code_appartement}',[AppartementsController::class,'show']) ->name('appartements.show');
+
+
     /*
+
     Route::get('/batiments/{id}/edit', [BatimentsController::class, 'edit'])->name('batiments.edit');
     Route::put('/batiments/{id}', [BatimentsController::class, 'update'])->name('batiments.update');
     Route::delete('/batiments/{id}', [BatimentsController::class, 'destroy'])->name('batiments.destroy');

@@ -114,7 +114,7 @@
             </a>
             
             <!-- Appartements -->
-            <a href="/appartements" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
+            <a href="{{route ('appartements.index')}}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
                 <i class="fas fa-home w-5"></i>
                 <span>Appartements</span>
             </a>
