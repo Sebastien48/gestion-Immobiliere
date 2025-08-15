@@ -175,55 +175,6 @@
     </div>
 </div>
 
-<!-- Section Activité récente -->
-<div class="bg-white rounded-lg shadow-md overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-        <h3 class="text-lg font-bold text-gray-800 flex items-center">
-            <i class="fas fa-history text-purple-600 mr-2"></i> Activité récente
-        </h3>
-    </div>
-    <div class="p-6">
-        <div class="space-y-4">
-            <div class="flex items-start">
-                <div class="flex-shrink-0 pt-1">
-                    <div class="bg-blue-100 text-blue-600 p-2 rounded-full">
-                        <i class="fas fa-file-contract"></i>
-                    </div>
-                </div>
-                <div class="ml-4 flex-1">
-                    <p class="text-sm font-medium text-gray-900">Nouveau contrat signé</p>
-                    <p class="text-sm text-gray-500">Marie Ange - Appartement B1-05</p>
-                    <p class="text-xs text-gray-400 mt-1">Aujourd'hui, 11:20</p>
-                </div>
-            </div>
-            <div class="flex items-start">
-                <div class="flex-shrink-0 pt-1">
-                    <div class="bg-green-100 text-green-600 p-2 rounded-full">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                </div>
-                <div class="ml-4 flex-1">
-                    <p class="text-sm font-medium text-gray-900">Paiement enregistré</p>
-                    <p class="text-sm text-gray-500">Jean Marc - 750 mille FCFA - Juillet 2023</p>
-                    <p class="text-xs text-gray-400 mt-1">Hier, 14:30</p>
-                </div>
-            </div>
-            <div class="flex items-start">
-                <div class="flex-shrink-0 pt-1">
-                    <div class="bg-purple-100 text-purple-600 p-2 rounded-full">
-                        <i class="fas fa-user-plus"></i>
-                    </div>
-                </div>
-                <div class="ml-4 flex-1">
-                    <p class="text-sm font-medium text-gray-900">Nouveau locataire</p>
-                    <p class="text-sm text-gray-500">Sophie Koffi ajoutée au système</p>
-                    <p class="text-xs text-gray-400 mt-1">Hier, 10:15</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <script>
     // Données simulées pour le tableau de bord
     const dashboardData = {
