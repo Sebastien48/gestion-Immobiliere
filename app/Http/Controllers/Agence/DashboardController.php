@@ -8,7 +8,8 @@ use App\Models\Batiments;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Batiment; // Import du modèle Batiment
+
+use App\Models\Appartements;  // Import du modèle Batiment
 // normalement est déja gérer le providersserice
 class DashboardController extends Controller
 {
@@ -38,6 +39,7 @@ class DashboardController extends Controller
  
           $buildingsCount = Batiments::where('code_agence', $agence->numero)->count();
         
+          // compter le nombre d'apprtement selon le status occup
         return view('dashboard', compact('user', 'agence', 'nomAgence', 'initiales', 'logo1','buildingsCount'));
     }
    

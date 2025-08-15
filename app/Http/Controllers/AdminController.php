@@ -22,7 +22,11 @@ class AdminController extends Controller
             $premiereLettrePrenom = substr($user->prenom, 0, 1);
             $initiales = strtoupper($premiereLettreNom . $premiereLettrePrenom);
         }
-        return view('admin.index',compact('user','initiales')); // Assuming you have an index view for the admin dashboard
+        
+        // Récupérer toutes les agences pour le dropdown
+        $agences = Agence::all();
+        
+        return view('admin.index',compact('user','initiales','agences')); // Assuming you have an index view for the admin dashboard
     }
    
 }

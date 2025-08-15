@@ -14,26 +14,32 @@ class UserController extends Controller
 {
     public function create()
     {
-        return view('admin.users.create'); // Assurez-vous d'avoir une vue pour créer un utilisateur
+        return view('admin.users.create');
     }
+
     public function index()
     {
-        $perPage = 10; // Nombre d'utilisateurs par page
-        $page = request()->input('page', 1); // Page actuelle, par défaut 1
+        $perPage = 10;
+        $page = request()->input('page', 1);
+        $filter = request()->input('filter', 'all');
         
-        // Récupérer les utilisateurs avec pagination et relation agence
         $query = User::with('agence')->orderBy('created_at', 'desc');
+        
+        if ($filter === 'active') {
+            $query->where('status', 'active');
+        } elseif ($filter === 'suspended') {
+            $query->where('status', 'suspended');
+        }
+        
         $total = $query->count();
         
         $users = $query->skip(($page - 1) * $perPage)
                      ->take($perPage)
                      ->get();
         
-        //calculer le nombre d'utilisateurs inscrit cette semaine
         $semaine = Carbon::now()->subDays(7);
         $userssemaine = User::where('created_at', '>=', $semaine)->count();
         
-        //calculer le nombre d'utilisateurs inscrit ce mois
         $mois = Carbon::now()->subMonth();
         $usersmois = User::where('created_at', '>=', $mois)->count();
         
@@ -52,46 +58,40 @@ class UserController extends Controller
         ]);
     }
 
-   public function store(Request $request)
-{
-    if ($request->expectsJson()) {
+    public function store(Request $request)
+    {
         $validated = $request->validate([
-            
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
             'telephone' => 'required|string|max:15',
-            'nomAgence' => 'nullable|string',
+            'agence_id' => 'nullable|exists:agences,id',
             'role' => 'required|in:administrateur,utilisateur',
             'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:6|confirmed', // attention au champ confirm
+            'password' => 'required|string|min:6|confirmed',
         ]);
 
-        $agence = Agence::where('nomAgence', $validated['nomAgence'])->first();
-
-        if (!$agence) {
-            return response()->json(['success' => false, 'message' => "Le nom de l'agence n'existe pas."], 422);
+        $agence = null;
+        if (!empty($validated['agence_id'])) {
+            $agence = Agence::find($validated['agence_id']);
         }
 
         User::create([
-            'code' => Str::random(5), // Génération d'un code aléatoire
+            'code' => Str::random(5),
             'nom' => $validated['nom'],
             'prenom' => $validated['prenom'],
             'telephone' => $validated['telephone'],
             'role' => $validated['role'],
-            'numero' => $agence->numero,
+            'numero' => $agence ? $agence->numero : null,
             'email' => $validated['email'],
-            'password'=>bcrypt($validated['password']),
+            'password' => bcrypt($validated['password']),
         ]);
 
         return response()->json(['success' => true, 'message' => 'Utilisateur créé avec succès.']);
     }
 
-    return redirect()->back()->with('error', 'Requête invalide.');
-}
-
-    public function edit($id)
+    public function edit($code)
     {
-        $user = User::with('agence')->find($id);
+        $user = User::with('agence')->find($code);
         
         if (!$user) {
             return response()->json(['success' => false, 'message' => 'Utilisateur non trouvé'], 404);
@@ -100,20 +100,62 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'user' => [
-                'id' => $user->id,
+                'id' => $user->code,
                 'code' => $user->code,
                 'nom' => $user->nom,
                 'prenom' => $user->prenom,
                 'telephone' => $user->telephone,
-                'agence' => $user->agence ? $user->agence->nomAgence : null,
+                'agence' => $user->agence ? $user->agence->id : null,
                 'role' => $user->role,
                 'email' => $user->email
             ]
         ]);
     }
 
-       // Si ce n’est pas une requête AJAX, on peut rediriger
-   
+    public function update(Request $request, $code)
+    {
+        $user = User::find($code);
+        
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Utilisateur non trouvé'], 404);
+        }
 
+        $validated = $request->validate([
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'telephone' => 'required|string|max:15',
+            'agence_id' => 'nullable|exists:agences,id',
+            'role' => 'required|in:administrateur,utilisateur',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $code,
+        ]);
+
+        $agence = null;
+        if (!empty($validated['agence_id'])) {
+            $agence = Agence::find($validated['agence_id']);
+        }
+
+        $user->update([
+            'nom' => $validated['nom'],
+            'prenom' => $validated['prenom'],
+            'telephone' => $validated['telephone'],
+            'role' => $validated['role'],
+            'numero' => $agence ? $agence->numero : null,
+            'email' => $validated['email'],
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Utilisateur mis à jour avec succès']);
+    }
+
+    public function destroy($code)
+    {
+        $user = User::find($code);
+        
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Utilisateur non trouvé'], 404);
+        }
+        
+        $user->delete();
+        
+        return response()->json(['success' => true, 'message' => 'Utilisateur supprimé avec succès']);
+    }
 }
-    

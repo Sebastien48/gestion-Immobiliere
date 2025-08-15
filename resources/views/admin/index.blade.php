@@ -6,11 +6,10 @@
     <title>Admin - Gestion Immobilière</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="stylesheet" href="{{asset('css/app5.css')}}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-100">
     <div class="min-h-screen">
@@ -72,7 +71,7 @@
                     <i class="fas fa-chart-bar text-blue-600 mr-3"></i> Statistiques des inscriptions
                 </h2>
                 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
                     <!-- Total Utilisateurs -->
                     <div class="stat-card bg-white rounded-lg shadow-md p-6 border-t-4 border-blue-500">
                         <div class="flex justify-between">
@@ -142,13 +141,30 @@
                             <span class="text-orange-600 text-sm font-medium">
                                 <i class="fas fa-check-circle"></i> Agences enregistrées
                             </span>
+                        </div>
+                    </div>
 
+                    <!-- Total Bâtiments -->
+                    <div class="stat-card bg-white rounded-lg shadow-md p-6 border-t-4 border-indigo-500">
+                        <div class="flex justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm font-medium">Total Bâtiments</p>
+                                <p class="text-3xl font-bold mt-2" id="batimentsTotal">0</p>
+                            </div>
+                            <div class="bg-indigo-100 text-indigo-600 p-3 rounded-full h-12 w-12 flex items-center justify-center">
+                                <i class="fas fa-city"></i>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <span class="text-indigo-600 text-sm font-medium">
+                                <i class="fas fa-home"></i> Bâtiments gérés
+                            </span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Graphiques -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-lg font-medium text-gray-800 mb-4">Évolution des inscriptions</h3>
                         <div class="chart-container">
@@ -159,6 +175,12 @@
                         <h3 class="text-lg font-medium text-gray-800 mb-4">Répartition par rôle</h3>
                         <div class="chart-container">
                             <canvas id="rolesChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-lg font-medium text-gray-800 mb-4">Performances Immobilières</h3>
+                        <div class="chart-container">
+                            <canvas id="performanceChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -181,22 +203,28 @@
                         @csrf
                        
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            
                             <div>
                                 <label for="nom" class="block text-sm font-medium text-gray-700">Nom *</label>
-                                <input type="text" id="nom" name="nom" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                                <input type="text" id="nom" name="nom" required autocomplete="family-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
                             </div>
                             <div>
                                 <label for="prenom" class="block text-sm font-medium text-gray-700">Prénom *</label>
-                                <input type="text" id="prenom" name="prenom" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                                <input type="text" id="prenom" name="prenom" required autocomplete="given-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
                             </div>
                             <div>
-                                <label for="agence" class="block text-sm font-medium text-gray-700">Nom de l'agence</label>
-                                <input type="text" id="agence" name="agence" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                                <label for="agenceUser" class="block text-sm font-medium text-gray-700">Agence</label>
+                                <select id="agenceUser" name="agence_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                                    <option value="">-- Sélectionner une agence (optionnel) --</option>
+                                    @if(isset($agences))
+                                        @foreach($agences as $agence)
+                                            <option value="{{ $agence->id }}">{{ $agence->nomAgence }}</option>
+                                        @endforeach
+                                    @endif
+                                </select>
                             </div>
                             <div>
                                 <label for="telephone" class="block text-sm font-medium text-gray-700">Numéro de téléphone *</label>
-                                <input type="tel" id="telephone" name="telephone" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                                <input type="tel" id="telephone" name="telephone" required autocomplete="tel" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
                             </div>
                             <div>
                                 <label for="role" class="block text-sm font-medium text-gray-700">Rôle *</label>
@@ -207,18 +235,18 @@
                             </div>
                             <div>
                                 <label for="email" class="block text-sm font-medium text-gray-700">Email *</label>
-                                <input type="email" id="email" name="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                                <input type="email" id="email" name="email" required autocomplete="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
                             </div>
                             <div class="password-container">
                                 <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe *</label>
-                                <input type="password" id="password" name="password" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border pr-10">
+                                <input type="password" id="password" name="password" required autocomplete="new-password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border pr-10">
                                 <button type="button" onclick="togglePassword('password')" class="password-toggle">
                                     <i class="fas fa-eye text-gray-400 hover:text-gray-600" id="passwordToggleIcon"></i>
                                 </button>
                             </div>
                             <div class="password-container">
                                 <label for="confirmPassword" class="block text-sm font-medium text-gray-700">Confirmer le mot de passe *</label>
-                                <input type="password" id="confirmPassword" name="confirmPassword" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border pr-10">
+                                <input type="password" id="confirmPassword" name="confirmPassword" required autocomplete="new-password" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border pr-10">
                                 <button type="button" onclick="togglePassword('confirmPassword')" class="password-toggle">
                                     <i class="fas fa-eye text-gray-400 hover:text-gray-600" id="confirmPasswordToggleIcon"></i>
                                 </button>
@@ -255,27 +283,27 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label for="numero" class="block text-sm font-medium text-gray-700">Numéro d'enregistrement *</label>
-                                <input type="text" id="numero" name="numero" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                                <input type="text" id="numero" name="numero" required autocomplete="organization" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
                             </div>
                             <div>
                                 <label for="nomAgence" class="block text-sm font-medium text-gray-700">Nom de l'agence *</label>
-                                <input type="text" id="nomAgence" name="nomAgence" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                                <input type="text" id="nomAgence" name="nomAgence" required autocomplete="organization" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
                             </div>
                             <div>
                                 <label for="fondateur" class="block text-sm font-medium text-gray-700">Nom du fondateur / responsable *</label>
-                                <input type="text" id="fondateur" name="fondateur" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                                <input type="text" id="fondateur" name="fondateur" required autocomplete="name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
                             </div>
                             <div>
                                 <label for="emailAgence" class="block text-sm font-medium text-gray-700">Email professionnel *</label>
-                                <input type="email" id="emailAgence" name="emailAgence" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                                <input type="email" id="emailAgence" name="emailAgence" required autocomplete="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
                             </div>
                             <div class="md:col-span-2">
                                 <label for="adresse" class="block text-sm font-medium text-gray-700">Adresse complète *</label>
-                                <input type="text" id="adresse" name="adresse" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                                <input type="text" id="adresse" name="adresse" required autocomplete="street-address" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
                             </div>
                             <div>
                                 <label for="telephoneAgence" class="block text-sm font-medium text-gray-700">Téléphone *</label>
-                                <input type="tel" id="telephoneAgence" name="telephoneAgence" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
+                                <input type="tel" id="telephoneAgence" name="telephoneAgence" required autocomplete="tel" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 p-2 border">
                             </div>
                             <div>
                                 <label for="logo" class="block text-sm font-medium text-gray-700">Logo de l'agence *</label>
@@ -324,7 +352,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rôle</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agence</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                 </tr>
@@ -426,7 +454,9 @@
     <!-- Scripts généraux -->
     <script>
         // Variables globales
-        let inscriptionsChart, rolesChart;
+        let inscriptionsChart, rolesChart, performanceChart;
+        let currentUserPage = 1;
+        let currentAgencyPage = 1;
 
         // Fonctions communes
         function togglePassword(fieldId) {
@@ -466,7 +496,14 @@
         }
 
         function initCharts() {
+            // Vérifier que Chart.js est chargé
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js n\'est pas chargé');
+                return;
+            }
+
             const ctxInscriptions = document.getElementById('inscriptionsChart').getContext('2d');
+            if (inscriptionsChart) inscriptionsChart.destroy();
             inscriptionsChart = new Chart(ctxInscriptions, {
                 type: 'line',
                 data: {
@@ -488,8 +525,9 @@
                     }
                 }
             });
-
+            
             const ctxRoles = document.getElementById('rolesChart').getContext('2d');
+            if (rolesChart) rolesChart.destroy();
             rolesChart = new Chart(ctxRoles, {
                 type: 'pie',
                 data: {
@@ -504,27 +542,443 @@
                     responsive: true,
                 }
             });
+
+            // Nouveau graphique de performances
+            const ctxPerformance = document.getElementById('performanceChart').getContext('2d');
+            if (performanceChart) performanceChart.destroy();
+            performanceChart = new Chart(ctxPerformance, {
+                type: 'bar',
+                data: {
+                    labels: ['Bâtiments', 'Appartements', 'Locataires', 'Locations'],
+                    datasets: [{
+                        label: 'Nombre',
+                        data: [25, 150, 120, 95],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.8)',
+                            'rgba(255, 99, 132, 0.8)',
+                            'rgba(255, 205, 86, 0.8)',
+                            'rgba(75, 192, 192, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(255, 205, 86, 1)',
+                            'rgba(75, 192, 192, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
         }
+
         function updateCharts() {
-    fetch('/admin/stats')
-        .then(response => response.json())
-        .then(data => {
-            // Met à jour le graphique des inscriptions
-            inscriptionsChart.data.labels = data.months;
-            inscriptionsChart.data.datasets[0].data = data.inscriptions;
-            inscriptionsChart.update();
+            fetch('/admin/stats')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Données reçues:', data);
+                    
+                    // Met à jour le graphique des inscriptions
+                    if (inscriptionsChart && data.months && data.inscriptions) {
+                        inscriptionsChart.data.labels = data.months;
+                        inscriptionsChart.data.datasets[0].data = data.inscriptions;
+                        inscriptionsChart.update();
+                    }
 
-            // Met à jour le graphique des rôles
-            rolesChart.data.labels = Object.keys(data.roles);
-            rolesChart.data.datasets[0].data = Object.values(data.roles);
-            rolesChart.update();
+                    // Met à jour le graphique des rôles
+                    if (rolesChart && data.roles) {
+                        rolesChart.data.labels = Object.keys(data.roles);
+                        rolesChart.data.datasets[0].data = Object.values(data.roles);
+                        rolesChart.update();
+                    }
+
+                    // Met à jour le graphique de performances avec les données réelles
+                    if (performanceChart && data.performance) {
+                        performanceChart.data.datasets[0].data = [
+                            data.performance.batiments || 0,
+                            data.performance.appartements || 0,
+                            data.performance.locataires || 0,
+                            data.performance.locations || 0
+                        ];
+                        performanceChart.update();
+                    }
+
+                    // Met à jour les statistiques dans les cartes
+                    if (data.batiments_total !== undefined) {
+                        document.getElementById('batimentsTotal').textContent = data.batiments_total;
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur lors du chargement des statistiques:', error);
+                });
+        }
+
+        // Chargement des utilisateurs validés
+        async function loadValidatedUsers(page = 1) {
+            const tableBody = document.getElementById('validatedUsersTable');
+            const filter = document.getElementById('filterValidated').value;
+            const prevBtn = document.getElementById('prevValidated');
+            const nextBtn = document.getElementById('nextValidated');
+            const agencesTotal = document.getElementById('agencesTotal');
+            const agencessemaine = document.getElementById('weeklyRegistrations');
+            const agencesmois = document.getElementById('monthlyRegistrations');
+            
+            // Afficher le skeleton pendant le chargement
+            tableBody.innerHTML = `
+                <tr id="skeletonRow">
+                    <td colspan="6" class="px-6 py-4 text-center">
+                        <div class="flex flex-col items-center space-y-3">
+                            <div class="skeleton skeleton-text w-3/4"></div>
+                            <div class="skeleton skeleton-text w-1/2"></div>
+                            <div class="skeleton skeleton-text w-2/3"></div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            try {
+                const response = await fetch(`/admin/users?page=${page}&filter=${filter}`);
+                const data = await response.json();
+
+                if (!data.success) throw new Error(data.message || 'Erreur de chargement');
+
+                // Remplissage du tableau
+                tableBody.innerHTML = '';
+                data.users.forEach(user => {
+                    const row = `
+                        <tr>
+                            <td class="px-6 py-4">${user.code}</td>
+                            <td class="px-6 py-4">${user.nom} ${user.prenom}</td>
+                            <td class="px-6 py-4">${user.email}</td>
+                            <td class="px-6 py-4">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full ${user.role === 'administrateur' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}">
+                                    ${user.role}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4">${user.agence ? user.agence.nomAgence : '-'}</td>
+                            <td class="px-6 py-4">
+                                <button class="text-blue-600 hover:underline" onclick="editUser(${user.id})">Modifier</button>
+                                <button class="text-red-600 hover:underline ml-2" onclick="deleteUser(${user.id})">Supprimer</button>
+                            </td>
+                        </tr>
+                    `;
+                    tableBody.insertAdjacentHTML('beforeend', row);
+                });
+
+                // Boutons de pagination
+                prevBtn.disabled = data.current_page <= 1;
+                nextBtn.disabled = data.current_page >= data.last_page;
+                agencesTotal.textContent = data.total;
+                document.getElementById('validatedTotal').textContent = data.total;
+                document.getElementById('validatedStart').textContent = data.from;
+                document.getElementById('validatedEnd').textContent = data.to;
+                
+                prevBtn.classList.toggle('cursor-not-allowed', prevBtn.disabled);
+                nextBtn.classList.toggle('cursor-not-allowed', nextBtn.disabled);
+                agencessemaine.textContent = data.userssemaine;
+                agencesmois.textContent = data.usersmois;
+                
+                currentUserPage = data.current_page;
+
+            } catch (error) {
+                tableBody.innerHTML = `<tr><td colspan="6" class="text-center p-4 text-red-600">${error.message}</td></tr>`;
+            }
+        }
+
+        // Chargement des agences
+        async function loadAgencies(page = 1) {
+            const tableBody = document.getElementById('agencesTable');
+            const agencesTotaux = document.getElementById('agencesTotaux');
+            const agencesTotalCount = document.getElementById('agencesTotalCount');
+            const prevBtn = document.getElementById('prevAgences');
+            const nextBtn = document.getElementById('nextAgences');
+
+            // Afficher le skeleton pendant le chargement
+            tableBody.innerHTML = `
+                <tr id="skeletonRowAgencies">
+                    <td colspan="7" class="text-center px-6 py-4">
+                        <div class="flex flex-col items-center space-y-3">
+                            <div class="w-3/4 h-4 bg-gray-200 rounded animate-pulse"></div>
+                            <div class="w-1/2 h-4 bg-gray-200 rounded animate-pulse"></div>
+                            <div class="w-2/3 h-4 bg-gray-200 rounded animate-pulse"></div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+
+            try {
+                const response = await fetch(`/admin/agences/list?page=${page}`);
+                const data = await response.json();
+
+                if (!data.success) throw new Error(data.message || 'Erreur de chargement');
+
+                // Remplissage du tableau
+                tableBody.innerHTML = '';
+                if (data.agences.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="7" class="text-center p-4 text-gray-500">Aucune agence trouvée.</td></tr>`;
+                } else {
+                    data.agences.forEach(agence => {
+                        const row = `
+                            <tr>
+                                <td class="px-6 py-4">${agence.numero}</td>
+                                <td class="px-6 py-4">${agence.nomAgence}</td>
+                                <td class="px-6 py-4">${agence.emailAgence}</td>
+                                <td class="px-6 py-4">${agence.adresse}</td>
+                                <td class="px-6 py-4">${agence.telephoneAgence}</td>
+                                <td class="px-6 py-4">${agence.fondateur}</td>
+                                <td class="px-6 py-4">
+                                    <p class="text-blue-600 hover:underline ml-2"> ${agence.users ? agence.users.length : 0} agents</p>
+                                    <button class="text-red-600 hover:underline ml-2" onclick="deleteAgency(${agence.id})">Supprimer</button>
+                                    <button class="text-yellow-600 hover:underline ml-2" onclick="editAgency(${agence.id})">Modifier</button>
+                                </td>
+                            </tr>
+                        `;
+                        tableBody.insertAdjacentHTML('beforeend', row);
+                    });
+                }
+
+                // Mise à jour des statistiques
+                agencesTotaux.textContent = data.total;
+                agencesTotalCount.textContent = data.total;
+
+                // Pagination
+                prevBtn.disabled = data.current_page <= 1;
+                nextBtn.disabled = data.current_page >= data.last_page;
+
+                prevBtn.classList.toggle('cursor-not-allowed', prevBtn.disabled);
+                nextBtn.classList.toggle('cursor-not-allowed', nextBtn.disabled);
+
+                currentAgencyPage = data.current_page;
+
+            } catch (error) {
+                tableBody.innerHTML = `<tr><td colspan="7" class="text-center p-4 text-red-600">${error.message}</td></tr>`;
+            }
+        }
+
+        // Édition d'utilisateur
+        function editUser(userId) {
+            fetch(`/admin/users/${userId}/edit`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const user = data.user;
+                        document.getElementById('nom').value = user.nom;
+                        document.getElementById('prenom').value = user.prenom;
+                        document.getElementById('agenceUser').value = user.agence || '';
+                        document.getElementById('telephone').value = user.telephone;
+                        document.getElementById('role').value = user.role;
+                        document.getElementById('email').value = user.email;
+                        
+                        // Modifier le formulaire pour l'édition
+                        const form = document.getElementById('userForm');
+                        form.action = `/admin/users/${userId}`;
+                        form.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-sync mr-2"></i> Mettre à jour';
+                        
+                        showUserForm();
+                    } else {
+                        alert('Erreur lors du chargement des données utilisateur');
+                    }
+                });
+        }
+
+        // Suppression d'utilisateur
+        function deleteUser(userId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
+                fetch(`/admin/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadValidatedUsers();
+                    }
+                });
+            }
+        }
+
+        // Édition agence
+        function editAgency(agencyId) {
+            fetch(`/admin/agences/${agencyId}/edit`)
+                .then(response => response.json())
+                .then(agence => {
+                    document.getElementById('numero').value = agence.numero;
+                    document.getElementById('nomAgence').value = agence.nomAgence;
+                    document.getElementById('fondateur').value = agence.fondateur;
+                    document.getElementById('emailAgence').value = agence.emailAgence;
+                    document.getElementById('adresse').value = agence.adresse;
+                    document.getElementById('telephoneAgence').value = agence.telephoneAgence;
+                    
+                    // Modifier le formulaire pour l'édition
+                    showAgenceForm();
+                    const form = document.getElementById('agenceForm');
+                    form.action = `/admin/agences/${agencyId}`;
+                    form.querySelector('button[type="submit"]').innerHTML = '<i class="fas fa-sync mr-2"></i> Mettre à jour';
+                });
+        }
+
+        // Suppression agence
+        function deleteAgency(agencyId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cette agence ?')) {
+                fetch(`/admin/agences/${agencyId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        loadAgencies();
+                    }
+                });
+            }
+        }
+
+        // Gestion du formulaire utilisateur
+        document.getElementById('userForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const messageDiv = document.getElementById('formMessage');
+            const token = document.querySelector('meta[name="csrf-token"]').content;
+
+            // Validation des mots de passe
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (password !== confirmPassword) {
+                messageDiv.innerHTML = `<div class="bg-red-100 text-red-800 p-3 rounded">❌ Les mots de passe ne correspondent pas</div>`;
+                return;
+            }
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enregistrement...';
+
+                const formData = new FormData(form);
+                formData.append('password_confirmation', confirmPassword);
+
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': token
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    messageDiv.innerHTML = `<div class="bg-green-100 text-green-800 p-3 rounded">✅ ${data.message}</div>`;
+                    form.reset();
+                    hideUserForm();
+                    loadValidatedUsers();
+                } else {
+                    messageDiv.innerHTML = `<div class="bg-red-100 text-red-800 p-3 rounded">❌ ${data.message || 'Erreur lors de la création'}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = `<div class="bg-red-100 text-red-800 p-3 rounded">❌ Erreur réseau: ${error.message}</div>`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save mr-2"></i> Enregistrer';
+            }
         });
-}
 
-document.addEventListener('DOMContentLoaded', function() {
-    initCharts();
-    updateCharts();
-});
+        // Gestion du formulaire agence
+        document.getElementById('agenceForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const messageDiv = document.getElementById('formMessage');
+            const token = document.querySelector('meta[name="csrf-token"]').content;
+
+            try {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Enregistrement...';
+
+                const formData = new FormData(form);
+                let method = 'POST';
+                if (form.action.match(/\/agences\/(\d+)$/)) {
+                    method = 'POST';
+                    formData.append('_method', 'PATCH');
+                }
+
+                const response = await fetch(form.action, {
+                    method: method,
+                    headers: {
+                        'X-CSRF-TOKEN': token
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    messageDiv.innerHTML = `<div class="bg-green-100 text-green-800 p-3 rounded">✅ ${data.message}</div>`;
+                    form.reset();
+                    hideAgenceForm();
+                    loadAgencies();
+                } else {
+                    messageDiv.innerHTML = `<div class="bg-red-100 text-red-800 p-3 rounded">❌ ${data.message || 'Erreur lors de la création'}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = `<div class="bg-red-100 text-red-800 p-3 rounded">❌ Erreur réseau: ${error.message}</div>`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save mr-2"></i> Enregistrer l\'agence';
+            }
+        });
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Attendre que Chart.js soit chargé
+            if (typeof Chart !== 'undefined') {
+                initCharts();
+                updateCharts();
+            } else {
+                console.error('Chart.js n\'est pas disponible');
+            }
+
+            // Événements de pagination utilisateurs
+            document.getElementById('prevValidated').addEventListener('click', () => {
+                if (currentUserPage > 1) loadValidatedUsers(currentUserPage - 1);
+            });
+
+            document.getElementById('nextValidated').addEventListener('click', () => {
+                loadValidatedUsers(currentUserPage + 1);
+            });
+
+            // Filtre utilisateurs
+            document.getElementById('filterValidated').addEventListener('change', () => {
+                loadValidatedUsers();
+            });
+
+            // Événements de pagination agences
+            document.getElementById('prevAgences').addEventListener('click', () => {
+                if (currentAgencyPage > 1) loadAgencies(currentAgencyPage - 1);
+            });
+
+            document.getElementById('nextAgences').addEventListener('click', () => {
+                loadAgencies(currentAgencyPage + 1);
+            });
+
+            // Charger initialement
+            loadValidatedUsers();
+            loadAgencies();
+        });
+
         // Fermer le dropdown si on clique ailleurs
         document.addEventListener('click', function(event) {
             const dropdown = document.getElementById('adminDropdown');
@@ -534,15 +988,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 dropdown.classList.add('hidden');
             }
         });
-
-        // Initialisation générale
-        document.addEventListener('DOMContentLoaded', function() {
-            initCharts();
-        });
-   
-        
     </script>
-    <script src="{{ asset('js/admin/users.js') }}"></script>
-    <script src="{{ asset('js/admin/agencies.js') }}"></script>
 </body>
 </html>

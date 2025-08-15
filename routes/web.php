@@ -54,43 +54,7 @@ Route::post('/appartement/store',[AppartementsController::class,'store'])->name(
 Route::get('/appartements/{code_appartement}',[AppartementsController::class,'show']) ->name('appartements.show');
 
 
-    /*
-
-    Route::get('/batiments/{id}/edit', [BatimentsController::class, 'edit'])->name('batiments.edit');
-    Route::put('/batiments/{id}', [BatimentsController::class, 'update'])->name('batiments.update');
-    Route::delete('/batiments/{id}', [BatimentsController::class, 'destroy'])->name('batiments.destroy');
     
- 
-    Route::get('/batiments/{id}', function ($id) {
-    return view('batiments.show', ['id' => $id]);
-})->name('batiments.show');
-
-Route::get('/appartements', function () {
-    return view('appartements.index');
-})->name('appartements.index');
-Route::get('/appartements/{id}', function ($id) {
-    $apartment = (object)[
-        'id' => $id,
-        'number' => 'B1-05',
-        'building' => (object)['name' => 'Résidence Yasmina'],
-        'surface' => '45',
-        'monthly_rent' => '750000',
-        'status' => 'libre'
-    ];
-    return view('appartements.show', ['apartment' => $apartment]);
-})->name('appartements.show');
-Route::get('/batiments/{buildingId}/appartements', function ($buildingId) {
-    return view('appartements.index', ['buildingId' => $buildingId]);
-})->name('batiments.appartements');
-
-// Locataires
-Route::get('/locataires', function () {
-    return view('locataires.index');
-})->name('locataires.index');
-Route::get('/locataires/{id}', function ($id) {
-    return view('locataires.show', ['id' => $id]);
-})->name('locataires.show');
-*/
 });
 
 // Admin routes (auth & admin middlewares)
@@ -102,8 +66,12 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/agences/create', [AgenceController::class, 'create'])->name('admin.agences.create');
     Route::post('/agences', [AgenceController::class, 'store'])->name('admin.agences.store');
     Route::get('/users/validated', [UserController::class, 'index'])->name('admin.users.index');
+    Route::get('/users', [UserController::class, 'index'])->name('admin.users.list');
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('admin.users.edit');
+    Route::put('/users/{id}', [UserController::class, 'update'])->name('admin.users.update');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
     Route::get('/agences/{id}/edit', [AgenceController::class, 'edit'])->name('admin.agences.edit');
+    Route::put('/agences/{id}', [AgenceController::class, 'update'])->name('admin.agences.update');
+    Route::delete('/agences/{id}', [AgenceController::class, 'destroy'])->name('admin.agences.destroy');
     Route::get('/stats', [AgenceController::class, 'stats'])->name('admin.stats');
 });
-

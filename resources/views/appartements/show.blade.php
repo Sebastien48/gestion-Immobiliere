@@ -35,10 +35,7 @@
                 <i class="fas fa-info-circle text-blue-500 mr-2"></i> Informations
             </h3>
             <ul class="space-y-3">
-                <li class="flex justify-between">
-                    <span class="text-gray-600">Étage:</span>
-                    <span class="font-medium">2</span>
-                </li>
+                
                 <li class="flex justify-between">
                     <span class="text-gray-600">Superficie:</span>
                     <span class="font-medium">{{ $appartement->superficie }} m²</span>
