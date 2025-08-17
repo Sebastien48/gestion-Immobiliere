@@ -14,7 +14,9 @@ use App\Http\Controllers\Admin\AgenceController;
 use App\Http\Controllers\Agence\AppartementsController;
 use App\Http\Controllers\Agence\BatimentsController;
 use App\Http\Controllers\Agence\LocatairesController;
+use App\Http\Controllers\Agence\LocationsController;
 use App\Http\Controllers\Agence\QuittancesController;
+use App\Http\Controllers\Agence\PaiementsController;
 
 // Accueil
 Route::get('/', [IndexController::class, 'index'])->name('index');
@@ -61,6 +63,13 @@ Route::get('/appartements/{code_appartement}',[AppartementsController::class,'sh
  Route::get('/locataires',action:[LocatairesController::class,'index'])->name('locataires.index');
     Route::post('/locataires',action:[LocatairesController::class,'store'])->name('locataires.store');
 
+
+    // route pour les locations 
+    Route::get('/locations',action:[LocationsController::class,'index'])->name('locations.index');
+    
+    //routespour les locatraires 
+
+    Route::get('/paiement',action:[PaiementsController::class,'index'])->name('paiements.index');
 
 // définis la route pours les quittances
 Route::get('/quittances',action:[QuittancesController::class,'index'])->name('quittances.index');
