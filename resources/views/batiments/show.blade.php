@@ -96,7 +96,7 @@
                 <i class="fas fa-bolt text-purple-500 mr-2"></i> Actions rapides
             </h3>
             <div class="space-y-3">
-                <button onclick="window.location.href='/appartements?batiment_id=1&action=add'" 
+                <button onclick="window.location.href='{{route('appartements.index')}}'" 
                         class="w-full flex items-center justify-between p-3 hover:bg-purple-50 rounded-lg transition">
                     <span class="text-purple-600">
                         <i class="fas fa-plus-circle mr-2"></i> Ajouter un appartement

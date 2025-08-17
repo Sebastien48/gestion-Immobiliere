@@ -39,15 +39,13 @@
                 <div>
                     <p class="text-gray-500 text-sm font-medium">Appartements</p>
                     <div class="flex items-baseline mt-2 space-x-4">
-                        <div>
-                            <p class="text-2xl font-bold text-green-600" id="apartmentsOccupied">24</p>
-                            <p class="text-xs text-gray-500">Occupés</p>
-                        </div>
-                        <div class="border-l border-gray-200 h-10"></div>
-                        <div>
-                            <p class="text-2xl font-bold text-blue-600" id="apartmentsAvailable">12</p>
-                            <p class="text-xs text-gray-500">Disponibles</p>
-                        </div>
+                            <p class="text-2xl font-bold text-green-600" id="apartmentsOccupied">{{$appartementsOccupes}}</p>
+                                    <p class="text-xs text-gray-500">Occupés</p>
+                                </div>
+                                <div class="border-l border-gray-200 h-10"></div>
+                                <div>
+                                    <p class="text-2xl font-bold text-blue-600" id="apartmentsAvailable">{{$appartementsLibres}}</p>
+                                    <p class="text-xs text-gray-500">Disponibles</p>
                     </div>
                 </div>
                 <div class="bg-green-100 text-green-600 p-3 rounded-full">
@@ -228,10 +226,7 @@
     // Données simulées pour le tableau de bord
     const dashboardData = {
         buildings: {{ $buildingsCount ?? 0 }},
-        apartments: {
-            occupied: 24,
-            available: 12
-        },
+       
         pendingPayments: 5,
         recentPayments: [
             { tenant: "Jean Marc", apartment: "B2-12", month: "Juillet 2023", amount: "750 mille FCFA", status: "paid" },

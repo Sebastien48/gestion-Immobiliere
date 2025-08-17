@@ -36,7 +36,7 @@
 @endif
 <!-- Filtres et recherche -->
 <div class="bg-white rounded-lg shadow p-4 mb-6">
-    <form method="GET" action="{{ route('batiments.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <form method="GET"  class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div class="md:col-span-2">
             <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Recherche</label>
             <div class="relative">
@@ -47,19 +47,20 @@
                        class="pl-10 w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
             </div>
         </div>
-        <div>
-            <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
-            <select id="status" name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
-                <option value="">Tous</option>
-                <option value="actif" {{ request('status') == 'actif' ? 'selected' : '' }}>Actif</option>
-                <option value="inactif" {{ request('status') == 'inactif' ? 'selected' : '' }}>Inactif</option>
-            </select>
-        </div>
+
         <div class="flex items-end">
             <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md w-full flex items-center justify-center">
-                <i class="fas fa-filter mr-2"></i> Filtrer
+                <i class="fas fa-search mr-2"></i> Rechercher
             </button>
         </div>
+        <div class=" flex items-end">
+            <button type="reset" class="bg-red-500 hover:bg-red-300 text-white px-4 py-2 rounded-b-md w-full flex items-center justify-center">
+                <i class="fas fa-times mr-2"></i> Annuler
+            </button>
+            
+        </div>
+        <!-- Affichage des résultats dynamiques, déplacé sous le bouton -->
+    <div id="liveResults" class="absolute bg-white border rounded-md mt-1 shadow-lg w-full hidden z-50"></div>
     </form>
 </div>
 
@@ -92,7 +93,7 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full mr-2">
-                                    {{ $batiment->nombre_Appartements ?? $batiment->nombre_appartements ?? 0 }}
+                                    {{ $batiment->nombre_Appartements ?? 0 }}
                                 </span>
                             </div>
                         </td>
@@ -324,6 +325,7 @@ function openEditModal(id, nom, proprietaire, adresse, nbAppartements, status, d
     document.getElementById('editBuildingApartments').value = nbAppartements;
     document.getElementById('editBuildingStatus').value = status;
     document.getElementById('editBuildingDescription').value = description;
+    document.getElementById('editBuildingForm').action = '/agence-immobiliere/batiments/update/' + id;
     openModal('editBuildingModal');
 }
 
@@ -333,9 +335,39 @@ function openEditModal(id, nom, proprietaire, adresse, nbAppartements, status, d
 function openDeleteModal(id, nom) {
     document.getElementById('deleteBuildingId').value = id;
     document.getElementById('buildingToDelete').textContent = nom;
+    document.getElementById('deleteBuildingForm').action = '/agence-immobiliere/batiments/' + id;
     openModal('deleteBuildingModal');
 }
 
-//Bonne pratique: tu traites les formulaires avec action backend (POST/PATCH/DELETE) et vérifies la sécurité CSRF de Laravel.
+ // le document pour récuperer la recherche
+document.getElementById('search').addEventListener('input', function () {
+    let query = this.value;
+    let status = document.getElementById('status').value;
+
+    if (query.length > 2) {
+        fetch(`/agence-immobiliere/batiments/live-search?search=${encodeURIComponent(query)}&status=${encodeURIComponent(status)}`)
+            .then(res => res.json())
+            .then(data => {
+                let resultsDiv = document.getElementById('liveResults');
+                resultsDiv.innerHTML = '';
+
+                if (data.length > 0) {
+                    data.forEach(item => {
+                        resultsDiv.innerHTML += `
+                            <div class="p-2 hover:bg-gray-100 cursor-pointer">
+                                ${item.nom} - ${item.adresse}
+                            </div>
+                        `;
+                    });
+                    resultsDiv.classList.remove('hidden');
+                } else {
+                    resultsDiv.classList.add('hidden');
+                }
+            })
+            .catch(error => console.error('Erreur lors de la recherche :', error));
+    } else {
+        document.getElementById('liveResults').classList.add('hidden');
+    }
+});
 </script>
 @endsection

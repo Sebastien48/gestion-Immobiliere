@@ -109,9 +109,34 @@ class BatimentsController extends Controller
             ->with('success', 'Bâtiment modifié avec succès.');
     }
 
-    // Suppression d'un bâtiment (à compléter si besoin)
-    public function destroy(string $id)
+
+    // le controller de la recherche de batiments
+
+   public function liveSearch(Request $request)
+{
+    $query = $request->get('search');
+   
+
+    $batiments = Batiments::query()
+        ->when($query, function ($q) use ($query) {
+            $q->where('nom', 'LIKE', "%{$query}%")
+              ->orWhere('adresse', 'LIKE', "%{$query}%")
+              ->orWhere('proprietaire', 'LIKE', "%{$query}%");
+        })
+        
+      
+        ->limit(5)
+        ->get();
+
+    return response()->json($batiments);
+}
+
+    // Suppression d'un bâtiment
+    public function destroy($code_batiment)
     {
-        //
+        $batiment = Batiments::where('code_batiment', $code_batiment)->firstOrFail();
+        Appartements::where('code_batiment', $code_batiment)->delete();
+        $batiment->delete();
+        return redirect()->route('batiments.index')->with('success', 'Bâtiment supprimé avec succès.');
     }
 }

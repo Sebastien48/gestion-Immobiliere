@@ -59,7 +59,8 @@ class UserController extends Controller
     }
 
     public function store(Request $request)
-    {
+{
+    try {
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
@@ -73,9 +74,12 @@ class UserController extends Controller
         $agence = null;
         if (!empty($validated['agence_id'])) {
             $agence = Agence::find($validated['agence_id']);
+            if (!$agence) {
+                return response()->json(['success' => false, 'message' => "Agence non trouvée."], 404);
+            }
         }
 
-        User::create([
+        $user = User::create([
             'code' => Str::random(5),
             'nom' => $validated['nom'],
             'prenom' => $validated['prenom'],
@@ -86,8 +90,34 @@ class UserController extends Controller
             'password' => bcrypt($validated['password']),
         ]);
 
-        return response()->json(['success' => true, 'message' => 'Utilisateur créé avec succès.']);
+        return response()->json(['success' => true, 'message' => 'Utilisateur créé avec succès.', 'user_id' => $user->id]);
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        // Erreur de validation des données (formulaire)
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur de validation: '.implode(', ', $e->validator->errors()->all())
+        ], 422);
+    } catch (\Illuminate\Database\QueryException $e) {
+        // Erreur liée à la base de données (contrainte d’unicité, etc.)
+        $error = $e->getMessage();
+        if (str_contains($error, 'Duplicate entry')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Un utilisateur existe déjà avec cet email ou ce téléphone.'
+            ], 400);
+        }
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur de base de données: '.$error
+        ], 500);
+    } catch (\Exception $e) {
+        // Autre erreur inattendue
+        return response()->json([
+            'success' => false,
+            'message' => 'Erreur inattendue: '.$e->getMessage()
+        ], 500);
     }
+}
 
     public function edit($code)
     {

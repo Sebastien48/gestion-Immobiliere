@@ -66,14 +66,14 @@ public function list(Request $request)
     // Comptage des bâtiments, appartements et locataires
     $batimentsCount = Batiments::count();
     $appartementsCount = Appartements::count();
-    $locatairesCount = Locataires::count();
+   // $locatairesCount = Locataires::count();
 
     // Données pour le graphique de performances immobilières
     $performanceData = [
         'batiments' => $batimentsCount,
         'appartements' => $appartementsCount,
-        'locataires' => $locatairesCount,
-        'locations' => $locatairesCount // Supposons que le nombre de locations = nombre de locataires
+       // 'locataires' => $locatairesCount,
+       // 'locations' => $locatairesCount // Supposons que le nombre de locations = nombre de locataires
     ];
 
     return response()->json([
@@ -83,7 +83,7 @@ public function list(Request $request)
         'performance' => $performanceData,
         'batiments_total' => $batimentsCount,
         'appartements_total' => $appartementsCount,
-        'locataires_total' => $locatairesCount
+       // 'locataires_total' => $locatairesCount
     ]);
  }
 

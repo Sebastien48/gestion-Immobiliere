@@ -120,7 +120,7 @@
             </a>
             
             <!-- Locataires -->
-            <a href="/locataires" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
+            <a href="{{route('locataires.index')}}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
                 <i class="fas fa-users w-5"></i>
                 <span>Locataires</span>
             </a>
@@ -138,7 +138,7 @@
             </a>
             
             <!-- Quittances -->
-            <a href="/quittances" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
+            <a href="{{route('quittances.index')}}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
                 <i class="fas fa-receipt w-5"></i>
                 <span>Quittances</span>
             </a>
