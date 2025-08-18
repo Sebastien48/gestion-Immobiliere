@@ -12,6 +12,28 @@
         <i class="fas fa-plus mr-2"></i> Ajouter un locataire
     </button>
 </div>
+@if (session('success'))
+    <div class="mb-4 px-4 py-3 rounded-md bg-green-100 text-green-800 font-semibold flex items-center">
+        <i class="fas fa-check-circle mr-2"></i>
+        {{ session('success') }}
+        @if(session('code_locataire'))
+            <span class="ml-3 px-2 py-1 bg-blue-200 text-blue-700 rounded text-xs">
+                Locataire # {{ session('code_locataire') }}
+            </span>
+        @endif
+    </div>
+@endif
+
+@if ($errors->any())
+    <div class="mb-4 px-4 py-3 rounded-md bg-red-100 text-red-800 font-semibold">
+        <i class="fas fa-exclamation-circle mr-2"></i>
+        <ul class="list-disc ml-6">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
 <!-- Filtres et recherche -->
 <div class="bg-white rounded-lg shadow p-4 mb-6">
@@ -25,17 +47,16 @@
                 <option value="sans-logement">Sans logement</option>
             </select>
         </div>
-        
         <!-- Filtre par bâtiment -->
         <div>
             <label for="buildingFilter" class="block text-sm font-medium text-gray-700 mb-1">Bâtiment</label>
             <select id="buildingFilter" class="w-full px-3 py-2 border border-gray-300 rounded-md">
                 <option value="">Tous les bâtiments</option>
-                <option value="1">Résidence Yasmina</option>
-                <option value="2">Immeuble Bellevue</option>
+                @foreach($batiments as $batiment)
+                    <option value="{{ $batiment->code_batiment }}">{{ $batiment->nom }}</option>
+                @endforeach
             </select>
         </div>
-        
         <!-- Recherche -->
         <div class="md:col-span-2">
             <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Recherche</label>
@@ -56,125 +77,77 @@
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Nom & Prénom
-                    </th>
-                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Contact
-                    </th>
-                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Appartement
-                    </th>
-                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Statut
-                    </th>
-                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                    </th>
+                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nom & Prénom</th>
+                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"> email & Contact </th>
+                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Photo identité</th>
+                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Statut</th>
+                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                <!-- Exemple de locataire avec logement -->
-                <tr>
-                    <td class="px-4 sm:px-6 py-4">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
-                                <i class="fas fa-user"></i>
+                @forelse($locataires as $locataire)
+                    <tr>
+                        <td class="px-4 sm:px-6 py-4">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="ml-4">
+                                  <a href="{{ route('locataires.show', ['code_locataire' => $locataire->code_locataires]) }}" >
+                                        <span class="font-medium text-gray-800  hover:text-blue-500">
+                                            {{ strtoupper($locataire->nom) }} {{ ucfirst($locataire->prenom) }}
+                                        </span>
+                                    </a>
+                                    <div class="text-sm text-gray-500">{{ $locataire->code_locataires ?? '-' }}</div>
+                                
+                                </div>
                             </div>
-                            <div class="ml-4">
-                                <a href="/locataires/1" class="font-medium text-blue-600 hover:text-blue-800">KOUADIO Amani</a>
-                                <div class="text-sm text-gray-500">CI-12345678</div>
+                        </td>
+                        <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ $locataire->email }}</div>
+                            <div class="text-sm text-gray-500">{{ $locataire->telephone }}</div>
+                        </td>
+                        <td class="px-4 sm:px-6 py-4">
+                            @if($locataire->photo_identite)
+                                <img src="{{ asset('storage/'.$locataire->photo_identite) }}"
+                                     alt="Pièce d'identité"
+                                     class="w-10 h-10 object-cover rounded-full" />
+                            @else
+                                <span class="text-xs text-gray-400">Aucune</span>
+                            @endif
+                        </td>
+                        <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                                En attente 
+                            </span>
+                        </td>
+                        <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex flex-col sm:flex-row gap-2">
+                              
+                                <button onclick="editTenant({{ $locataire->code_locataire}})" class="text-blue-600 hover:text-blue-900">
+                                    <i class="fas fa-edit"></i>
+                                    <span class="sm:hidden">Modifier</span>
+                                </button>
+                                <button onclick="deleteTenant({{ $locataire->code_locataire}})" class="text-red-600 hover:text-red-900">
+                                    <i class="fas fa-trash"></i>
+                                    <span class="sm:hidden">Supprimer</span>
+                                </button>
                             </div>
-                        </div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">amanikouadio@example.com</div>
-                        <div class="text-sm text-gray-500">+225 07 08 09 10 11</div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <a href="/appartements/1" class="text-blue-600 hover:text-blue-800">B1-05</a>
-                        <div class="text-sm text-gray-500">Résidence Yasmina</div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Locataire</span>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            <button onclick="assignApartment(1)" class="text-purple-600 hover:text-purple-900" title="Attribuer un logement">
-                                <i class="fas fa-home"></i>
-                                <span class="sm:hidden">Attribuer</span>
-                            </button>
-                            <button onclick="editTenant(1)" class="text-blue-600 hover:text-blue-900">
-                                <i class="fas fa-edit"></i>
-                                <span class="sm:hidden">Modifier</span>
-                            </button>
-                            <button onclick="deleteTenant(1)" class="text-red-600 hover:text-red-900">
-                                <i class="fas fa-trash"></i>
-                                <span class="sm:hidden">Supprimer</span>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                
-                <!-- Exemple de locataire sans logement -->
-                <tr>
-                    <td class="px-4 sm:px-6 py-4">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 h-10 w-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="ml-4">
-                                <a href="/locataires/2" class="font-medium text-blue-600 hover:text-blue-800">TRAORE Fatou</a>
-                                <div class="text-sm text-gray-500">CI-87654321</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">fatoutraore@example.com</div>
-                        <div class="text-sm text-gray-500">+225 01 02 03 04 05</div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        Aucun logement
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">En attente</span>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            <button onclick="assignApartment(2)" class="text-purple-600 hover:text-purple-900" title="Attribuer un logement">
-                                <i class="fas fa-home"></i>
-                                <span class="sm:hidden">Attribuer</span>
-                            </button>
-                            <button onclick="editTenant(2)" class="text-blue-600 hover:text-blue-900">
-                                <i class="fas fa-edit"></i>
-                                <span class="sm:hidden">Modifier</span>
-                            </button>
-                            <button onclick="deleteTenant(2)" class="text-red-600 hover:text-red-900">
-                                <i class="fas fa-trash"></i>
-                                <span class="sm:hidden">Supprimer</span>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" class="text-center py-8 text-gray-400">Aucun locataire trouvé.</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
-    
-    <!-- Pagination -->
-    <div class="bg-gray-50 px-4 sm:px-6 py-3 flex items-center justify-between border-t border-gray-200">
-        <div class="text-sm text-gray-500">
-            Affichage de <span>1</span> à <span>2</span> sur <span>2</span> locataires
-        </div>
-        <nav class="flex space-x-2">
-            <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 bg-white cursor-not-allowed" disabled>
-                <i class="fas fa-chevron-left"></i>
-            </button>
-            <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                <i class="fas fa-chevron-right"></i>
-            </button>
-        </nav>
-    </div>
+
+    <!-- PAGINATION si nécessaire -->
+    {{-- {!! $locataires->links() !!} --}}
 </div>
+
 
 <!-- Modal Ajout de locataire -->
 <div id="addTenantModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 sm:p-6">
@@ -187,7 +160,8 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <form id="addTenantForm" class="p-4 sm:p-6">
+        <form id="addTenantForm"  action="{{route('locataires.store')}}"  method="POST" class="p-4 sm:p-6"enctype="multipart/form-data">
+            @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nom*</label>
@@ -304,79 +278,7 @@
     </div>
 </div>
 
-<!-- Modal Attribution d'appartement -->
-<div id="assignApartmentModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 sm:p-6">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 sm:mx-6 overflow-y-auto" style="max-height: 90vh;">
-        <div class="flex justify-between items-center border-b px-4 sm:px-6 py-4 sticky top-0 bg-white z-10">
-            <h3 class="text-lg font-bold text-gray-800">
-                <i class="fas fa-home text-purple-500 mr-2"></i> Attribuer un logement
-            </h3>
-            <button onclick="closeModal('assignApartmentModal')" class="text-gray-400 hover:text-gray-500 text-xl">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <form id="assignApartmentForm" class="p-4 sm:p-6">
-            <div class="mb-4">
-                <h4 class="font-medium text-gray-900 mb-2">Locataire: <span id="tenantName" class="font-bold">KOUADIO Amani</span></h4>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Bâtiment*</label>
-                    <select id="buildingSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md" onchange="updateAvailableApartments()">
-                        <option value="">Sélectionner un bâtiment</option>
-                        <option value="1">Résidence Yasmina</option>
-                        <option value="2">Immeuble Bellevue</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Appartement*</label>
-                    <select name="apartment_id" id="apartmentSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md" disabled>
-                        <option value="">Sélectionnez d'abord un bâtiment</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="border-t border-gray-200 pt-4 mb-4">
-                <h4 class="font-medium text-gray-900 mb-4">Détails du contrat</h4>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Date de début*</label>
-                        <input type="date" name="start_date" required 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Durée (mois)*</label>
-                        <input type="number" name="duration" min="1" value="12" required 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Loyer mensuel*</label>
-                        <input type="number" name="monthly_rent" id="monthlyRent" required 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md" readonly>
-                    </div>
-                </div>
-                
-                <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Conditions spéciales</label>
-                    <textarea name="special_conditions" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
-                </div>
-            </div>
-            
-            <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 mt-6">
-                <button type="button" onclick="closeModal('assignApartmentModal')" 
-                        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 order-2 sm:order-1">
-                    Annuler
-                </button>
-                <button type="submit" 
-                        class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 flex items-center justify-center order-1 sm:order-2 mb-3 sm:mb-0">
-                    <i class="fas fa-save mr-2"></i> Enregistrer la location
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+
 
 <!-- Modal Suppression -->
 <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
@@ -420,15 +322,8 @@
         document.body.classList.remove('overflow-hidden');
     }
 
-    // Ajout de locataire
-    document.getElementById('addTenantForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData);
-        console.log('Nouveau locataire:', data);
-        alert('Locataire ajouté avec succès !');
-        closeModal('addTenantModal');
-    });
+    
+  
 
     // Modification de locataire
     function editTenant(id) {

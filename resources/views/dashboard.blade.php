@@ -18,14 +18,14 @@
             <div class="flex justify-between items-start">
                 <div>
                     <p class="text-gray-500 text-sm font-medium">Bâtiments gérés</p>
-                    <p class="text-3xl font-bold mt-2" id="buildingsCount">8</p>
+                    <p class="text-3xl font-bold mt-2" id="buildingsCount">{{$buildingsCount}}</p>
                 </div>
                 <div class="bg-blue-100 text-blue-600 p-3 rounded-full">
                     <i class="fas fa-building text-xl"></i>
                 </div>
             </div>
             <div class="mt-4">
-                <a href="/batiments" class="text-blue-600 hover:text-blue-800 text-sm flex items-center">
+                <a href="{{route('batiments.index')}}" class="text-blue-600 hover:text-blue-800 text-sm flex items-center">
                     Voir la liste complète <i class="fas fa-arrow-right ml-2"></i>
                 </a>
             </div>
@@ -39,15 +39,13 @@
                 <div>
                     <p class="text-gray-500 text-sm font-medium">Appartements</p>
                     <div class="flex items-baseline mt-2 space-x-4">
-                        <div>
-                            <p class="text-2xl font-bold text-green-600" id="apartmentsOccupied">24</p>
-                            <p class="text-xs text-gray-500">Occupés</p>
-                        </div>
-                        <div class="border-l border-gray-200 h-10"></div>
-                        <div>
-                            <p class="text-2xl font-bold text-blue-600" id="apartmentsAvailable">12</p>
-                            <p class="text-xs text-gray-500">Disponibles</p>
-                        </div>
+                            <p class="text-2xl font-bold text-green-600" id="apartmentsOccupied">{{$appartementsOccupes}}</p>
+                                    <p class="text-xs text-gray-500">Occupés</p>
+                                </div>
+                              <!--  <div class="border-l border-gray-200 h-10"></div> -->
+                                <div>
+                                    <p class="text-2xl font-bold text-blue-600" id="apartmentsAvailable">{{$appartementsLibres}}</p>
+                                    <p class="text-xs text-gray-500">Disponibles</p>
                     </div>
                 </div>
                 <div class="bg-green-100 text-green-600 p-3 rounded-full">
@@ -55,7 +53,7 @@
                 </div>
             </div>
             <div class="mt-4">
-                <a href="/appartements" class="text-green-600 hover:text-green-800 text-sm flex items-center">
+                <a href="{{route('appartements.index')}}" class="text-green-600 hover:text-green-800 text-sm flex items-center">
                     Gérer les appartements <i class="fas fa-arrow-right ml-2"></i>
                 </a>
             </div>
@@ -76,7 +74,7 @@
                 </div>
             </div>
             <div class="mt-4">
-                <a href="/paiements" class="text-yellow-600 hover:text-yellow-800 text-sm flex items-center">
+                <a href="{{route('paiements.index')}}" class="text-yellow-600 hover:text-yellow-800 text-sm flex items-center">
                     Voir les paiements <i class="fas fa-arrow-right ml-2"></i>
                 </a>
             </div>
@@ -178,11 +176,8 @@
 <script>
     // Données simulées pour le tableau de bord
     const dashboardData = {
-        buildings: 8,
-        apartments: {
-            occupied: 24,
-            available: 12
-        },
+        buildings: {{ $buildingsCount ?? 0 }},
+       
         pendingPayments: 5,
         recentPayments: [
             { tenant: "Jean Marc", apartment: "B2-12", month: "Juillet 2023", amount: "750 mille FCFA", status: "paid" },
@@ -203,7 +198,7 @@
     // Initialisation du tableau de bord
     document.addEventListener('DOMContentLoaded', function() {
         // Mise à jour des cartes statistiques
-        document.getElementById('buildingsCount').textContent = dashboardData.buildings;
+        // document.getElementById('buildingsCount').textContent = dashboardData.buildings;
         document.getElementById('apartmentsOccupied').textContent = dashboardData.apartments.occupied;
         document.getElementById('apartmentsAvailable').textContent = dashboardData.apartments.available;
         document.getElementById('pendingPayments').textContent = dashboardData.pendingPayments;

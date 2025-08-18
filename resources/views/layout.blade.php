@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agent - Gestion Immobilière</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -17,15 +16,26 @@
                 <button id="sidebarToggle" class="lg:hidden text-gray-600 hover:text-gray-900">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
-                <h1 class="text-xl font-bold text-gray-800 hidden md:block">Agence Immobilière</h1>
+                   <h1 class="text-xl font-bold text-gray-800 hidden md:block">{{$agence ? $agence->nomAgence : 'Agence'}} </h1>
                 
                 <!-- Barre de recherche - Visible sur desktop -->
+<<<<<<< HEAD
                 <div class="hidden lg:flex items-center bg-gray-100 rounded-lg px-3 py-2 ml-4">
                     <i class="fas fa-search text-gray-400 mr-2"></i>
                     <input type="text" placeholder="Rechercher locataire, bâtiment..." 
                         class="bg-transparent outline-none text-sm w-64 placeholder-gray-500">
                     
                 </div>
+=======
+            <div class="hidden lg:flex items-center bg-gray-100 rounded-lg px-3 py-2 ml-4">
+                <i class="fas fa-search text-gray-400 mr-2"></i>
+                <form action="{{ route('search.global') }}" method="GET" class="flex items-center">
+                    <input type="text" name="q" placeholder="Rechercher locataire, bâtiment..." 
+                        class="bg-transparent outline-none text-sm w-64 placeholder-gray-500" value="{{ request('q') }}">
+                    <button type="submit" class="ml-2 text-blue-500">Chercher</button>
+                </form>
+            </div>
+>>>>>>> branche
             </div>
             
             <div class="flex items-center space-x-4">
@@ -189,9 +199,21 @@
                                 
                 <!-- User Menu -->
                 <div class="relative">
-                    <button id="userMenuButton" class="flex items-center space-x-2 text-gray-600 hover:text-gray-900">
-                        <img src="https://via.placeholder.com/32" alt="Avatar" class="w-8 h-8 rounded-full">
-                        <span class="hidden md:block text-sm font-medium">Agent</span>
+                     <button id="userMenuButton" class="flex items-center space-x-2 text-gray-600 hover:text-gray-900">
+                        <!-- afficher le logo de l'agence avec les initiales superposées -->
+                        
+                        
+                        <div class="relative">
+                                @if(isset($logo1) && $logo1)
+                                    <img src="{{ asset('storage/' . $logo1) }}" alt="Logo Agence" class="w-8 h-8 rounded-full object-cover"> 
+                                @else
+                                    <div class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-600 to-indigo-600 flex items-center justify-center text-white font-bold text-xl">
+                                        {{ $initiales ?? 'AG' }}
+                                    </div>
+                                @endif
+                        </div>
+                        
+                        <span class="hidden md:block text-xl font-medium">{{$initiales ?? 'Agent'}}</span>
                         <i class="fas fa-chevron-down text-xs"></i>
                     </button>
                     
@@ -203,7 +225,7 @@
                             <i class="fas fa-cog mr-2"></i>Paramètres
                         </a>
                         <hr class="my-1">
-                        <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                        <a href="{{route('logout')}}" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
                             <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
                         </a>
                     </div>
@@ -236,43 +258,43 @@
         
         <nav class="px-2 space-y-1">
             <!-- Tableau de bord -->
-            <a href="{{ url('/dashboard') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
+            <a href="{{ route('home') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
                 <i class="fas fa-tachometer-alt w-5"></i>
                 <span>Tableau de bord</span>
             </a>
             
             <!-- Bâtiments -->
-            <a href="{{ url('/batiments') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
+            <a href="{{ route('batiments.index') }}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
                 <i class="fas fa-building w-5"></i>
                 <span>Bâtiments</span>
             </a>
             
             <!-- Appartements -->
-            <a href="/appartements" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
+            <a href="{{route('appartements.index')}}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
                 <i class="fas fa-home w-5"></i>
                 <span>Appartements</span>
             </a>
             
             <!-- Locataires -->
-            <a href="/locataires" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
+            <a href="{{route('locataires.index')}}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
                 <i class="fas fa-users w-5"></i>
                 <span>Locataires</span>
             </a>
             
             <!-- Locations -->
-            <a href="/locations" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
+            <a href="{{route('locations.index')}}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
                 <i class="fas fa-file-contract w-5"></i>
                 <span>Locations</span>
             </a>
             
             <!-- Paiements -->
-            <a href="/paiements" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
+            <a href="{{route('paiements.index')}}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
                 <i class="fas fa-money-bill-wave w-5"></i>
                 <span>Paiements</span>
             </a>
             
             <!-- Quittances -->
-            <a href="/quittances" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
+            <a href="{{route('quittances.index')}}" class="nav-item flex items-center space-x-3 px-4 py-3 rounded-lg text-blue-100 hover:bg-blue-700 hover:text-white transition-colors">
                 <i class="fas fa-receipt w-5"></i>
                 <span>Quittances</span>
             </a>

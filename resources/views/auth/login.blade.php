@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connexion - Gestion Immobilière</title>
-    <link rel="icon" href="/public/favicon.ico" type="image/x-icon">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -120,7 +120,7 @@
                 
                 <!-- Lien d'inscription -->
                 <div class="flex items-center">
-                    <a href="register.html" class="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-300">
+                    <a href="{{route ('register')}}" class="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-300">
                         Pas de compte ? <span class="font-bold">Inscrivez-vous</span>
                     </a>
                 </div>
@@ -145,7 +145,8 @@
             </div>
 
             <!-- Formulaire -->
-            <form class="space-y-6" onsubmit="handleLogin(event)">
+            <form class="space-y-6"  method="POST" action="{{ route('login') }}">
+                @csrf
                 <!-- Champ Email -->
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -208,7 +209,7 @@
                         >
                         <span class="ml-2 text-gray-600">Se souvenir de moi</span>
                     </label>
-                    <a href="#" class="text-blue-600 hover:text-blue-800 font-medium transition-colors duration-300">
+                    <a href="{{route('forget.password')}}" class="text-blue-600 hover:text-blue-800 font-medium transition-colors duration-300">
                         Mot de passe oublié ?
                     </a>
                 </div>
@@ -238,7 +239,7 @@
             <div class="text-center">
                 <p class="text-gray-600 text-sm">
                     Pas encore de compte ? 
-                    <a href="register.html" class="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300">
+                    <a href="{{route('register')}}" class="text-blue-600 hover:text-blue-800 font-semibold transition-colors duration-300">
                         S'inscrire maintenant
                     </a>
                 </p>
@@ -499,3 +500,4 @@
     </script>
 </body>
 </html>
+
