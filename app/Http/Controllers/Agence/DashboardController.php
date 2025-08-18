@@ -26,6 +26,7 @@ class DashboardController extends Controller
         $logo1 = $agence ? $agence->logo : null;
         $initiales = $this->getInitiales($user);
         $buildingsCount = $agence ? $this->getBuildingsCount($agence) : 0;
+        
       /*
         $appartementStats = $agence ? $this->getAppartementStats($agence) : [
             'total_libres' => 0,
@@ -33,7 +34,7 @@ class DashboardController extends Controller
         ];*/
         $appartementsList = $agence ? $this->getAppartementsParStatut($agence) : collect([]);
         $appartementsLibres = $appartementsList->where('statut', 'libre')->count();
-$appartementsOccupes = $appartementsList->where('statut', 'occupé')->count();
+        $appartementsOccupes = $appartementsList->where('statut', 'occupe')->count();
         return view('dashboard', [
             'user' => $user,
             'agence' => $agence,
@@ -41,6 +42,7 @@ $appartementsOccupes = $appartementsList->where('statut', 'occupé')->count();
             'initiales' => $initiales,
             'logo1' => $logo1,
             'buildingsCount' => $buildingsCount,
+            
              'appartementsList' => $appartementsList,
     'appartementsLibres' => $appartementsLibres,
     'appartementsOccupes' => $appartementsOccupes,
@@ -63,6 +65,7 @@ $appartementsOccupes = $appartementsList->where('statut', 'occupé')->count();
         return Batiments::where('code_agence', $agence->numero)->count();
     }
 
+  
     // Méthode privée pour compter les appartements libres et occupés
     private function getAppartementsParStatut($agence)
      

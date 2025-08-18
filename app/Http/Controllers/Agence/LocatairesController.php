@@ -8,6 +8,7 @@ use App\Models\Locataires;
 use Illuminate\Support\Facades\Log;
 use App\Models\Batiments;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Appartements;
 
 class LocatairesController extends Controller
 {
@@ -26,8 +27,9 @@ class LocatairesController extends Controller
 
         // Les bâtiments appartenant à la même agence
         $batiments = Batiments::where('code_agence', $agenceCode)->get();
+        $locataire= Locataires::all();
 
-        return view('locataires.index', compact('locataires', 'batiments', 'user'));
+        return view('locataires.index', compact('locataires', 'batiments', 'user','locataire'));
     }
 
     /**
@@ -87,4 +89,20 @@ class LocatairesController extends Controller
                 ]);
         }
     }
+    //afficher les informations du locataires 
+    public function show($code_locataire)
+{
+    $user = Auth::user();
+    $agence = $user->agence;
+
+    // Vérification que le locataire appartient bien à l'agence de l'utilisateur
+    $locataire = Locataires::where('code_locataires', $code_locataire)
+        ->where('code_agence', $agence->numero)
+        ->firstOrFail();
+
+    // On pourra ajouter la récupération des documents, paiements, logement, etc. si besoin
+
+    return view('locataires.show', compact('locataire'));
+}
+
 }

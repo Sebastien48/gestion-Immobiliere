@@ -20,12 +20,14 @@
                    <h1 class="text-xl font-bold text-gray-800 hidden md:block">{{$agence ? $agence->nomAgence : 'Agence'}} </h1>
                 
                 <!-- Barre de recherche - Visible sur desktop -->
-                <div class="hidden lg:flex items-center bg-gray-100 rounded-lg px-3 py-2 ml-4">
-                    <i class="fas fa-search text-gray-400 mr-2"></i>
-                    <input type="text" placeholder="Rechercher locataire, bâtiment..." 
-                        class="bg-transparent outline-none text-sm w-64 placeholder-gray-500">
-                    
-                </div>
+            <div class="hidden lg:flex items-center bg-gray-100 rounded-lg px-3 py-2 ml-4">
+                <i class="fas fa-search text-gray-400 mr-2"></i>
+                <form action="{{ route('search.global') }}" method="GET" class="flex items-center">
+                    <input type="text" name="q" placeholder="Rechercher locataire, bâtiment..." 
+                        class="bg-transparent outline-none text-sm w-64 placeholder-gray-500" value="{{ request('q') }}">
+                    <button type="submit" class="ml-2 text-blue-500">Chercher</button>
+                </form>
+            </div>
             </div>
             
             <div class="flex items-center space-x-4">

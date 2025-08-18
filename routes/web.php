@@ -17,6 +17,7 @@ use App\Http\Controllers\Agence\LocatairesController;
 use App\Http\Controllers\Agence\LocationsController;
 use App\Http\Controllers\Agence\QuittancesController;
 use App\Http\Controllers\Agence\PaiementsController;
+use App\Http\Controllers\GlobalSearchController;
 
 // Accueil
 Route::get('/', [IndexController::class, 'index'])->name('index');
@@ -40,7 +41,7 @@ Route::post('/forget-password', [PasswordController::class, 'check'])->name('for
 Route::get('/reset-password', [ResetController::class, 'index'])->middleware('guest')->name('reset.password');
 Route::get('/reset-password/{token}', [ResetController::class, 'showResetForm'])->middleware('guest')->name('password.reset');
 Route::post('/reset-password', [ResetController::class, 'reset'])->middleware('guest')->name('password.update');
-
+Route::get('/search',action:[GlobalSearchController::class,'index'])->name('search.global');
 // Utilisateur agence - Dashboard (auth obligatoire)
 Route::prefix('agence-immobiliere')->middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('home');
@@ -62,6 +63,7 @@ Route::get('/appartements/{code_appartement}',[AppartementsController::class,'sh
 
  Route::get('/locataires',action:[LocatairesController::class,'index'])->name('locataires.index');
     Route::post('/locataires',action:[LocatairesController::class,'store'])->name('locataires.store');
+Route::get('locataires/{code_locataire}', [LocatairesController::class,'show'])->name('locataires.show');
 
 
     // route pour les locations 

@@ -93,10 +93,13 @@
                                     <i class="fas fa-user"></i>
                                 </div>
                                 <div class="ml-4">
-                                    <span class="font-medium text-gray-800">
-                                        {{ strtoupper($locataire->nom) }} {{ ucfirst($locataire->prenom) }}
-                                    </span>
+                                  <a href="{{ route('locataires.show', ['code_locataire' => $locataire->code_locataires]) }}" class="text:bg-red-400">
+                                        <span class="font-medium text-gray-800 ">
+                                            {{ strtoupper($locataire->nom) }} {{ ucfirst($locataire->prenom) }}
+                                        </span>
+                                    </a>
                                     <div class="text-sm text-gray-500">{{ $locataire->code_locataires ?? '-' }}</div>
+                                
                                 </div>
                             </div>
                         </td>
@@ -120,10 +123,7 @@
                         </td>
                         <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex flex-col sm:flex-row gap-2">
-                                <button onclick="assignApartment({{ $locataire->code_locataire }})" class="text-purple-600 hover:text-purple-900" title="Attribuer un logement">
-                                    <i class="fas fa-home"></i>
-                                    <span class="sm:hidden">Attribuer</span>
-                                </button>
+                              
                                 <button onclick="editTenant({{ $locataire->code_locataire}})" class="text-blue-600 hover:text-blue-900">
                                     <i class="fas fa-edit"></i>
                                     <span class="sm:hidden">Modifier</span>
@@ -278,83 +278,7 @@
     </div>
 </div>
 
-<!-- Modal Attribution d'appartement -->
-<div id="assignApartmentModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 sm:p-6">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 sm:mx-6 overflow-y-auto" style="max-height: 90vh;">
-        <div class="flex justify-between items-center border-b px-4 sm:px-6 py-4 sticky top-0 bg-white z-10">
-            <h3 class="text-lg font-bold text-gray-800">
-                <i class="fas fa-home text-purple-500 mr-2"></i> Attribuer un logement
-            </h3>
-            <button onclick="closeModal('assignApartmentModal')" class="text-gray-400 hover:text-gray-500 text-xl">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <form id="assignApartmentForm" class="p-4 sm:p-6">
-            <div class="mb-4">
-                <h4 class="font-medium text-gray-900 mb-2">Locataire: <span id="tenantName" class="font-bold">mmp Amani</span></h4>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Bâtiment*</label>
-                    <select id="buildingSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md" onchange="updateAvailableApartments()">
-                        <option value="">Sélectionner un bâtiment</option>
-                        @foreach ($batiments as $batiment )
-                          <option value="{{ $batiment->code_batiment }}">{{ $batiment->nom }}</option>
-                        
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Appartement*</label>
-                    <select name="apartment_id" id="apartmentSelect" class="w-full px-3 py-2 border border-gray-300 rounded-md" disabled>
-                        <option value="">Sélectionnez d'abord un bâtiment</option>
-                        <option value="aaa">aaa</option>
-                        <option value="la vie">la vie mature</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="border-t border-gray-200 pt-4 mb-4">
-                <h4 class="font-medium text-gray-900 mb-4">Détails du contrat</h4>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Date de début*</label>
-                        <input type="date" name="start_date" required 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Durée (mois)*</label>
-                        <input type="number" name="duration" min="1" value="12" required 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Loyer mensuel*</label>
-                        <input type="number" name="monthly_rent" id="monthlyRent" required 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md" readonly>
-                    </div>
-                </div>
-                
-                <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Conditions spéciales</label>
-                    <textarea name="special_conditions" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md"></textarea>
-                </div>
-            </div>
-            
-            <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 mt-6">
-                <button type="button" onclick="closeModal('assignApartmentModal')" 
-                        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 order-2 sm:order-1">
-                    Annuler
-                </button>
-                <button type="submit" 
-                        class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 flex items-center justify-center order-1 sm:order-2 mb-3 sm:mb-0">
-                    <i class="fas fa-save mr-2"></i> Enregistrer la location
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
+
 
 <!-- Modal Suppression -->
 <div id="deleteModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">

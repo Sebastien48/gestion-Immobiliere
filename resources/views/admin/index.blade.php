@@ -583,7 +583,7 @@
             fetch('/admin/stats')
                 .then(response => response.json())
                 .then(data => {
-                    console.log('Données reçues:', data);
+                    //console.log('Données reçues:', data);
                     
                     // Met à jour le graphique des inscriptions
                     if (inscriptionsChart && data.months && data.inscriptions) {

@@ -42,7 +42,7 @@
                             <p class="text-2xl font-bold text-green-600" id="apartmentsOccupied">{{$appartementsOccupes}}</p>
                                     <p class="text-xs text-gray-500">Occupés</p>
                                 </div>
-                                <div class="border-l border-gray-200 h-10"></div>
+                              <!--  <div class="border-l border-gray-200 h-10"></div> -->
                                 <div>
                                     <p class="text-2xl font-bold text-blue-600" id="apartmentsAvailable">{{$appartementsLibres}}</p>
                                     <p class="text-xs text-gray-500">Disponibles</p>
@@ -74,7 +74,7 @@
                 </div>
             </div>
             <div class="mt-4">
-                <a href="/paiements" class="text-yellow-600 hover:text-yellow-800 text-sm flex items-center">
+                <a href="{{route('paiements.index')}}" class="text-yellow-600 hover:text-yellow-800 text-sm flex items-center">
                     Voir les paiements <i class="fas fa-arrow-right ml-2"></i>
                 </a>
             </div>
