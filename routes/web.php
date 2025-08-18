@@ -22,9 +22,6 @@ use App\Http\Controllers\GlobalSearchController;
 // Accueil
 Route::get('/', [IndexController::class, 'index'])->name('index');
 
-// Fallback pour 404 personnalisé
-//Route::fallback([ErreurController::class, 'show404'])->name('error.404');
-
 // Authentification & inscription
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
@@ -41,42 +38,50 @@ Route::post('/forget-password', [PasswordController::class, 'check'])->name('for
 Route::get('/reset-password', [ResetController::class, 'index'])->middleware('guest')->name('reset.password');
 Route::get('/reset-password/{token}', [ResetController::class, 'showResetForm'])->middleware('guest')->name('password.reset');
 Route::post('/reset-password', [ResetController::class, 'reset'])->middleware('guest')->name('password.update');
-Route::get('/search',action:[GlobalSearchController::class,'index'])->name('search.global');
+
+// Recherche globale
+Route::get('/search', action: [GlobalSearchController::class, 'index'])->name('search.global');
+
+// NOTE: on supprime l'ancienne route sans paramètre vers apartmentsByBuilding
+// Route::get('/locations/app', action: [LocationsController::class, 'apartmentsByBuilding'])->name('locations.apartments');
+
 // Utilisateur agence - Dashboard (auth obligatoire)
 Route::prefix('agence-immobiliere')->middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('home');
-    Route::get('/batiments',[BatimentsController::class, 'index'])->name('batiments.index');
+
+    // Bâtiments
+    Route::get('/batiments', [BatimentsController::class, 'index'])->name('batiments.index');
     Route::post('/batiments/store', [BatimentsController::class, 'store'])->name('batiments.post');
     Route::get('batiments/live-search', [BatimentsController::class, 'liveSearch'])->name('batiments.liveSearch');
-   // Route::get('/batiments/create', [BatimentsController::class, 'create'])->name('batiments.create');
     Route::get('/batiments/{code_batiment}', [BatimentsController::class, 'show'])->name('batiments.show');
     Route::put('/batiments/update/{code_batiment}', [BatimentsController::class, 'update'])->name('batiments.update');
-   Route::delete('batiments/{code_batiment}', [BatimentsController::class, 'destroy'])->name('batiments.destroy');
-    Route::get('batiments/live-search', [BatimentsController::class, 'liveSearch'])->name('batiments.liveSearch');
+    Route::delete('batiments/{code_batiment}', [BatimentsController::class, 'destroy'])->name('batiments.destroy');
 
-// route appartement 
-Route::get('/appartements', [AppartementsController::class,'index'])->name('appartements.index');
-Route::post('/appartement/store',[AppartementsController::class,'store'])->name('appartements.store');
-Route::get('/appartements/{code_appartement}',[AppartementsController::class,'show']) ->name('appartements.show');
+    // Appartements
+    Route::get('/appartements', [AppartementsController::class, 'index'])->name('appartements.index');
+    Route::post('/appartement/store', [AppartementsController::class, 'store'])->name('appartements.store');
+    Route::get('/appartements/{code_appartement}', [AppartementsController::class, 'show'])->name('appartements.show');
 
- // route pour locataires
+    // Locataires
+    Route::get('/locataires', action: [LocatairesController::class, 'index'])->name('locataires.index');
+    Route::post('/locataires', action: [LocatairesController::class, 'store'])->name('locataires.store');
+    Route::get('locataires/{code_locataire}', [LocatairesController::class, 'show'])->name('locataires.show');
 
- Route::get('/locataires',action:[LocatairesController::class,'index'])->name('locataires.index');
-    Route::post('/locataires',action:[LocatairesController::class,'store'])->name('locataires.store');
-Route::get('locataires/{code_locataire}', [LocatairesController::class,'show'])->name('locataires.show');
+    // Locations
+    Route::get('/locations', action: [LocationsController::class, 'index'])->name('locations.index');
+    Route::post('/locations', action: [LocationsController::class, 'store'])->name('locations.store');
 
+    // API appartements par bâtiment (avec paramètre requis)
+    Route::get(
+        '/locations/apartments/{codeBatiment}',
+        action: [LocationsController::class, 'apartmentsByBuilding']
+    )->name('locations.apartments');
 
-    // route pour les locations 
-    Route::get('/locations',action:[LocationsController::class,'index'])->name('locations.index');
-    
-    //routespour les locatraires 
+    // Paiements
+    Route::get('/paiement', action: [PaiementsController::class, 'index'])->name('paiements.index');
 
-    Route::get('/paiement',action:[PaiementsController::class,'index'])->name('paiements.index');
-
-// définis la route pours les quittances
-Route::get('/quittances',action:[QuittancesController::class,'index'])->name('quittances.index');
-
-
+    // Quittances
+    Route::get('/quittances', action: [QuittancesController::class, 'index'])->name('quittances.index');
 });
 
 // Admin routes (auth & admin middlewares)

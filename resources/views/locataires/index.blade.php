@@ -93,8 +93,8 @@
                                     <i class="fas fa-user"></i>
                                 </div>
                                 <div class="ml-4">
-                                  <a href="{{ route('locataires.show', ['code_locataire' => $locataire->code_locataires]) }}" class="text:bg-red-400">
-                                        <span class="font-medium text-gray-800 ">
+                                  <a href="{{ route('locataires.show', ['code_locataire' => $locataire->code_locataires]) }}" >
+                                        <span class="font-medium text-gray-800  hover:text-blue-500">
                                             {{ strtoupper($locataire->nom) }} {{ ucfirst($locataire->prenom) }}
                                         </span>
                                     </a>
