@@ -15,7 +15,25 @@
         <div class="shape"></div>
         <div class="shape"></div>
     </div>
-    
+    @if (session('status'))
+    <div class="alert alert-success">
+        {{ session('status') }}
+    </div>
+@endif
+@if (session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+@endif
+@if ($errors->any())
+    <div class="alert alert-danger">
+      <ul>
+        @foreach($errors->all() as $error)
+          <li>{{ $error }}</li>
+        @endforeach
+      </ul>
+    </div>
+@endif
     <div class="flex items-center justify-center min-h-screen px-4 relative z-10">
         <div class="w-full max-w-md">
             <div class="glass-card rounded-3xl shadow-2xl p-8">

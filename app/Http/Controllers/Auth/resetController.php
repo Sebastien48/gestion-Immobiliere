@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\DB;
 class ResetController extends Controller
 {
     /**
-     * Afficher le formulaire de réinitialisation du mot de passe.
+     * Show the password reset form.
      */
     public function index()
     {
@@ -27,7 +27,7 @@ class ResetController extends Controller
     }
 
     /**
-     * Afficher le formulaire de réinitialisation avec le token.
+     * Show the password reset form with token.
      */
     public function showResetForm(Request $request, $token = null)
     {
@@ -46,7 +46,7 @@ class ResetController extends Controller
     }
 
     /**
-     * Traiter la réinitialisation du mot de passe.
+     * Handle the password reset request.
      */
     public function reset(Request $request)
     {
@@ -59,7 +59,6 @@ class ResetController extends Controller
             ]);
         }
 
-        // Validation des données
         $validator = Validator::make($request->all(), [
             'token'    => 'required|string',
             'email'    => 'required|email|exists:users,email',
@@ -71,7 +70,6 @@ class ResetController extends Controller
                 PasswordRule::min(8)->mixedCase()->numbers()->symbols()->uncompromised()
             ],
         ], [
-            // Messages d'erreur personnalisés
             'token.required'         => 'Le token de réinitialisation est requis.',
             'email.required'         => 'L\'adresse email est requise.',
             'email.email'            => 'Le format de l\'email n\'est pas valide.',
@@ -93,7 +91,6 @@ class ResetController extends Controller
         }
 
         try {
-            // Réinitialisation officielle du mot de passe
             $status = Password::reset(
                 $request->only('email', 'password', 'password_confirmation', 'token'),
                 function ($user, $password) {
@@ -147,17 +144,17 @@ class ResetController extends Controller
     }
 
     /**
-     * Met à jour le mot de passe de l'utilisateur.
+     * Update user password helper.
      */
     private function updateUserPassword($user, $password)
     {
         $user->forceFill([
-            'password'          => Hash::make($password),
-            'remember_token'    => Str::random(60),
-            'password_changed_at'=> now(), // Optionnel
+            'password'            => Hash::make($password),
+            'remember_token'      => Str::random(60),
+            'password_changed_at' => now(), // Optional
         ])->save();
 
-        // Si l'utilisateur utilise Sanctum, révoquer tous les tokens
+        // If the user uses Sanctum, revoke all tokens
         if (method_exists($user, 'tokens')) {
             $user->tokens()->delete();
         }
@@ -172,7 +169,7 @@ class ResetController extends Controller
     }
 
     /**
-     * Affiche le formulaire de demande de lien de réinitialisation.
+     * Show the reset link request form.
      */
     public function showLinkRequestForm()
     {
@@ -180,7 +177,7 @@ class ResetController extends Controller
     }
 
     /**
-     * Envoie le lien de réinitialisation par email.
+     * Send password reset link by email.
      */
     public function sendResetLinkEmail(Request $request)
     {
@@ -237,7 +234,7 @@ class ResetController extends Controller
     }
 
     /**
-     * Vérifie la validité d'un token sans le consommer.
+     * Validate a password reset token without consuming it.
      */
     public function validateToken(Request $request, $token)
     {
@@ -251,7 +248,7 @@ class ResetController extends Controller
             return response()->json(['valid' => false, 'message' => 'Utilisateur introuvable.']);
         }
 
-        // Attention : la table par défaut dans Laravel est 'password_resets' selon ta version !
+        // Default Laravel table is 'password_resets'.
         $tokenRecord = DB::table('password_resets')
             ->where('email', $request->email)
             ->first();
@@ -260,7 +257,6 @@ class ResetController extends Controller
             return response()->json(['valid' => false, 'message' => 'Token introuvable.']);
         }
 
-        // Vérifier l'expiration (par défaut, expire en 60 minutes)
         $expiry = config('auth.passwords.users.expire', 60);
         $isExpired = Carbon::parse($tokenRecord->created_at)
             ->addMinutes($expiry)
@@ -270,7 +266,6 @@ class ResetController extends Controller
             return response()->json(['valid' => false, 'message' => 'Token expiré.']);
         }
 
-        // Vérifier la correspondance du token (hashé dans la table)
         $isValid = Hash::check($token, $tokenRecord->token);
 
         return response()->json([
@@ -280,13 +275,12 @@ class ResetController extends Controller
     }
 
     /**
-     * Nettoie les tokens expirés (à exécuter périodiquement, ex: scheduler ou admin).
+     * Clean expired tokens (run periodically with scheduler or admin).
      */
     public function cleanExpiredTokens()
     {
         $expiry = config('auth.passwords.users.expire', 60);
 
-        // Table Laravel classique : 'password_resets'
         $deletedCount = DB::table('password_resets')
             ->where('created_at', '<', now()->subMinutes($expiry))
             ->delete();

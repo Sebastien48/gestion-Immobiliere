@@ -27,9 +27,9 @@ class LocatairesController extends Controller
 
         // Les bâtiments appartenant à la même agence
         $batiments = Batiments::where('code_agence', $agenceCode)->get();
-        $locataire= Locataires::all();
+  //      $locataire= Locataires::all();
 
-        return view('locataires.index', compact('locataires', 'batiments', 'user','locataire'));
+        return view('locataires.index', compact('locataires', 'batiments', 'user'));
     }
 
     /**

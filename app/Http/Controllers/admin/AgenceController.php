@@ -11,6 +11,7 @@ use Carbon\Carbon;// pour utiliser dynamiquement le graphique
  use App\Models\Batiments;
  use App\Models\Appartements;// Import the Agence model
 use App\Models\Locataires;
+use App\Models\Locations;
 
 class AgenceController extends Controller
 {
@@ -67,7 +68,7 @@ public function list(Request $request)
     $batimentsCount = Batiments::count();
     $appartementsCount = Appartements::count();
     $locatairesCount = Locataires::count();
-    //$locationsCount = Locations::count();
+    $locationsCount = Locations::count();
 
     // Données pour le graphique de performances immobilières
     
@@ -75,7 +76,7 @@ public function list(Request $request)
         'batiments' => $batimentsCount,
         'appartements' => $appartementsCount,
        'locataires' => $locatairesCount,
-       // 'locations' => $locationsCount // Supposons que le nombre de locations = nombre de locataires
+       'locations' => $locationsCount // Supposons que le nombre de locations = nombre de locataires
     ];
 
     return response()->json([

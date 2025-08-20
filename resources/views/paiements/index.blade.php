@@ -12,7 +12,28 @@
         <i class="fas fa-plus mr-2"></i> Enregistrer un paiement
     </button>
 </div>
+ @if (session('success'))
+    <div class="mb-4 px-4 py-3 rounded-md bg-green-100 text-green-800 font-semibold flex items-center">
+        <i class="fas fa-check-circle mr-2"></i>
+        {{ session('success') }}
+        @if(session('paiement_id'))
+            <span class="ml-3 px-2 py-1 bg-blue-200 text-blue-700 rounded text-xs">
+                Contrat # {{ session('paiement_id') }}
+            </span>
+        @endif
+    </div>
+@endif
 
+@if ($errors->any())
+    <div class="mb-4 px-4 py-3 rounded-md bg-red-100 text-red-800 font-semibold">
+        <i class="fas fa-exclamation-circle mr-2"></i>
+        <ul class="list-disc ml-6">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <!-- Filtres -->
 <div class="bg-white rounded-lg shadow p-4 mb-6">
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -32,9 +53,20 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">Mois</label>
             <select class="w-full px-3 py-2 border border-gray-300 rounded-md">
                 <option value="">Tous les mois</option>
-                <option value="2023-07">Juillet 2023</option>
-                <option value="2023-06">Juin 2023</option>
-                <option value="2023-05">Mai 2023</option>
+                    <option value="Janvier">Janvier</option>
+                    <option value="Février">Février</option>
+                    <option value="Mars">Mars</option>
+                    <option value="Avril">Avril</option>
+                    <option value="Mai">Mai</option>
+                    <option value="juin">Juin</option>
+                    <option value="Juillet">Juillet</option>
+                    <option value="Août">Août</option>
+                    <option value="Septembre">Sptembre</option>
+                    <option value=" Octobre">Octobre</option>
+                    <option value="Novembre">Novembre</option>
+                    <option value="Décembre">Décembre</option>
+
+                </select>
             </select>
         </div>
         
@@ -43,9 +75,9 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
             <select class="w-full px-3 py-2 border border-gray-300 rounded-md">
                 <option value="">Tous</option>
-                <option value="paid">Payé</option>
-                <option value="pending">En attente</option>
-                <option value="partial">Partiel</option>
+                <option value="payé">Payé</option>
+                <option value="partiel">Partiel</option>
+                <option value="annulé">annulé</option>
             </select>
         </div>
         
@@ -65,177 +97,165 @@
 
 <!-- Liste des paiements -->
 <div class="bg-white rounded-lg shadow overflow-hidden mb-8">
-    <div class="overflow-x-auto">
+   <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                 <tr>
-                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Code
-                    </th>
-                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Locataire
-                    </th>
-                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Mois
-                    </th>
-                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Montant
-                    </th>
-                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Date
-                    </th>
-                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Statut
-                    </th>
-                    <th scope="col" class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                    </th>
+                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Réference</th>
+                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Locataire</th>
+                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mois</th>
+                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Montant à payer</th>
+                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+                    <th class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                <!-- Paiement 1 -->
+                @foreach($paiements as $paiement)
                 <tr>
                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <span class="font-mono text-blue-600">PAY-2307-001</span>
+                        <span class="font-mono text-blue-600">{{ $paiement->reference ?? $paiement->paiement_id }}</span>
                     </td>
                     <td class="px-4 sm:px-6 py-4">
                         <div class="flex items-center">
-                            <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
-                                JM
+                            <div class="flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center
+                                @php
+                                    // Juste pour attribuer une couleur selon l'initiale
+                                    $colors = ['bg-blue-100 text-blue-600','bg-purple-100 text-purple-600','bg-yellow-100 text-yellow-600','bg-green-100 text-green-600'];
+                                    $index = ord(strtoupper($paiement->locataire->nom[0] ?? 'A')) % count($colors);
+                                @endphp
+                                {{ $colors[$index] }}">
+                                @if($paiement->locataire)
+                                    {{ strtoupper(substr($paiement->locataire->nom, 0, 1) . substr($paiement->locataire->prenom ?? '', 0, 1)) }}
+                                @else
+                                    ?
+                                @endif
                             </div>
                             <div class="ml-4">
-                                <div class="font-medium">Jean Marc</div>
-                                <div class="text-sm text-gray-500">B1-05</div>
+                                <div class="font-medium">
+                                    {{ $paiement->locataire->nom ?? 'Inconnu' }}
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    {{ $paiement->appartement->code_appartement ?? '' }}
+                                </div>
                             </div>
                         </div>
                     </td>
                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">Juillet 2023</div>
+                        <div class="text-sm text-gray-900">{{ $paiement->mois }}</div>
                     </td>
                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium">750 000 FCFA</div>
+                        <div class="text-sm font-medium">{{ number_format($paiement->montant, 0, ',', ' ') }} FCFA</div>
                     </td>
                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-500">05/07/2023</div>
+                        <div class="text-sm text-gray-500">{{ $paiement->created_at ? $paiement->created_at->format('d/m/Y') : '-' }}</div>
                     </td>
                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Payé</span>
-                    </td>
+    @php
+        if ($paiement->statut == 'payer') {
+            $bg = 'bg-green-100 text-green-800';
+            $statut = 'Payé';
+        } elseif ($paiement->statut == 'avance') {
+            $bg = 'bg-orange-100 text-orange-700';
+            $statut = 'Avance';
+        } else {
+            $bg = 'bg-red-700 text-red-100';
+            $statut = 'Impayé';
+        }
+    @endphp
+    <span class="px-2 py-1 text-xs rounded-full {{ $bg }}">{{ $statut }}</span>
+</td>
                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <div class="flex flex-col sm:flex-row gap-2">
-                            <button onclick="viewPaymentDetails('PAY-2307-001')" class="text-blue-600 hover:text-blue-900" title="Voir">
+                            <button 
+                                onclick="openDetailModal('paiement-detail-{{ $paiement->paiement_id }}')" 
+                                class="text-blue-600 hover:text-blue-900" title="Voir">
                                 <i class="fas fa-eye"></i>
                                 <span class="sm:hidden">Voir</span>
                             </button>
-                            <button class="text-gray-600 hover:text-gray-900" title="Quittance">
-                                <i class="fas fa-print"></i>
-                                <span class="sm:hidden">Quittance</span>
-                            </button>
                         </div>
+                        <!-- Modal par paiement (caché par défaut, unique via id) -->
+                        <div id="paiement-detail-{{ $paiement->paiement_id }}"
+                             class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 sm:p-6">
+                            <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 sm:mx-6">
+                                <div class="flex justify-between items-center border-b px-4 sm:px-6 py-4">
+                                    <h3 class="text-lg font-bold text-gray-800">
+                                        <i class="fas fa-file-invoice-dollar text-blue-500 mr-2"></i> Détails du paiement
+                                    </h3>
+                                    <button onclick="closeDetailModal('paiement-detail-{{ $paiement->paiement_id }}')" class="text-gray-400 hover:text-gray-500 text-xl">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="p-4 sm:p-6 space-y-4">
+                                    <div>
+                                        <p class="text-sm text-gray-500">Code paiement</p>
+                                        <p class="font-mono font-medium text-blue-600">{{ $paiement->reference ?? $paiement->paiement_id }}</p>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10 @if($paiement->locataire) {{ $colors[$index] }} @endif rounded-full flex items-center justify-center mr-3">
+                                            @if($paiement->locataire)
+                                                {{ strtoupper(substr($paiement->locataire->nom, 0, 1) . substr($paiement->locataire->prenom ?? '', 0, 1)) }}
+                                            @else
+                                                ?
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <p class="font-medium">{{ $paiement->locataire->nom ?? 'Inconnu' }}</p>
+                                            <p class="text-sm text-gray-500">{{ $paiement->appartement->code_appartement ?? '' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <p class="text-sm text-gray-500">Mois concerné</p>
+                                            <p class="font-medium">{{ $paiement->mois }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-gray-500">Date paiement</p>
+                                            <p class="font-medium">{{ $paiement->created_at ? $paiement->created_at->format('d/m/Y') : '-' }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <p class="text-sm text-gray-500">Montant</p>
+                                            <p class="font-medium">{{ number_format($paiement->montant, 0, ',', ' ') }} FCFA</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-gray-500">Mode</p>
+                                            <p class="font-medium">{{ $paiement->mode_paiement }}</p>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">Référence</p>
+                                        <p class="font-medium">{{ $paiement->reference ?? '-' }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">Statut</p>
+                                        <p><span class="px-2 py-1 text-xs rounded-full {{ $bg }}">{{ $statut }}</span></p>
+                                    </div>
+                                </div>
+                                <div class="mt-6 flex justify-end">
+                                    <button onclick="closeDetailModal('paiement-detail-{{ $paiement->paiement_id }}')" 
+                                            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                        Fermer
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Fin modal paiement -->
                     </td>
                 </tr>
-                
-                <!-- Paiement 2 -->
-                <tr>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <span class="font-mono text-blue-600">PAY-2307-002</span>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 h-10 w-10 bg-purple-100 rounded-full flex items-center justify-center text-purple-600">
-                                MA
-                            </div>
-                            <div class="ml-4">
-                                <div class="font-medium">Marie Ange</div>
-                                <div class="text-sm text-gray-500">B2-12</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">Juillet 2023</div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium">650 000 FCFA</div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-500">10/07/2023</div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Payé</span>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            <button onclick="viewPaymentDetails('PAY-2307-002')" class="text-blue-600 hover:text-blue-900" title="Voir">
-                                <i class="fas fa-eye"></i>
-                                <span class="sm:hidden">Voir</span>
-                            </button>
-                            <button class="text-gray-600 hover:text-gray-900" title="Quittance">
-                                <i class="fas fa-print"></i>
-                                <span class="sm:hidden">Quittance</span>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                
-                <!-- Paiement 3 -->
-                <tr>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <span class="font-mono text-blue-600">PAY-2306-001</span>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0 h-10 w-10 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600">
-                                TS
-                            </div>
-                            <div class="ml-4">
-                                <div class="font-medium">Thomas Shelby</div>
-                                <div class="text-sm text-gray-500">A-03</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-900">Juin 2023</div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm font-medium">550 000 FCFA</div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <div class="text-sm text-gray-500">15/06/2023</div>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">En retard</span>
-                    </td>
-                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div class="flex flex-col sm:flex-row gap-2">
-                            <button onclick="viewPaymentDetails('PAY-2306-001')" class="text-blue-600 hover:text-blue-900" title="Voir">
-                                <i class="fas fa-eye"></i>
-                                <span class="sm:hidden">Voir</span>
-                            </button>
-                            <button class="text-gray-600 hover:text-gray-900" title="Quittance">
-                                <i class="fas fa-print"></i>
-                                <span class="sm:hidden">Quittance</span>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
+     
     
     <!-- Pagination -->
+
     <div class="bg-gray-50 px-4 sm:px-6 py-3 flex items-center justify-between border-t border-gray-200">
-        <div class="text-sm text-gray-500">
-            Affichage de <span class="font-medium">1</span> à <span class="font-medium">3</span> sur <span class="font-medium">3</span> paiements
-        </div>
-        <nav class="flex space-x-2">
-            <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 bg-white cursor-not-allowed" disabled>
-                <i class="fas fa-chevron-left"></i>
-            </button>
-            <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                <i class="fas fa-chevron-right"></i>
-            </button>
-        </nav>
+        {!! $paiements->links() !!}
     </div>
+    
 </div>
 
 <!-- Modal Ajout de paiement -->
@@ -250,293 +270,103 @@
             </button>
         </div>
         
-        <form id="paymentForm" class="p-4 sm:p-6">
-            <!-- Sélection du locataire -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Locataire*</label>
-                <select id="tenantSelect" name="tenant_id" required 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                    <option value="">Sélectionnez un locataire</option>
-                    <option value="1">Jean Marc (B1-05)</option>
-                    <option value="2">Marie Ange (B2-12)</option>
-                    <option value="3">Thomas Shelby (A-03)</option>
-                </select>
+       <form method="POST" action="{{ route('paiements.store') }}" class="p-4 sm:p-6">
+    @csrf
+    <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Locataire*</label>
+        <select name="tenant_value" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+            <option value="">-- Choisir --</option>
+            @foreach($locataires as $locataire)
+                <option value="{{ $locataire->code_locataires }}">
+                    {{ $locataire->nom }} {{ $locataire->prenom }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Mois à payer*</label>
+        <select name="month" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+            <option value="">-- Choisir --</option>
+            <option value="Janvier">Janvier</option>
+            <option value="Février">Février</option>
+            <option value="Mars">Mars</option>
+            <option value="Avril">Avril</option>
+            <option value="Mai">Mai</option>
+            <option value="Juin">Juin</option>
+            <option value="Juillet">Juillet</option>
+            <option value="Août">Août</option>
+            <option value="Septembre">Septembre</option>
+            <option value="Octobre">Octobre</option>
+            <option value="Novembre">Novembre</option>
+            <option value="Décembre">Décembre</option>
+        </select>
+    </div>
+
+    <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Montant*</label>
+        <div class="relative">
+            <input name="amount" type="number" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-md pl-12"
+                value="{{ old('amount', $montantParDefaut ?? '') }}" required placeholder="750000">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span class="text-gray-500">FCFA</span>
             </div>
-            
-            <!-- Mois concerné -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Mois à payer*</label>
-                <select id="monthSelect" name="month" required 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md"
-                        disabled>
-                    <option value="">Sélectionnez d'abord un locataire</option>
-                </select>
-            </div>
-            
-            <!-- Montant -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Montant reçu (FCFA)*</label>
-                <div class="relative">
-                    <input type="number" id="amountInput" name="amount" required 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md pl-12"
-                           placeholder="750000">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span class="text-gray-500">FCFA</span>
-                    </div>
-                </div>
-                <p id="expectedAmount" class="text-xs text-gray-500 mt-1 hidden">Montant attendu: <span class="font-medium">750 000 FCFA</span></p>
-            </div>
-            
-            <!-- Date de paiement -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Date de paiement*</label>
-                <input type="date" id="paymentDate" name="payment_date" required 
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md"
-                       value="{{ date('Y-m-d') }}">
-            </div>
-            
-            <!-- Mode de paiement -->
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Mode de paiement*</label>
-                <select name="payment_method" required 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                    <option value="">Sélectionnez un mode</option>
-                    <option value="cash">Espèces</option>
-                    <option value="check">Chèque</option>
-                    <option value="transfer">Virement</option>
-                    <option value="mobile">Mobile Money</option>
-                </select>
-            </div>
-            
-            <!-- Référence -->
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Référence</label>
-                <input type="text" name="reference" 
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md"
-                       placeholder="Numéro de chèque, référence...">
-            </div>
-            
-            <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3">
-                <button type="button" onclick="closeModal('addPaymentModal')" 
-                        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                    Annuler
-                </button>
-                <button type="submit" 
-                        class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center justify-center">
-                    <i class="fas fa-save mr-2"></i> Enregistrer
-                </button>
-            </div>
-        </form>
+        </div>
+    </div>
+     <div class="mb-4">
+            <label for="statusFilter" class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
+            <select id="statusFilter"  name="statut" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                <option value="">Tous</option>
+                <option value="payer">Payer</option>
+                <option value="avance">Avance</option>
+                <option value="impayer">Impayer</option>
+            </select>
+        </div>
+
+    <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Référence</label>
+        <input name="reference" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-md"
+            value="{{ old('reference') }}" placeholder="Numéro de chèque, référence...">
+    </div>
+
+    <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Mode de paiement*</label>
+        <select name="payment_method" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+            <option value="">-- Choisir --</option>
+            <option value="cash">Espèces</option>
+            <option value="check">Chèque</option>
+            <option value="transfer">Virement</option>
+            <option value="mobile">Mobile Money</option>
+        </select>
+    </div>
+
+    <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 flex items-center justify-center">
+        <i class="fas fa-save mr-2"></i> Enregistrer
+    </button>
+</form>
     </div>
 </div>
 
-<!-- Modal Détails du paiement -->
-<div id="paymentDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 sm:p-6">
-    <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 sm:mx-6">
-        <div class="flex justify-between items-center border-b px-4 sm:px-6 py-4">
-            <h3 class="text-lg font-bold text-gray-800">
-                <i class="fas fa-file-invoice-dollar text-blue-500 mr-2"></i> Détails du paiement
-            </h3>
-            <button onclick="closeModal('paymentDetailsModal')" class="text-gray-400 hover:text-gray-500 text-xl">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="p-4 sm:p-6">
-            <div class="space-y-4">
-                <div>
-                    <p class="text-sm text-gray-500">Code paiement</p>
-                    <p class="font-mono font-medium text-blue-600" id="detailPaymentCode">PAY-2307-001</p>
-                </div>
-                
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mr-3">
-                        JM
-                    </div>
-                    <div>
-                        <p class="font-medium" id="detailTenant">Jean Marc</p>
-                        <p class="text-sm text-gray-500" id="detailApartment">B1-05</p>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-sm text-gray-500">Mois concerné</p>
-                        <p class="font-medium" id="detailMonth">Juillet 2023</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Date paiement</p>
-                        <p class="font-medium" id="detailPaymentDate">05/07/2023</p>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-sm text-gray-500">Montant</p>
-                        <p class="font-medium" id="detailAmount">750 000 FCFA</p>
-                    </div>
-                    <div>
-                        <p class="text-sm text-gray-500">Mode</p>
-                        <p class="font-medium" id="detailMethod">Mobile Money</p>
-                    </div>
-                </div>
-                
-                <div>
-                    <p class="text-sm text-gray-500">Référence</p>
-                    <p class="font-medium" id="detailReference">MTN-458796</p>
-                </div>
-                
-                <div>
-                    <p class="text-sm text-gray-500">Statut</p>
-                    <p><span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800" id="detailStatus">Payé</span></p>
-                </div>
-            </div>
-            
-            <div class="mt-6 flex justify-end">
-                <button onclick="closeModal('paymentDetailsModal')" 
-                        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                    Fermer
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 <script>
-    // Données simulées
-    const tenantsData = {
-        1: { name: "Jean Marc", apartment: "B1-05", rent: 750000, unpaidMonths: ["Août 2023"] },
-        2: { name: "Marie Ange", apartment: "B2-12", rent: 650000, unpaidMonths: [] },
-        3: { name: "Thomas Shelby", apartment: "A-03", rent: 550000, unpaidMonths: ["Juillet 2023"] }
-    };
-
-    const paymentsData = {
-        "PAY-2307-001": {
-            tenant: "Jean Marc",
-            apartment: "B1-05",
-            month: "Juillet 2023",
-            amount: "750 000 FCFA",
-            date: "05/07/2023",
-            method: "Mobile Money",
-            reference: "MTN-458796",
-            status: "Payé"
-        },
-        "PAY-2307-002": {
-            tenant: "Marie Ange",
-            apartment: "B2-12",
-            month: "Juillet 2023",
-            amount: "650 000 FCFA",
-            date: "10/07/2023",
-            method: "Espèces",
-            reference: "",
-            status: "Payé"
-        },
-        "PAY-2306-001": {
-            tenant: "Thomas Shelby",
-            apartment: "A-03",
-            month: "Juin 2023",
-            amount: "550 000 FCFA",
-            date: "15/06/2023",
-            method: "Virement",
-            reference: "VIR-784512",
-            status: "En retard"
-        }
-    };
-
-    // Gestion des modals
+    // Modals dynamiques par paiement
+    function openDetailModal(id) {
+        document.getElementById(id).classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+    }
+    function closeDetailModal(id) {
+        document.getElementById(id).classList.add('hidden');
+        document.body.classList.remove('overflow-hidden');
+    }
+    // Gère l'ajout (inchangé)
     function openModal(modalId) {
         document.getElementById(modalId).classList.remove('hidden');
         document.body.classList.add('overflow-hidden');
     }
-
     function closeModal(modalId) {
         document.getElementById(modalId).classList.add('hidden');
         document.body.classList.remove('overflow-hidden');
     }
-
-    // Gestion de la sélection du locataire
-    document.getElementById('tenantSelect').addEventListener('change', function() {
-        const tenantId = this.value;
-        const monthSelect = document.getElementById('monthSelect');
-        
-        if (tenantId) {
-            const tenant = tenantsData[tenantId];
-            monthSelect.innerHTML = '';
-            
-            tenant.unpaidMonths.forEach(month => {
-                const option = document.createElement('option');
-                option.value = month;
-                option.textContent = month;
-                monthSelect.appendChild(option);
-            });
-            
-            document.getElementById('expectedAmount').classList.remove('hidden');
-            document.getElementById('expectedAmount').querySelector('span').textContent = 
-                tenant.rent.toLocaleString() + ' FCFA';
-            document.getElementById('amountInput').value = tenant.rent;
-            monthSelect.disabled = false;
-        } else {
-            monthSelect.innerHTML = '<option value="">Sélectionnez d\'abord un locataire</option>';
-            monthSelect.disabled = true;
-            document.getElementById('expectedAmount').classList.add('hidden');
-            document.getElementById('amountInput').value = '';
-        }
-    });
-
-    // Gestion du formulaire
-    document.getElementById('paymentForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Simuler l'enregistrement
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData);
-        data.code = 'PAY-' + new Date().getTime().toString().slice(-6);
-        
-        console.log('Paiement enregistré:', data);
-        closeModal('addPaymentModal');
-        
-        // Afficher un message temporaire
-        const alert = document.createElement('div');
-        alert.className = 'fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded';
-        alert.innerHTML = '<i class="fas fa-check-circle mr-2"></i> Paiement enregistré avec succès!';
-        document.body.appendChild(alert);
-        
-        setTimeout(() => {
-            alert.remove();
-        }, 3000);
-    });
-
-    // Voir les détails d'un paiement
-    function viewPaymentDetails(paymentCode) {
-        const payment = paymentsData[paymentCode];
-        
-        document.getElementById('detailPaymentCode').textContent = paymentCode;
-        document.getElementById('detailTenant').textContent = payment.tenant;
-        document.getElementById('detailApartment').textContent = payment.apartment;
-        document.getElementById('detailMonth').textContent = payment.month;
-        document.getElementById('detailPaymentDate').textContent = payment.date;
-        document.getElementById('detailAmount').textContent = payment.amount;
-        document.getElementById('detailMethod').textContent = payment.method;
-        document.getElementById('detailReference').textContent = payment.reference || 'N/A';
-        
-        const statusElement = document.getElementById('detailStatus');
-        statusElement.textContent = payment.status;
-        statusElement.className = 'px-2 py-1 text-xs rounded-full ';
-        
-        if (payment.status === 'Payé') {
-            statusElement.classList.add('bg-green-100', 'text-green-800');
-        } else {
-            statusElement.classList.add('bg-yellow-100', 'text-yellow-800');
-        }
-        
-        openModal('paymentDetailsModal');
-    }
-
-    // Fermer les modals en cliquant à l'extérieur
-    document.addEventListener('click', function(event) {
-        if (event.target === document.getElementById('addPaymentModal') || 
-            event.target === document.getElementById('paymentDetailsModal')) {
-            closeModal(event.target.id);
-        }
-    });
 </script>
 @endsection

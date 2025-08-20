@@ -33,7 +33,7 @@ Route::get('/logout', [LoginController::class, 'logout'])->name('logout.get');
 
 // Mot de passe oublié & réinitialisation
 Route::get('/forget-password', [PasswordController::class, 'index'])->name('forget.password');
-Route::post('/forget-password', [PasswordController::class, 'check'])->name('forget.password.post');
+Route::post('/forget-password', [PasswordController::class, 'sendResetLinkEmail'])->name('forget.password.post');
 
 Route::get('/reset-password', [ResetController::class, 'index'])->middleware('guest')->name('reset.password');
 Route::get('/reset-password/{token}', [ResetController::class, 'showResetForm'])->middleware('guest')->name('password.reset');
@@ -78,10 +78,21 @@ Route::prefix('agence-immobiliere')->middleware(['auth'])->group(function () {
     )->name('locations.apartments');
 
     // Paiements
-    Route::get('/paiement', action: [PaiementsController::class, 'index'])->name('paiements.index');
-
+        Route::get('/paiement', [PaiementsController::class, 'index'])->name('paiements.index');
+Route::post('/paiement', [PaiementsController::class, 'store'])->name('paiements.store');
+// Par exemple :
+Route::get('/paiements/{paiement_id}/valider', [PaiementsController::class, 'validerPaiement'])
+   ->name('paiements.valider');
     // Quittances
-    Route::get('/quittances', action: [QuittancesController::class, 'index'])->name('quittances.index');
+   
+   // Route::get('/quittances', action: [QuittancesController::class, 'index'])->name('quittances.index');
+
+ 
+   Route::get('/quittances', [QuittancesController::class, 'index'])->name('quittances.index');
+    Route::get('/quittances/{id_quittance}', [QuittancesController::class, 'index'])->name('quittances.detail');
+    Route::get('/quittances/{id_quittance}/download', [QuittancesController::class, 'download'])->name('quittances.download');
+    Route::post('/quittances/creer', [QuittancesController::class, 'creerQuittanceSimple'])->name('quittances.creer_via_form');
+
 });
 
 // Admin routes (auth & admin middlewares)
