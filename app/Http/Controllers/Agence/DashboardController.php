@@ -10,6 +10,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Appartements;  
+use App\Models\Paiements;
+use App\Models\Quittances;
 
 class DashboardController extends Controller
 {// definition des différents
@@ -26,12 +28,12 @@ class DashboardController extends Controller
         $logo1 = $agence ? $agence->logo : null;
         $initiales = $this->getInitiales($user);
         $buildingsCount = $agence ? $this->getBuildingsCount($agence) : 0;
+
+        //calculer le paiement  par mois et le total de paiments
+
+        $paiementStats = $agence ? $this->getpaimentCount($agence) : ['total' => 0, 'par_mois' => []];
         
-      /*
-        $appartementStats = $agence ? $this->getAppartementStats($agence) : [
-            'total_libres' => 0,
-            'total_occupes' => 0
-        ];*/
+      
         $appartementsList = $agence ? $this->getAppartementsParStatut($agence) : collect([]);
         $appartementsLibres = $appartementsList->where('statut', 'libre')->count();
         $appartementsOccupes = $appartementsList->where('statut', 'occupe')->count();
@@ -46,7 +48,7 @@ class DashboardController extends Controller
              'appartementsList' => $appartementsList,
     'appartementsLibres' => $appartementsLibres,
     'appartementsOccupes' => $appartementsOccupes,
-           
+            'paiementStats' => $paiementStats,
         ]);
     }
 
@@ -84,5 +86,36 @@ class DashboardController extends Controller
             )
             ->orderBy('ap.statut')
             ->get();
+    }
+
+     public function getpaimentCount($agence)
+    {
+        // Sécurité : s'assurer qu'il y a bien une agence
+        if(!$agence) {
+            return [
+                'total'   => 0,
+                'par_mois'=> [],
+            ];
+        }
+
+        // Paiements groupés par mois (année-mois) et total
+        // On suppose que champ 'montant' et 'mois' dans la table 'paiements'
+      $paiements = DB::table('paiements')
+    ->selectRaw("mois AS periode, SUM(montant) AS montant_par_mois")
+    ->where('code_agence', $agence->numero)
+    ->groupBy('mois')
+    ->orderByRaw('MIN(created_at) DESC') // doit avoir une colonne de tri réaliste 
+    ->get();
+
+        // Tableau période (YYYY-MM) => montant
+        $parMois = $paiements->pluck('montant_par_mois', 'periode')->toArray();
+
+        // Total général pour cette agence
+        $total = array_sum($parMois);
+
+        return [
+            'total'    => $total,
+            'par_mois' => $parMois,
+        ];
     }
 }

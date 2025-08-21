@@ -62,23 +62,34 @@
 
     <!-- Carte Paiements -->
     <div class="bg-white rounded-lg shadow-md overflow-hidden border-l-4 border-yellow-500">
-        <div class="p-6">
-            <div class="flex justify-between items-start">
-                <div>
-                    <p class="text-gray-500 text-sm font-medium">Paiements en attente</p>
-                    <p class="text-3xl font-bold mt-2" id="pendingPayments">5</p>
-                    <p class="text-sm text-gray-500 mt-1">Total: <span class="font-medium">1 M FCFA</span></p>
-                </div>
-                <div class="bg-yellow-100 text-yellow-600 p-3 rounded-full">
-                    <i class="fas fa-money-bill-wave text-xl"></i>
-                </div>
-            </div>
-            <div class="mt-4">
-                <a href="{{route('paiements.index')}}" class="text-yellow-600 hover:text-yellow-800 text-sm flex items-center">
-                    Voir les paiements <i class="fas fa-arrow-right ml-2"></i>
-                </a>
-            </div>
+    <div class="p-6">
+        @php
+            // Récupérer le mois courant (format YYYY-MM)
+            $moisCourant = now()->format('Y-m');
+            $paiementMois = $paiementStats['par_mois'][$moisCourant] ?? 0;
+            $totalPaiements = $paiementStats['total'] ?? 0;
+        @endphp
+
+        <p class="text-gray-500 text-sm font-medium">
+            Paiements du mois
+        </p>
+        <p class="text-3xl font-bold mt-2" id="pendingPayments">
+            {{ number_format($paiementMois, 0, ',', ' ') }} FCFA
+        </p>
+        <p class="text-sm text-gray-500 mt-1">
+            Total : 
+            <span class="font-medium">
+                {{ number_format($totalPaiements, 0, ',', ' ') }} FCFA
+            </span>
+        </p>
+        <div class="mt-4">
+            <a href="{{ route('paiements.index') }}" class="text-yellow-600 hover:text-yellow-800 text-sm flex items-center">
+                Voir les paiements 
+                <i class="fas fa-arrow-right ml-2"></i>
+            </a>
         </div>
+    </div>
+</div>
     </div>
 </div>
 

@@ -58,6 +58,8 @@ public function boot(): void
             'initiales' => $initiales, // idem
         ]);
     });
+
+    
 }
 
             

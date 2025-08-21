@@ -10,6 +10,8 @@ use App\Models\Appartements;
 use App\Models\Locataires;
 use App\Models\Quittance;
 use App\Models\Quittances;
+use App\Models\User;
+use App\Notifications\ActionAgenceNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -103,6 +105,7 @@ class PaiementsController extends Controller
                 'code_location'    => $location->code_location,
                 'statut' =>$validated['statut'],
             ]);
+            $this -> payer($request);
             return redirect()->route('paiements.index')
                 ->with('success', 'Paiement enregistré avec succès')
                 ->with('paiement_id', $code_paiement);
@@ -113,7 +116,27 @@ class PaiementsController extends Controller
         }
     }
 
+public function payer(Request $request)
+{
+    $currentUser = Auth::user(); // Utilisateur connecté
+    $agenceCode = $currentUser->numero;
 
+    // Liste des utilisateurs de l'agence (à notifier)
+    $usersToNotify = User::where('numero', $agenceCode)->get();
+
+    foreach ($usersToNotify as $notifiable) {
+        $notifiable->notify(
+            new ActionAgenceNotification(
+                "Nouveau paiement enregistré",
+                trim($currentUser->nom . ' ' . $currentUser->prenom)
+            )
+        );
+    }
+
+    return back()->with('success', 'Paiement enregistré et notifications envoyées');
+
+    
+}
 
 
 

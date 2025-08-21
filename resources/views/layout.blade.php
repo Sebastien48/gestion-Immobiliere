@@ -36,157 +36,137 @@
                 </button>
                 
                 <!-- Notifications -->
-                <div class="relative">
-                    <button id="notificationsButton" class="text-gray-600 hover:text-gray-900 relative">
-                        <i class="fas fa-bell text-xl"></i>
-                        <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+             @php
+    $user = Auth::user();
+    $notifications = $user ? $user->notifications()->latest()->take(10)->get() : collect();
+    $unreadCount = $user ? $user->unreadNotifications->count() : 0;
+
+    // Filtrages par type, selon le champs "type" que tu définis dans toDatabase() de ta notification
+    $alertNotifications = $notifications->filter(fn($n) => ($n->data['type'] ?? null) === 'alerte');
+    $paymentNotifications = $notifications->filter(fn($n) => ($n->data['type'] ?? null) === 'paiement');
+@endphp
+
+<div class="relative">
+    <button id="notificationsButton" class="text-gray-600 hover:text-gray-900 relative" onclick="openModal('notificationsModal')">
+        <i class="fas fa-bell text-xl"></i>
+        @if($unreadCount > 0)
+            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {{ $unreadCount }}
+            </span>
+        @endif
+    </button>
+
+    <!-- Modal Notifications (Web & Mobile Optimisé) -->
+    <div id="notificationsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-end p-0 sm:items-center sm:justify-center sm:p-4">
+        <div class="bg-white w-full h-full sm:h-auto sm:rounded-lg shadow-xl sm:max-w-2xl max-h-screen sm:max-h-[90vh] overflow-hidden flex flex-col">
+            <!-- En-tête collant en haut -->
+            <div class="flex justify-between items-center border-b px-4 py-3 sm:px-6 sm:py-4 sticky top-0 bg-white z-10">
+                <h3 class="text-lg font-bold text-gray-800">
+                    <i class="fas fa-bell text-yellow-500 mr-2"></i> Notifications
+                </h3>
+                <button onclick="closeModal('notificationsModal')" class="text-gray-400 hover:text-gray-500 text-xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <!-- Tabs navigation (filtrage par type) -->
+            <div class="border-b border-gray-200 mb-4 overflow-x-auto">
+                <nav class="flex space-x-4 min-w-max sm:min-w-0 sm:space-x-8">
+                    <button onclick="showNotificationsTab('all')" id="allNotificationsTab"
+                        class="notification-tab whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-yellow-500 text-yellow-600">
+                        Toutes ({{ $notifications->count() }})
                     </button>
-                    
-                    <!-- Modal Notifications - Version mobile optimisée -->
-                    <div id="notificationsModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-end p-0 sm:items-center sm:justify-center sm:p-4">
-                        <div class="bg-white w-full h-full sm:h-auto sm:rounded-lg shadow-xl sm:max-w-2xl max-h-screen sm:max-h-[90vh] overflow-hidden flex flex-col">
-                            <!-- En-tête collant en haut -->
-                            <div class="flex justify-between items-center border-b px-4 py-3 sm:px-6 sm:py-4 sticky top-0 bg-white z-10">
-                                <h3 class="text-lg font-bold text-gray-800">
-                                    <i class="fas fa-bell text-yellow-500 mr-2"></i> Notifications
-                                </h3>
-                                <button onclick="closeModal('notificationsModal')" class="text-gray-400 hover:text-gray-500 text-xl">
-                                    <i class="fas fa-times"></i>
-                                </button>
+                    <button onclick="showNotificationsTab('alerts')" id="alertsNotificationsTab"
+                        class="notification-tab whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        Alertes ({{ $alertNotifications->count() }})
+                    </button>
+                    <button onclick="showNotificationsTab('payments')" id="paymentsNotificationsTab"
+                        class="notification-tab whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        Paiements ({{ $paymentNotifications->count() }})
+                    </button>
+                </nav>
+            </div>
+            <!-- Notifications ALL -->
+            <div id="allNotificationsContent" class="notification-content space-y-3 sm:space-y-4">
+                @forelse($notifications as $notif)
+                    <div class="p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-yellow-50 transition-colors">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                @if(($notif->data['type'] ?? '') === 'alerte')
+                                    <div class="bg-red-100 text-red-600 p-2 rounded-full">
+                                        <i class="fas fa-exclamation-circle text-sm sm:text-base"></i>
+                                    </div>
+                                @elseif(($notif->data['type'] ?? '') === 'paiement')
+                                    <div class="bg-green-100 text-green-600 p-2 rounded-full">
+                                        <i class="fas fa-money-bill-wave text-sm sm:text-base"></i>
+                                    </div>
+                                @else
+                                    <div class="bg-gray-100 text-gray-600 p-2 rounded-full">
+                                        <i class="fas fa-info-circle text-sm sm:text-base"></i>
+                                    </div>
+                                @endif
                             </div>
-                            
-                            <!-- Contenu scrollable -->
-                            <div class="flex-1 overflow-y-auto p-4 sm:p-6">
-                                <!-- Onglets - Version mobile avec scroll horizontal -->
-                                <div class="border-b border-gray-200 mb-4 overflow-x-auto">
-                                    <nav class="flex space-x-4 min-w-max sm:min-w-0 sm:space-x-8">
-                                        <button onclick="showNotificationsTab('all')" id="allNotificationsTab" class="notification-tab whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-yellow-500 text-yellow-600">
-                                            Toutes (3)
-                                        </button>
-                                        <button onclick="showNotificationsTab('alerts')" id="alertsNotificationsTab" class="notification-tab whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                                            Alertes (2)
-                                        </button>
-                                        <button onclick="showNotificationsTab('payments')" id="paymentsNotificationsTab" class="notification-tab whitespace-nowrap py-3 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                                            Paiements (1)
-                                        </button>
-                                    </nav>
-                                </div>
-                                
-                                <!-- Contenu des notifications - Version mobile compacte -->
-                                <div id="allNotificationsContent" class="notification-content space-y-3 sm:space-y-4">
-                                    <!-- Notification 1 -->
-                                    <div class="p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-yellow-50 transition-colors">
-                                        <div class="flex items-start">
-                                            <div class="flex-shrink-0">
-                                                <div class="bg-red-100 text-red-600 p-2 rounded-full">
-                                                    <i class="fas fa-exclamation-circle text-sm sm:text-base"></i>
-                                                </div>
-                                            </div>
-                                            <div class="ml-3 flex-1 min-w-0">
-                                                <p class="text-sm font-medium text-gray-900 truncate">Contrats à renouveler</p>
-                                                <p class="text-xs sm:text-sm text-gray-500 truncate">3 contrats arrivent à expiration dans 15 jours</p>
-                                                <p class="text-xs text-gray-400 mt-1">Il y a 2 heures</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Notification 2 -->
-                                    <div class="p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-yellow-50 transition-colors">
-                                        <div class="flex items-start">
-                                            <div class="flex-shrink-0">
-                                                <div class="bg-yellow-100 text-yellow-600 p-2 rounded-full">
-                                                    <i class="fas fa-clock text-sm sm:text-base"></i>
-                                                </div>
-                                            </div>
-                                            <div class="ml-3 flex-1 min-w-0">
-                                                <p class="text-sm font-medium text-gray-900 truncate">Paiements en retard</p>
-                                                <p class="text-xs sm:text-sm text-gray-500 truncate">2 locataires n'ont pas encore payé ce mois</p>
-                                                <p class="text-xs text-gray-400 mt-1">Aujourd'hui, 09:30</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Notification 3 -->
-                                    <div class="p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-yellow-50 transition-colors">
-                                        <div class="flex items-start">
-                                            <div class="flex-shrink-0">
-                                                <div class="bg-green-100 text-green-600 p-2 rounded-full">
-                                                    <i class="fas fa-money-bill-wave text-sm sm:text-base"></i>
-                                                </div>
-                                            </div>
-                                            <div class="ml-3 flex-1 min-w-0">
-                                                <p class="text-sm font-medium text-gray-900 truncate">Paiement reçu</p>
-                                                <p class="text-xs sm:text-sm text-gray-500 truncate">Jean Marc a payé 750 mille FCFA pour Juillet</p>
-                                                <p class="text-xs text-gray-400 mt-1">Hier, 14:30</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Contenu des alertes -->
-                                <div id="alertsNotificationsContent" class="notification-content hidden space-y-3 sm:space-y-4">
-                                    <!-- Alerte 1 -->
-                                    <div class="p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-yellow-50 transition-colors">
-                                        <div class="flex items-start">
-                                            <div class="flex-shrink-0">
-                                                <div class="bg-red-100 text-red-600 p-2 rounded-full">
-                                                    <i class="fas fa-exclamation-circle text-sm sm:text-base"></i>
-                                                </div>
-                                            </div>
-                                            <div class="ml-3 flex-1 min-w-0">
-                                                <p class="text-sm font-medium text-gray-900 truncate">Contrats à renouveler</p>
-                                                <p class="text-xs sm:text-sm text-gray-500 truncate">3 contrats arrivent à expiration dans 15 jours</p>
-                                                <p class="text-xs text-gray-400 mt-1">Il y a 2 heures</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Alerte 2 -->
-                                    <div class="p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-yellow-50 transition-colors">
-                                        <div class="flex items-start">
-                                            <div class="flex-shrink-0">
-                                                <div class="bg-yellow-100 text-yellow-600 p-2 rounded-full">
-                                                    <i class="fas fa-clock text-sm sm:text-base"></i>
-                                                </div>
-                                            </div>
-                                            <div class="ml-3 flex-1 min-w-0">
-                                                <p class="text-sm font-medium text-gray-900 truncate">Paiements en retard</p>
-                                                <p class="text-xs sm:text-sm text-gray-500 truncate">2 locataires n'ont pas encore payé ce mois</p>
-                                                <p class="text-xs text-gray-400 mt-1">Aujourd'hui, 09:30</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Contenu des paiements -->
-                                <div id="paymentsNotificationsContent" class="notification-content hidden space-y-3 sm:space-y-4">
-                                    <!-- Paiement 1 -->
-                                    <div class="p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-yellow-50 transition-colors">
-                                        <div class="flex items-start">
-                                            <div class="flex-shrink-0">
-                                                <div class="bg-green-100 text-green-600 p-2 rounded-full">
-                                                    <i class="fas fa-money-bill-wave text-sm sm:text-base"></i>
-                                                </div>
-                                            </div>
-                                            <div class="ml-3 flex-1 min-w-0">
-                                                <p class="text-sm font-medium text-gray-900 truncate">Paiement reçu</p>
-                                                <p class="text-xs sm:text-sm text-gray-500 truncate">Jean Marc a payé 750 mille FCFA pour Juillet</p>
-                                                <p class="text-xs text-gray-400 mt-1">Hier, 14:30</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Bouton de fermeture pour mobile -->
-                            <div class="lg:hidden p-4 border-t border-gray-200 sticky bottom-0 bg-white">
-                                <button onclick="closeModal('notificationsModal')" class="w-full py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200">
-                                    Fermer
-                                </button>
+                            <div class="ml-3 flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900 truncate">{{ $notif->data['title'] ?? 'Notification' }}</p>
+                                <p class="text-xs sm:text-sm text-gray-500 truncate">{{ $notif->data['message'] ?? '' }}</p>
+                                <p class="text-xs text-gray-400 mt-1">{{ \Carbon\Carbon::parse($notif->created_at)->diffForHumans() }}</p>
                             </div>
                         </div>
                     </div>
-                </div>
+                @empty
+                    <div class="text-gray-500 py-10 text-center">Aucune notification récente.</div>
+                @endforelse
+            </div>
+            <!-- Notifications ALERTS -->
+            <div id="alertsNotificationsContent" class="notification-content hidden space-y-3 sm:space-y-4">
+                @forelse($alertNotifications as $notif)
+                    <div class="p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-yellow-50 transition-colors">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="bg-red-100 text-red-600 p-2 rounded-full">
+                                    <i class="fas fa-exclamation-circle text-sm sm:text-base"></i>
+                                </div>
+                            </div>
+                            <div class="ml-3 flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900 truncate">{{ $notif->data['title'] ?? 'Notification' }}</p>
+                                <p class="text-xs sm:text-sm text-gray-500 truncate">{{ $notif->data['message'] ?? '' }}</p>
+                                <p class="text-xs text-gray-400 mt-1">{{ \Carbon\Carbon::parse($notif->created_at)->diffForHumans() }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-gray-500 py-10 text-center">Aucune alerte.</div>
+                @endforelse
+            </div>
+            <!-- Notifications PAYMENTS -->
+            <div id="paymentsNotificationsContent" class="notification-content hidden space-y-3 sm:space-y-4">
+                @forelse($paymentNotifications as $notif)
+                    <div class="p-3 sm:p-4 border border-gray-200 rounded-lg hover:bg-yellow-50 transition-colors">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <div class="bg-green-100 text-green-600 p-2 rounded-full">
+                                    <i class="fas fa-money-bill-wave text-sm sm:text-base"></i>
+                                </div>
+                            </div>
+                            <div class="ml-3 flex-1 min-w-0">
+                                <p class="text-sm font-medium text-gray-900 truncate">{{ $notif->data['title'] ?? 'Paiement' }}</p>
+                                <p class="text-xs sm:text-sm text-gray-500 truncate">{{ $notif->data['message'] ?? '' }}</p>
+                                <p class="text-xs text-gray-400 mt-1">{{ \Carbon\Carbon::parse($notif->created_at)->diffForHumans() }}</p>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="text-gray-500 py-10 text-center">Aucun paiement récent.</div>
+                @endforelse
+            </div>
+            <!-- Footer mobile -->
+            <div class="lg:hidden p-4 border-t border-gray-200 sticky bottom-0 bg-white">
+                <button onclick="closeModal('notificationsModal')" class="w-full py-2 bg-gray-100 text-gray-800 rounded-md hover:bg-gray-200">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
                                 
                 <!-- User Menu -->
                 <div class="relative">
@@ -398,32 +378,38 @@
         }
 
         // Gestion des onglets de notifications
-        function showNotificationsTab(tabName) {
-            // Masquer tous les contenus
-            document.querySelectorAll('.notification-content').forEach(content => {
-                content.classList.add('hidden');
-            });
-            
-            // Désactiver tous les onglets
-            document.querySelectorAll('.notification-tab').forEach(tab => {
-                tab.classList.remove('border-yellow-500', 'text-yellow-600');
-                tab.classList.add('border-transparent', 'text-gray-500');
-            });
-            
-            // Activer l'onglet sélectionné
-            document.getElementById(tabName + 'NotificationsTab').classList.add('border-yellow-500', 'text-yellow-600');
-            document.getElementById(tabName + 'NotificationsTab').classList.remove('border-transparent', 'text-gray-500');
-            
-            // Afficher le contenu correspondant
-            document.getElementById(tabName + 'NotificationsContent').classList.remove('hidden');
-        }
+       function showNotificationsTab(tab) {
+    // Hide all
+    document.getElementById('allNotificationsContent').classList.add('hidden');
+    document.getElementById('alertsNotificationsContent').classList.add('hidden');
+    document.getElementById('paymentsNotificationsContent').classList.add('hidden');
+    document.getElementById('allNotificationsTab').classList.remove('border-yellow-500', 'text-yellow-600');
+    document.getElementById('alertsNotificationsTab').classList.remove('border-yellow-500', 'text-yellow-600');
+    document.getElementById('paymentsNotificationsTab').classList.remove('border-yellow-500', 'text-yellow-600');
 
-        // Fermer le modal en cliquant à l'extérieur
-        document.addEventListener('click', function(event) {
-            if (event.target === document.getElementById('notificationsModal')) {
-                closeModal('notificationsModal');
-            }
-        });
+    // Show & highlight selected
+    if(tab === "all") {
+        document.getElementById('allNotificationsContent').classList.remove('hidden');
+        document.getElementById('allNotificationsTab').classList.add('border-yellow-500', 'text-yellow-600');
+    }
+    if(tab === "alerts") {
+        document.getElementById('alertsNotificationsContent').classList.remove('hidden');
+        document.getElementById('alertsNotificationsTab').classList.add('border-yellow-500', 'text-yellow-600');
+    }
+    if(tab === "payments") {
+        document.getElementById('paymentsNotificationsContent').classList.remove('hidden');
+        document.getElementById('paymentsNotificationsTab').classList.add('border-yellow-500', 'text-yellow-600');
+    }
+}
+// Ouvre le modal
+function openModal(id) {
+    document.getElementById(id).classList.remove('hidden');
+    // Option: Au chargement tu peux tout marquer comme "lu" via un appel Ajax ici
+}
+// Ferme le modal
+function closeModal(id) {
+    document.getElementById(id).classList.add('hidden');
+}
     </script>
 </body>
 </html>
