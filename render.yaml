@@ -1,7 +1,7 @@
 services:
   - type: web
     name: gestion-immobiliere
-    env: docker
+    env: other
     plan: free
     buildCommand: |
       composer install --optimize-autoloader --no-dev
