@@ -40,4 +40,5 @@ RUN mkdir -p /var/www/storage /var/www/bootstrap/cache \
 EXPOSE 80
 
 # Commande de démarrage : PHP-FPM + Nginx
-CMD service php8.3-fpm start && nginx -g "daemon off;"
+CMD php-fpm -D && nginx -g "daemon off;"
+
