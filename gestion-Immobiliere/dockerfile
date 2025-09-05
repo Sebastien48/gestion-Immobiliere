@@ -1,20 +1,12 @@
-# Image de base PHP 8.3 avec FPM
-FROM php:8.3-fpm
+# ----------------------------
+# Étape 1 : Build PHP + Composer
+# ----------------------------
+FROM php:8.3-fpm AS build
 
-# Installer dépendances système + Nginx
+# Installer dépendances système
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpng-dev \
-    libjpeg62-turbo-dev \
-    libfreetype6-dev \
-    libpq-dev \
-    libonig-dev \
-    zip \
-    unzip \
-    git \
-    curl \
-    pkg-config \
-    nginx \
+    libpng-dev libjpeg62-turbo-dev libfreetype6-dev libpq-dev libonig-dev \
+    zip unzip git curl pkg-config nginx \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo pdo_pgsql pdo_mysql mbstring exif pcntl bcmath gd \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -28,17 +20,31 @@ WORKDIR /var/www
 # Copier le code Laravel
 COPY . .
 
-# Copier la config Nginx
-COPY ./nginx/default.conf /etc/nginx/sites-available/default
+# Installer les dépendances Laravel
+RUN composer install --no-dev --optimize-autoloader
 
-# Permissions
+# Créer les dossiers nécessaires et définir les permissions
 RUN mkdir -p /var/www/storage /var/www/bootstrap/cache \
     && chown -R www-data:www-data /var/www \
     && chmod -R 755 /var/www/storage /var/www/bootstrap/cache
 
-# Exposer le port HTTP (Render utilisera $PORT)
+# ----------------------------
+# Étape 2 : Image finale Nginx + PHP-FPM
+# ----------------------------
+FROM nginx:alpine
+
+# Copier PHP-FPM depuis l'étape précédente
+COPY --from=build /usr/local/etc/php /usr/local/etc/php
+COPY --from=build /usr/local/bin/php* /usr/local/bin/
+COPY --from=build /usr/local/sbin/php-fpm /usr/local/sbin/php-fpm
+COPY --from=build /var/www /var/www
+
+# Copier la configuration Nginx
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+
+WORKDIR /var/www
+
 EXPOSE 80
 
-# Commande de démarrage : PHP-FPM + Nginx
-CMD php-fpm -D && nginx -g "daemon off;"
-
+# Lancer PHP-FPM + Nginx
+CMD sh -c "php-fpm -D && nginx -g 'daemon off;'"
