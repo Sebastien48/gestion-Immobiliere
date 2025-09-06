@@ -1,40 +1,35 @@
-version: "3.9"
+version: '3.8'
 
 services:
   app:
-    build:
-      context: ./gestion-immobiliere
-      dockerfile: Dockerfile
-    container_name: gestion-immobiliere
-    restart: unless-stopped
-    working_dir: /var/www
-    volumes:
-      - ./gestion-immobiliere:/var/www
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    build: .
+    container_name: laravel_app
     ports:
-      - "8080:80"   # accès Laravel via http://localhost:8080
+      - "8080:8080"
     depends_on:
       - db
-    networks:
-      - laravel
+    environment:
+      DB_CONNECTION: pgsql
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_DATABASE: laravel
+      DB_USERNAME: laravel
+      DB_PASSWORD: secret
+    volumes:
+  
+      - ./gestion-immobiliere:/var/www/gestion-immobiliere
 
   db:
     image: postgres:17
     container_name: laravel_db
-    restart: unless-stopped
     environment:
-      POSTGRES_DB: laravel
       POSTGRES_USER: laravel
       POSTGRES_PASSWORD: secret
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+      POSTGRES_DB: laravel
     ports:
       - "5432:5432"
-    networks:
-      - laravel
-
-networks:
-  laravel:
+    volumes:
+      - db_data:/var/lib/postgresql/data
 
 volumes:
-  pgdata:
+  db_data:
