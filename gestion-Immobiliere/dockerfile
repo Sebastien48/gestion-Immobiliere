@@ -26,31 +26,35 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Définir le répertoire de travail
 WORKDIR /var/www
 
-# Copier uniquement composer.json et composer.lock
+# Copier uniquement composer.json et composer.lock (meilleure utilisation du cache Docker)
 COPY composer.json composer.lock ./
 
-# Installer dépendances sans scripts (évite artisan error)
+# Installer dépendances PHP (sans scripts pour éviter artisan error)
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 # Copier tout le code Laravel
 COPY . .
 
-# Exécuter les scripts Composer maintenant que artisan est présent
-RUN composer run-script post-autoload-dump
+# Exécuter les scripts Composer (artisan est maintenant présent)
+RUN composer run-script post-autoload-dump || true
 
-# Donner les bonnes permissions
+# Créer dossiers nécessaires + permissions
 RUN mkdir -p /var/www/storage /var/www/bootstrap/cache \
     && chown -R www-data:www-data /var/www \
-    && chmod -R 755 /var/www/storage /var/www/bootstrap/cache
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 # Copier configuration Nginx
 COPY ./nginx.conf /etc/nginx/nginx.conf
 
-# Copier configuration Supervisor (pour gérer php-fpm + nginx)
+# Copier configuration Supervisor
 COPY ./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Exposer HTTP
+# Copier entrypoint
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Exposer port 80
 EXPOSE 80
 
-# Lancer supervisor
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Lancer via entrypoint (migrations + cache + supervisor)
+CMD ["/usr/local/bin/entrypoint.sh"]
