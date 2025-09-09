@@ -26,7 +26,13 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Définir le répertoire de travail
 WORKDIR /var/www
 
-# Copier le code Laravel
+# Copier uniquement composer.json et composer.lock (meilleur cache Docker)
+COPY composer.json composer.lock ./
+
+# Installer les dépendances PHP (dans le conteneur)
+RUN composer install --no-dev --optimize-autoloader
+
+# Copier tout le code Laravel après (pour ne pas casser le cache docker)
 COPY . .
 
 # Donner les bonnes permissions
