@@ -193,100 +193,102 @@
             </button>
         </div>
 
-        <form id="addLocationForm" method="POST" action="{{ route('locations.store') }}" class="p-4 sm:p-6" enctype="multipart/form-data">
-            @csrf
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                <!-- Locataire -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Locataire*</label>
-                    <select name="tenant_value" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
-                        <option value="">-- Sélectionnez un locataire --</option>
-                        @foreach ($locataires as $loc)
-                            <option value="{{ $loc->code_locataires }}">{{ $loc->nom }} {{ $loc->prenom }}</option>
-                        @endforeach
-                    </select>
+        <div class="overflow-y-auto max-h-[80vh]">
+            <form id="addLocationForm" method="POST" action="{{ route('locations.store') }}" class="p-4 sm:p-6" enctype="multipart/form-data">
+                @csrf
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                    <!-- Locataire -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Locataire*</label>
+                        <select name="tenant_value" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                            <option value="">-- Sélectionnez un locataire --</option>
+                            @foreach ($locataires as $loc)
+                                <option value="{{ $loc->code_locataires }}">{{ $loc->nom }} {{ $loc->prenom }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Bâtiment -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Bâtiment*</label>
+                        <select name="building_value" id="locationBuildingSelect"
+                                class="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                data-apartments-url="{{ route('locations.apartments', ['codeBatiment' => '___CODE___']) }}"
+                                required>
+                            <option value="">Sélectionner un bâtiment</option>
+                            @foreach ($batiments as $batiment )
+                                <option value="{{ $batiment->code_batiment }}">{{ $batiment->nom }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Appartement -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Appartement*</label>
+                        <select name="apartment_value" id="locationApartmentSelect" required class="w-full px-3 py-2 border border-gray-300 rounded-md" disabled>
+                            <option value="">Sélectionnez d'abord un bâtiment</option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1">Les appartements seront chargés automatiquement selon le bâtiment choisi.</p>
+                    </div>
+
+                    <!-- Dates et durée -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date de début*</label>
+                        <input type="date" name="start_date" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Durée (mois)*</label>
+                        <input type="number" name="duration" min="1" value="12" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                    </div>
+
+                    <!-- Loyer et caution (remplis automatiquement) -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Loyer mensuel*</label>
+                        <input type="number" name="monthly_rent" id="locationMonthlyRent" required class="w-full px-3 py-2 border border-gray-300 rounded-md" readonly>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Caution*</label>
+                        <input type="number" name="deposit" id="locationDeposit" required class="w-full px-3 py-2 border border-gray-300 rounded-md" >
+                    </div>
+
+                    <!-- Statut -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="statut">Statut*</label>
+                        <select name="statut" id="statut" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                            <option value="">Sélectionner un statut</option>
+                            <option value="arret">Arrêt</option>
+                            <option value="en_location">En location</option>
+                            <option value="en_attente">En attente</option>
+                        </select>
+                    </div>
+
+                    <!-- Contrat PDF -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1" for="contract_document">Document du contrat (PDF)*</label>
+                        <input 
+                            type="file" 
+                            name="contract_document" 
+                            id="contract_document" 
+                            accept="application/pdf"
+                            required 
+                            class="w-full px-3 py-2 border border-gray-300 rounded-md file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" 
+                        >
+                        <p class="text-xs text-gray-500 mt-1">Format accepté: PDF uniquement (max: 2 Mo).</p>
+                    </div>
                 </div>
 
-                <!-- Bâtiment -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Bâtiment*</label>
-                    <select name="building_value" id="locationBuildingSelect"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-md"
-                            data-apartments-url="{{ route('locations.apartments', ['codeBatiment' => '___CODE___']) }}"
-                            required>
-                        <option value="">Sélectionner un bâtiment</option>
-                        @foreach ($batiments as $batiment )
-                            <option value="{{ $batiment->code_batiment }}">{{ $batiment->nom }}</option>
-                        @endforeach
-                    </select>
+                <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 mt-6">
+                    <button type="button" onclick="closeModal('addLocationModal')" 
+                            class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 order-2 sm:order-1">
+                        Annuler
+                    </button>
+                    <button type="submit" 
+                            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center order-1 sm:order-2 mb-3 sm:mb-0">
+                        <i class="fas fa-save mr-2"></i> Enregistrer la location
+                    </button>
                 </div>
-
-                <!-- Appartement -->
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Appartement*</label>
-                    <select name="apartment_value" id="locationApartmentSelect" required class="w-full px-3 py-2 border border-gray-300 rounded-md" disabled>
-                        <option value="">Sélectionnez d'abord un bâtiment</option>
-                    </select>
-                    <p class="text-xs text-gray-500 mt-1">Les appartements seront chargés automatiquement selon le bâtiment choisi.</p>
-                </div>
-
-                <!-- Dates et durée -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Date de début*</label>
-                    <input type="date" name="start_date" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Durée (mois)*</label>
-                    <input type="number" name="duration" min="1" value="12" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                </div>
-
-                <!-- Loyer et caution (remplis automatiquement) -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Loyer mensuel*</label>
-                    <input type="number" name="monthly_rent" id="locationMonthlyRent" required class="w-full px-3 py-2 border border-gray-300 rounded-md" readonly>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Caution*</label>
-                    <input type="number" name="deposit" id="locationDeposit" required class="w-full px-3 py-2 border border-gray-300 rounded-md" >
-                </div>
-
-                <!-- Statut -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1" for="statut">Statut*</label>
-                    <select name="statut" id="statut" required class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                        <option value="">Sélectionner un statut</option>
-                        <option value="arret">Arrêt</option>
-                        <option value="en_location">En location</option>
-                        <option value="en_attente">En attente</option>
-                    </select>
-                </div>
-
-                <!-- Contrat PDF -->
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-medium text-gray-700 mb-1" for="contract_document">Document du contrat (PDF)*</label>
-                    <input 
-                        type="file" 
-                        name="contract_document" 
-                        id="contract_document" 
-                        accept="application/pdf"
-                        required 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" 
-                    >
-                    <p class="text-xs text-gray-500 mt-1">Format accepté: PDF uniquement (max: 2 Mo).</p>
-                </div>
-            </div>
-
-            <div class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-3 mt-6">
-                <button type="button" onclick="closeModal('addLocationModal')" 
-                        class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 order-2 sm:order-1">
-                    Annuler
-                </button>
-                <button type="submit" 
-                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center justify-center order-1 sm:order-2 mb-3 sm:mb-0">
-                    <i class="fas fa-save mr-2"></i> Enregistrer la location
-                </button>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 

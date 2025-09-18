@@ -85,7 +85,8 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
-                <form id="apartmentForm" method="POST" action="{{ route('appartements.store') }}" class="p-6">
+                <div class="max-h-[80vh] overflow-y-auto">
+                    <form id="apartmentForm" method="POST" action="{{ route('appartements.store') }}" class="p-6">
                         @csrf  
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -132,6 +133,7 @@
                             </button>
                         </div>
                     </form>
+                </div>
     </div>
 </div>
 

@@ -160,7 +160,7 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <form id="addTenantForm"  action="{{route('locataires.store')}}"  method="POST" class="p-4 sm:p-6"enctype="multipart/form-data">
+        <form id="addTenantForm" action="{{ route('locataires.store') }}" method="POST" class="p-4 sm:p-6 overflow-y-auto" enctype="multipart/form-data" style="max-height: 80vh;">
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
@@ -225,7 +225,7 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <form id="editTenantForm" class="p-4 sm:p-6">
+        <form id="editTenantForm" class="p-4 sm:p-6 overflow-y-auto" style="max-height: 80vh;">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Nom*</label>
